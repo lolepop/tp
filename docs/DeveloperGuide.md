@@ -282,16 +282,22 @@ Allows a professor or teaching assistant to retrieve vital contact context or ge
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                                    | I want to …​                     | So that I can…​                                                        |
-| -------- | ------------------------------------------ | ------------------------------ | ---------------------------------------------------------------------- |
-| `* * *`  | new user                                   | see usage instructions         | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                                       | add a new person               |                                                                        |
-| `* * *`  | user                                       | delete a person                | remove entries that I no longer need                                   |
-| `* * *`  | user                                       | find a person by name          | locate details of persons without having to go through the entire list |
-| `* *`    | user                                       | hide private contact details   | minimize chance of someone else seeing them by accident                |
-| `*`      | user with many persons in the address book | sort persons by name           | locate a person easily                                                 |
-
-*{More to be added}*
+| Priority | As a …​                            | I want to …​                                           | So that I can…​                                                        |
+|----------|------------------------------------|--------------------------------------------------------|------------------------------------------------------------------------|
+| `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the App                 |
+| `* * *`  | user                               | add a new person                                       |                                                                        |
+| `* * *`  | user                               | delete a person                                        | remove entries that I no longer need                                   |
+| `* * *`  | user                               | find a person by name                                  | locate details of persons without having to go through the entire list |
+| `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
+| `* *`    | professor that teach many students | sort persons by name                                   | locate a person easily                                                 |
+| `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
+| `* *`    | forgetful user                     | do fuzzy and partially maching search                  | locate a person without remembring the full name of that person        |
+| `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
+| `* *`    | user                               | see contextual error messages when a command fails     | know what is the problem and fix it                                    |
+| `*`      | user                               | access my input history                                | run similar commands easily                                            |
+| `* *`    | sloppy user                        | double confirm some dangerous operations               | keep my contacts data safe from mistakes                               |
+| `*`      | sloppy user                        | undo some commands                                     | revert the effects of mistakes                                         |
+| `*`      | user                               | have some customized configuration options             | customize this software to improve my efficiency and comfort           |
 
 ### Use cases
 
