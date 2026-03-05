@@ -9,6 +9,14 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
+### Jia Wen
+
+<img src="images/incursi0n.png" width="200px">
+
+[[github](https://github.com/incursi0n)]
+
+* Role: Project Advisor
+
 ### Marcus
 
 <img src="images/lolepop.png" width="200px">
