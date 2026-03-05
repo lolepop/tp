@@ -9,7 +9,7 @@ You can reach us at the email `seer[at]comp.nus.edu.sg`
 
 ## Project team
 
-### John Doe
+### Jia Wen
 
 <img src="images/incursi0n.png" width="200px">
 
