@@ -301,16 +301,39 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ### Use cases
 
-(For all use cases below, the **System** is the `AddressBook` and the **Actor** is the `user`, unless specified otherwise)
+(For all use cases below, the **System** is the `Doritus` and the **Actor** is the `user`, unless specified otherwise)
+
+**Use case: Add a person**
+
+**MSS**
+
+1.  User requests to add a person with all required details
+2.  System adds the person
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User does not provide all required details.
+
+    * 1a1. System shows an error message.
+
+      Use case resumes at step 1.
+
+* 1b. User provides invalid details (e.g., invalid name format).
+
+    * 1b1. System shows an error message.
+
+      Use case resumes at step 1.
 
 **Use case: Delete a person**
 
 **MSS**
 
 1.  User requests to list persons
-2.  AddressBook shows a list of persons
+2.  System shows a list of persons
 3.  User requests to delete a specific person in the list
-4.  AddressBook deletes the person
+4.  System deletes the person
 
     Use case ends.
 
@@ -322,11 +345,55 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 3a. The given index is invalid.
 
-    * 3a1. AddressBook shows an error message.
+    * 3a1. System shows an error message.
 
       Use case resumes at step 2.
 
-*{More to be added}*
+**Use case: see command instructions**
+
+**MSS**
+
+1. User requests to see instructions for a specific command
+2. System shows instructions for the command
+
+    Use case ends.
+
+**Extensions*
+
+* 1a. User does not specify a command.
+
+    * 1a1. System shows instructions for all commands.
+
+      Use case ends.
+
+* 1b. User specifies an invalid command.
+
+    * 1b1. System shows an error message.
+
+      Use case resumes at step 1.
+
+**Use case: find a person by name**
+
+**MSS**
+
+1.  User requests to find a person by name
+2.  System shows a list of persons whose names match the search query
+
+    Use case ends.
+
+**Extensions**
+
+* 1a. User does not provide a search query.
+
+    * 1a1. System shows an error message.
+
+      Use case resumes at step 1.
+
+* 1b. User provides an invalid search query (e.g., invalid name format).
+
+    * 1b1. System shows an error message.
+
+      Use case resumes at step 1.
 
 ### Non-Functional Requirements
 
