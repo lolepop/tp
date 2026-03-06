@@ -262,21 +262,17 @@ _{Explain here how the data archiving feature will be implemented}_
 
 **Target user profile**:
 
-* has a need to manage a significant number of contacts
-* prefer desktop apps over other types
-* can type fast
-* prefers typing to mouse interactions
-* is reasonably comfortable using CLI apps
-* at teaching position that need to manage contacts of students
+* NUS teaching staff (lecturers, instructors, and teaching assistants) who manage hundreds to thousands of students each semester
+* prefer desktop apps that run locally on their own laptops
+* can type fast and are comfortable with command-style (CLI-like) interfaces
+* frequently need to retrieve student context quickly during emails, grading, and office hours
+* need to organise students by module, tutorial, and lab group, and to reset cohorts each semester while keeping old records for reference
 
 **Value proposition**: 
-
-Focusing on the unique hierarchy of campus life:
-
-Mapping students by course codes, TAs by labs and tutorials.
-
-Allows a professor or teaching assistant to retrieve vital contact context or generate student lists quickly, ensuring that managing a massive network of names never interrupts the flow of deep work or teaching.
-
+* Focusing on the unique hierarchy of campus life.
+* Mapping students by course codes, TAs by labs and tutorials.
+* Allows a professor or teaching assistant to retrieve vital contact context or generate student lists quickly
+* Ensuring that managing a massive network of names never interrupts the flow of deep work or teaching.
 
 ### User stories
 
@@ -284,12 +280,12 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 | Priority | As a …​                            | I want to …​                                           | So that I can…​                                                        |
 |----------|------------------------------------|--------------------------------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the App                 |
-| `* * *`  | user                               | add a new person                                       |                                                                        |
-| `* * *`  | user                               | delete a person                                        | remove entries that I no longer need                                   |
-| `* * *`  | user                               | find a person by name                                  | locate details of persons without having to go through the entire list |
+| `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the Doritus             |
+| `* * *`  | user                               | add a new contact                                      | store their student ID and contact details for future reference        |
+| `* * *`  | user                               | delete a contact                                       | remove withdrawn students or duplicate entries                         |
+| `* * *`  | user                               | find a person by name or ID                            | locate details of persons without having to go through the entire list |
 | `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
-| `* *`    | professor that teach many students | sort persons by name                                   | locate a person easily                                                 |
+| `* *`    | professor that teach many students | sort persons by name or ID                             | locate a person easily                                                 |
 | `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
 | `* *`    | forgetful user                     | do fuzzy and partially maching search                  | locate a person without remembring the full name of that person        |
 | `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
@@ -298,17 +294,19 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* *`    | sloppy user                        | double confirm some dangerous operations               | keep my contacts data safe from mistakes                               |
 | `*`      | sloppy user                        | undo some commands                                     | revert the effects of mistakes                                         |
 | `*`      | user                               | have some customized configuration options             | customize this software to improve my efficiency and comfort           |
+| `* *`    | professor                          | archive a completed semester’s cohort                  | start each new semester with a clean state                             |
+| `*`      | professor                          | record short notes about students                      | recall important context when meeting them again in future semesters   |              
 
 ### Use cases
 
 (For all use cases below, the **System** is the `Doritus` and the **Actor** is the `user`, unless specified otherwise)
 
-**Use case: Add a person**
+**Use case: UC01 - Add a contact**
 
 **MSS**
 
-1.  User requests to add a person with all required details
-2.  System adds the person
+1.  User requests to add a person with all required details.
+2.  System adds the person.
 
     Use case ends.
 
@@ -320,59 +318,32 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 1.
 
-* 1b. User provides invalid details (e.g., invalid name format).
+* 1b. User provides invalid details. (e.g., invalid name format)
 
     * 1b1. System shows an error message.
 
       Use case resumes at step 1.
-
-**Use case: Delete a person**
+      
+**Use case: UC02 - Delete a contact**
 
 **MSS**
 
-1.  User requests to list persons
-2.  System shows a list of persons
-3.  User requests to delete a specific person in the list
-4.  System deletes the person
+1.  User requests to show all contacts.
+2.  System shows contacts.
+3.  User requests to delete a contact by index.
+4.  System remove the contact.
 
     Use case ends.
 
 **Extensions**
 
-* 2a. The list is empty.
+* 3a. User locate the contact to be deleted by other fields. (e.g. name, email)
 
-  Use case ends.
-
-* 3a. The given index is invalid.
-
-    * 3a1. System shows an error message.
-
-      Use case resumes at step 2.
-
-**Use case: see command instructions**
-
-**MSS**
-
-1. User requests to see instructions for a specific command
-2. System shows instructions for the command
+  * 3a1. System remove the contact.
 
     Use case ends.
-
-**Extensions*
-
-* 1a. User does not specify a command.
-
-    * 1a1. System shows instructions for all commands.
-
-      Use case ends.
-
-* 1b. User specifies an invalid command.
-
-    * 1b1. System shows an error message.
-
-      Use case resumes at step 1.
-
-**Use case: find a person by name**
+    
+**Use case: UC03 - find a person by name**
 
 **MSS**
 
@@ -395,18 +366,162 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 1.
 
+**Use case: UC04 – Add a lab group tag to a student**
+
+**MSS**
+
+1. User enters a `find NAME_KEYWORD` command.
+2. Doritus shows a list of matching contacts.
+3. User identifies the correct student and notes their index in the displayed list.
+4. User enters `addtag INDEX TAG`.
+5. Doritus adds the tag to the student and shows a success message including the updated tags.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The `NAME_KEYWORD` is in an invalid format.
+
+  * 1a1. Doritus shows an error message explaining the valid name format.
+
+    Use case resumes at step 1.
+
+* 2a. No contacts match the search keyword.
+
+  * 2a1. Doritus shows an error message indicating that no contacts were found.
+  * 2a2. User revises the search keyword.
+ 
+    Use case resumes at step 1.
+
+* 4a. The given index is invalid (out of range or not a positive integer).
+
+  * 4a1. Doritus shows an error message explaining that the index must refer to a contact in the displayed list.
+  * 4a2. User checks the displayed list and re-enters `addtag INDEX TAG`.
+ 
+    Use case resumes at step 4.
+
+* 4b. The given tag is invalid or already exists for that student.
+
+  * 4b1. Doritus shows an error message describing the validation problem (e.g., invalid characters, duplicate tag).
+  * 4b2. User corrects the tag value and re-enters `addtag INDEX TAG`.
+
+    Use case resumes at step 4.
+
+---
+
+**Use case: UC05 – Prepare a tutorial group contact list for attendance**
+
+**MSS**
+
+1. User requests to view all contacts.
+2. Doritus shows the contacts.
+3. User narrows down the list to a specific tutorial or lab group (e.g., by using tags or a future `filter TAG` command).
+4. Doritus shows only the contacts belonging to that tutorial or lab group.
+5. User uses the displayed list to take attendance or copy email addresses.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The address book is empty.
+
+  * 1a1. Doritus shows an empty list with a message such as “No contacts found. Add your first contact to get started!”.
+  
+    Use case ends.
+
+* 3a. The specified tag or filter value is invalid.
+
+  * 3a1. Doritus shows an error message explaining the valid format for tags/filters.
+  * 3a2. User re-enters the filter with a valid value.
+  
+    Use case resumes at step 3.
+
+* 4a. No contacts match the specified tutorial or lab group.
+
+  * 4a1. Doritus shows an empty list and a message such as “No contacts found for this group”.
+  * 4a2. User may try a different group or adjust the filter.
+ 
+    Use case resumes at step 3.
+
+---
+
+**Use case: UC06 – Archive a completed semester’s contacts**
+
+**MSS**
+
+1. User ensures the current list shows the cohort to be archived (e.g., by filtering by module code and semester tag).
+2. User initiates an archive operation (e.g., `archive CURRENT_VIEW` or similar command).
+3. Doritus writes the selected contacts to an archive data file while keeping them readable by humans.
+4. Doritus removes the archived contacts from the active list or marks them as archived, depending on the chosen design.
+5. Doritus shows a summary indicating how many contacts were archived and where the archive is stored.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. No contacts are visible in the current view.
+
+  * 1a1. Doritus shows a message indicating there is nothing to archive.
+  
+    Use case ends.
+
+* 2a. The archive command format is invalid.
+
+  * 2a1. Doritus shows an error message giving the correct archive command usage.
+  * 2a2. User re-enters the command.
+
+    Use case resumes at step 2.
+
+* 3a. There is an I/O error while writing to the archive file.
+
+  * 3a1. Doritus shows an error message explaining that the archive could not be saved and that no changes were made to active data.
+  * 3a2. User resolves the underlying issue (e.g., disk space, permissions) and retries the command.
+  
+    Use case resumes at step 2.
+
+**Use case: UC07 - see command instructions**
+
+**MSS**
+
+1. User requests to see instructions for a specific command
+2. System shows instructions for the command
+
+    Use case ends.
+
+**Extensions*
+
+* 1a. User does not specify a command.
+
+    * 1a1. System shows instructions for all commands.
+
+      Use case ends.
+
+* 1b. User specifies an invalid command.
+
+    * 1b1. System shows an error message.
+
+      Use case resumes at step 1.
+
 ### Non-Functional Requirements
 
-1.  Should work on any _mainstream OS_ as long as it has Java `17` or above installed.
-2.  Should be able to hold up to 1000 persons without a noticeable sluggishness in performance for typical usage.
-3.  A user with above average typing speed for regular English text (i.e. not code, not system admin commands) should be able to accomplish most of the tasks faster using commands than using the mouse.
-
-*{More to be added}*
+1. Should work on any _mainstream OS_ (Windows, Linux, macOS) as long as it has Java `17` or above installed.
+2. Should remain responsive (each command completing within 1 second) for address books with up to 5,000 contacts.
+3. A user with above-average typing speed for regular English text should be able to accomplish most common tasks faster using commands than using the mouse (CLI-first design).
+4. All user data should be stored locally in a human-editable text file format (e.g., JSON) so that advanced users can inspect and edit data directly if needed.
+5. The application should be portable and runnable from a single JAR file, without requiring a separate installer.
+6. The software should not depend on any team-hosted remote server; all core features must work fully offline.
+7. The product should be designed for single-user usage on a single machine at a time (no concurrent multi-user access to the same data file).
+8. The application should fail gracefully when the data file is missing or corrupted, with clear error messages and without crashing.
 
 ### Glossary
 
-* **Mainstream OS**: Windows, Linux, Unix, MacOS
-* **Private contact detail**: A contact detail that is not meant to be shared with others
+* **Doritus**: The address book application described in this document.
+* **Contact**: A record representing a student or teaching staff member, including fields such as name, ID, email, phone, and tags.
+* **Student ID**: A unique identifier assigned to NUS students (e.g., `A1234567Z`), used by Doritus to detect duplicate student contacts.
+* **Teaching staff**: Lecturers, instructors, and teaching assistants involved in teaching NUS modules.
+* **Tag**: A short label attached to a contact (e.g., module code, tutorial group, lab group) used for grouping and filtering contacts.
+* **Tutorial group / Lab group**: A subgroup of students within a module, usually associated with a specific weekly session; commonly represented as tags in Doritus.
+* **Mainstream OS**: Windows, Linux, macOS.
 
 --------------------------------------------------------------------------------------------------------------------
 
