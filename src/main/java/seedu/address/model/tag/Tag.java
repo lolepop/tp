@@ -17,7 +17,7 @@ public class Tag extends AbstractTag {
 
     @Override
     public TagType getTagType() {
-        return TagType.Tag;
+        return TagType.TAG;
     }
 
     @Override

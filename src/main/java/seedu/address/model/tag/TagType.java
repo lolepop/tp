@@ -4,7 +4,7 @@ package seedu.address.model.tag;
  * Represents types of Tag in the address book.
  */
 public enum TagType {
-    Tag("Tag"),;
+    TAG("Tag"),;
 
     private final String description;
 
