@@ -58,13 +58,13 @@ public class StringUtil {
      * </pre>
      *
      * @param sentence  cannot be null
-     * @param subString cannot be null, cannot be empty
+     * @param substring cannot be null, cannot be empty
      */
-    public static boolean containsSubstringIgnoreCase(String sentence, String subString) {
+    public static boolean containsSubstringIgnoreCase(String sentence, String substring) {
         requireNonNull(sentence);
-        requireNonNull(subString);
+        requireNonNull(substring);
 
-        String preppedWord = subString.trim().toLowerCase();
+        String preppedWord = substring.trim().toLowerCase();
         checkArgument(!preppedWord.isEmpty(), "Word parameter cannot be empty");
         checkArgument(preppedWord.split("\\s+").length == 1, "Word parameter should be a single word");
 
