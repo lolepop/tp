@@ -216,7 +216,7 @@ public class AddCommandParserTest {
 
         // multiple positions
         assertParseFailure(parser, "staff" + POSITION_DESC_AMY + NAME_DESC_BOB + PHONE_DESC_BOB
-                        + EMAIL_DESC_BOB + USERNAME_DESC_BOB + POSITION_DESC_BOB + TAG_DESC_FRIEND,
+                + EMAIL_DESC_BOB + USERNAME_DESC_BOB + POSITION_DESC_BOB + TAG_DESC_FRIEND,
                 Messages.getErrorMessageForDuplicatePrefixes(PREFIX_POSITION));
     }
 

@@ -14,6 +14,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 
@@ -21,6 +22,8 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.NameContainsKeywordsPredicate;
+import seedu.address.model.person.TagsContainsTagPredicate;
+import seedu.address.model.tag.Tag;
 
 /**
  * Contains integration tests (interaction with the Model) for
@@ -108,10 +111,47 @@ public class FindCommandTest {
     }
 
     @Test
+    public void execute_nameAndTagPredicate_personFound() {
+        String expectedMessage = String.format(MESSAGE_PERSONS_LISTED_OVERVIEW, 1);
+        NameContainsKeywordsPredicate namePredicate = preparePredicate("Daniel");
+        TagsContainsTagPredicate tagPredicate = new TagsContainsTagPredicate(Set.of(new Tag("friends")));
+        FindCommand command = new FindCommand(namePredicate, tagPredicate);
+        expectedModel.updateFilteredPersonList(person -> namePredicate.test(person) && tagPredicate.test(person));
+        assertCommandSuccess(command, model, expectedMessage, expectedModel);
+        assertEquals(Collections.singletonList(DANIEL), model.getFilteredPersonList());
+    }
+
+    @Test
+    public void equals_withTagPredicate() {
+        NameContainsKeywordsPredicate namePredicate = new NameContainsKeywordsPredicate(
+                Collections.singletonList("Alice"));
+        TagsContainsTagPredicate tagPredicate = new TagsContainsTagPredicate(Set.of(new Tag("colleague")));
+
+        FindCommand commandWithBoth = new FindCommand(namePredicate, tagPredicate);
+        FindCommand commandWithNameOnly = new FindCommand(namePredicate);
+
+        // same object -> returns true
+        assertTrue(commandWithBoth.equals(commandWithBoth));
+
+        // same values -> returns true
+        FindCommand commandWithBothCopy = new FindCommand(namePredicate, tagPredicate);
+        assertTrue(commandWithBoth.equals(commandWithBothCopy));
+
+        // different types -> returns false
+        assertFalse(commandWithBoth.equals(1));
+
+        // null -> returns false
+        assertFalse(commandWithBoth.equals(null));
+
+        // different predicates -> returns false
+        assertFalse(commandWithBoth.equals(commandWithNameOnly));
+    }
+
+    @Test
     public void toStringMethod() {
         NameContainsKeywordsPredicate predicate = new NameContainsKeywordsPredicate(Arrays.asList("keyword"));
         FindCommand findCommand = new FindCommand(predicate);
-        String expected = FindCommand.class.getCanonicalName() + "{predicate=" + predicate + "}";
+        String expected = FindCommand.class.getCanonicalName() + "{namePredicate=" + predicate + ", tagPredicate=null}";
         assertEquals(expected, findCommand.toString());
     }
 

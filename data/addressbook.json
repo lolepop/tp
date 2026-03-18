@@ -1,83 +1,116 @@
 {
-  "persons" : [ {
-    "name" : "Alex Yeoh",
-    "phone" : "87438807",
-    "email" : "alexyeoh@example.com",
-    "username" : "alexyeoh",
-    "type" : "student",
-    "position" : null,
-    "tags" : [ "friends" ]
-  }, {
-    "name" : "Bernice Yu",
-    "phone" : "99272758",
-    "email" : "berniceyu@example.com",
-    "username" : "berniceyu",
-    "type" : "staff",
-    "position" : "Professors",
-    "tags" : [ "colleagues", "friends" ]
-  }, {
-    "name" : "Charlotte Oliveiro",
-    "phone" : "93210283",
-    "email" : "charlotte@example.com",
-    "username" : "charlotteo",
-    "type" : "student",
-    "position" : null,
-    "tags" : [ "neighbours" ]
-  }, {
-    "name" : "David Li",
-    "phone" : "91031282",
-    "email" : "lidavid@example.com",
-    "username" : "davidli",
-    "type" : "staff",
-    "position" : "Teaching Assistant",
-    "tags" : [ "family" ]
-  }, {
-    "name" : "Irfan Ibrahim",
-    "phone" : "92492021",
-    "email" : "irfan@example.com",
-    "username" : "irfani",
-    "type" : "student",
-    "position" : null,
-    "tags" : [ "classmates" ]
-  }, {
-    "name" : "Roy Balakrishnan",
-    "phone" : "92624417",
-    "email" : "royb@example.com",
-    "username" : "royb",
-    "type" : "staff",
-    "position" : "Teaching Assistant",
-    "tags" : [ "colleagues" ]
-  }, {
-    "name" : "Emma Watson",
-    "phone" : "81234567",
-    "email" : "emma.w@example.com",
-    "username" : "emmawatson",
-    "type" : "student",
-    "position" : null,
-    "tags" : [ "year1" ]
-  }, {
-    "name" : "Dr Sarah Chen",
-    "phone" : "89876543",
-    "email" : "sarah.chen@example.com",
-    "username" : "sarahchen",
-    "type" : "staff",
-    "position" : "Professors",
-    "tags" : [ "colleagues", "CS2103" ]
-  }, {
-    "name" : "James Tan",
-    "phone" : "91112233",
-    "email" : "james.tan@example.com",
-    "username" : "jamestan",
-    "type" : "student",
-    "position" : null,
-    "tags" : [ "tutorialA" ]
-  }, {
-    "name" : "Michelle Ng",
-    "phone" : "92223344",
-    "email" : "michelle.ng@example.com",
-    "username" : "michelleng",
-    "type" : "staff",
-    "position" : "Teaching Assistant",
-    "tags" : [ "labinstructor" ]
-  } ]
+    "persons": [
+        {
+            "name": "Alex Yeoh",
+            "phone": "87438807",
+            "email": "alexyeoh@example.com",
+            "username": "alexyeoh",
+            "type": "student",
+            "position": null,
+            "tags": [
+                "friends"
+            ]
+        },
+        {
+            "name": "Bernice Yu",
+            "phone": "99272758",
+            "email": "berniceyu@example.com",
+            "username": "berniceyu",
+            "type": "staff",
+            "position": "Professors",
+            "tags": [
+                "colleagues",
+                "friends"
+            ]
+        },
+        {
+            "name": "Charlotte Oliveiro",
+            "phone": "93210283",
+            "email": "charlotte@example.com",
+            "username": "charlotteo",
+            "type": "student",
+            "position": null,
+            "tags": [
+                "neighbours"
+            ]
+        },
+        {
+            "name": "David Li",
+            "phone": "91031282",
+            "email": "lidavid@example.com",
+            "username": "davidli",
+            "type": "staff",
+            "position": "Teaching Assistant",
+            "tags": [
+                "family"
+            ]
+        },
+        {
+            "name": "Irfan Ibrahim",
+            "phone": "92492021",
+            "email": "irfan@example.com",
+            "username": "irfani",
+            "type": "student",
+            "position": null,
+            "tags": [
+                "classmates"
+            ]
+        },
+        {
+            "name": "Roy Balakrishnan",
+            "phone": "92624417",
+            "email": "royb@example.com",
+            "username": "royb",
+            "type": "staff",
+            "position": "Teaching Assistant",
+            "tags": [
+                "colleagues"
+            ]
+        },
+        {
+            "name": "Emma Watson",
+            "phone": "81234567",
+            "email": "emma.w@example.com",
+            "username": "emmawatson",
+            "type": "student",
+            "position": null,
+            "tags": [
+                "year1"
+            ]
+        },
+        {
+            "name": "Dr Sarah Chen",
+            "phone": "89876543",
+            "email": "sarah.chen@example.com",
+            "username": "sarahchen",
+            "type": "staff",
+            "position": "Professors",
+            "tags": [
+                "colleagues",
+                "CS2103"
+            ]
+        },
+        {
+            "name": "James Tan",
+            "phone": "91112233",
+            "email": "james.tan@example.com",
+            "username": "jamestan",
+            "type": "student",
+            "position": null,
+            "tags": [
+                "tutorialA"
+            ]
+        },
+        {
+            "name": "Michelle Ng",
+            "phone": "92223344",
+            "email": "michelle.ng@example.com",
+            "username": "michelleng",
+            "type": "staff",
+            "position": "Teaching Assistant",
+            "tags": [
+                "labinstructor"
+            ]
+        }
+    ]
 }
