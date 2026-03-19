@@ -21,16 +21,17 @@ import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
 import seedu.address.model.person.Person;
+import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.Tag;
 
 public class AddTagCommandTest {
-    private static final HashSet<Tag> TAGS_TO_ADD = new HashSet<>(List.of(new Tag("lab1"), new Tag("tut5")));
+    private static final HashSet<AbstractTag> TAGS_TO_ADD = new HashSet<>(List.of(new Tag("lab1"), new Tag("tut5")));
 
     private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
     @Test
     public void addTag_normal_success() {
-        final HashSet<Tag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
         tagsToExpect.addAll(BENSON.getTags());
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
@@ -52,7 +53,7 @@ public class AddTagCommandTest {
     public void addTag_filteredList_success() {
         showPersonAtIndex(model, INDEX_SECOND_PERSON);
 
-        final HashSet<Tag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
         tagsToExpect.addAll(BENSON.getTags());
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
@@ -103,11 +104,11 @@ public class AddTagCommandTest {
         model.setPerson(personToEdit, editedPerson);
 
         personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        HashSet<Tag> tagsToAdd = new HashSet<>(List.of(new Tag("tut5"), new Tag("newtag")));
+        HashSet<AbstractTag> tagsToAdd = new HashSet<>(List.of(new Tag("tut5"), new Tag("newtag")));
 
         // verify that there will be duplicates
         boolean hasDuplicate = false;
-        for (Tag tag : personToEdit.getTags()) {
+        for (AbstractTag tag : personToEdit.getTags()) {
             if (tagsToAdd.contains(tag)) {
                 hasDuplicate = true;
                 break;
@@ -117,7 +118,7 @@ public class AddTagCommandTest {
 
         AddTagCommand addTagCommand = new AddTagCommand(INDEX_FIRST_PERSON, tagsToAdd);
 
-        HashSet<Tag> allTags = new HashSet<>(personToEdit.getTags());
+        HashSet<AbstractTag> allTags = new HashSet<>(personToEdit.getTags());
         allTags.addAll(tagsToAdd);
 
         editedPerson = personToEdit.cloneInto(p -> {

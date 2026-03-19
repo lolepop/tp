@@ -13,7 +13,7 @@ import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.AbstractTag;
 
 /**
  * Adds tag(s) to an existing Person
@@ -38,17 +38,17 @@ public class AddTagCommand extends Command {
             + "as they already exist: %1$s";
 
     private Index targetPersonIndex;
-    private Set<Tag> tagsToAdd;
+    private Set<AbstractTag> tagsToAdd;
 
     /**
      * @param index of the person in the filtered person list to edit
      * @param tags  a set of tag(s) to be added to the person located at index
      */
-    public AddTagCommand(Index targetPersonIndex, Set<Tag> tags) {
+    public <T extends AbstractTag> AddTagCommand(Index targetPersonIndex, Set<T> tags) {
         requireNonNull(targetPersonIndex);
         requireNonNull(tags);
         this.targetPersonIndex = targetPersonIndex;
-        this.tagsToAdd = tags;
+        this.tagsToAdd = new HashSet<>(tags);
     }
 
     @Override
@@ -85,7 +85,7 @@ public class AddTagCommand extends Command {
      *                   person's tags.
      * @return A formatted message string indicating the ignored duplicate tags.
      */
-    private String formatDuplicateTagMessage(List<Tag> duplicates) {
+    private String formatDuplicateTagMessage(List<AbstractTag> duplicates) {
         if (duplicates.size() == 0) {
             return "";
         }
@@ -102,7 +102,7 @@ public class AddTagCommand extends Command {
      * @return A list of duplicate tags that are already present in the person's
      *         tags.
      */
-    private List<Tag> findDuplicateTags(Set<Tag> existing) {
+    private List<AbstractTag> findDuplicateTags(Set<AbstractTag> existing) {
         return existing.stream().filter(tagsToAdd::contains).toList();
     }
 
@@ -114,7 +114,7 @@ public class AddTagCommand extends Command {
      * @return A new set containing all tags from both existing and new tags, with
      *         duplicates removed.
      */
-    private Set<Tag> appendTags(Set<Tag> existing) {
+    private Set<AbstractTag> appendTags(Set<AbstractTag> existing) {
         var newTags = new HashSet<>(existing);
         newTags.addAll(tagsToAdd);
         return newTags;

@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddTagCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
-import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.AbstractTag;
 
 /**
  * Parses input arguments and creates a new AddTagCommand object
@@ -34,7 +34,7 @@ public class AddTagCommandParser implements Parser<AddTagCommand> {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddTagCommand.MESSAGE_USAGE), pe);
         }
 
-        Set<Tag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
+        Set<AbstractTag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
         return new AddTagCommand(index, tagList);
     }
 
