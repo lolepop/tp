@@ -171,22 +171,33 @@ Edits an existing person in the address book. For teaching staff, you can also c
 * `edit 2 n/Betsy Crower t/` — Edits the 2nd person's name and clears all tags.
 * `staffslist` then `edit 1 pos/Professors` — Edits the 1st teaching staff's position to Professors.
 
-### Locating persons by name: `find`
+### Locating persons by name/tag: `find`
 
-Finds persons whose names contain any of the given keywords.
+Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
-Format: `find KEYWORD [MORE_KEYWORDS]`
+**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...]`
 
-* The search is case-insensitive. e.g `hans` will match `Hans`
-* The order of the keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
-* Only the name is searched.
-* Only full words will be matched e.g. `Han` will not match `Hans`
-* Persons matching at least one keyword will be returned (i.e. `OR` search).
-  e.g. `Hans Bo` will return `Hans Gruber`, `Bo Yang`
+**Note:** At least one keyword or tag must be provided.
 
-Examples:
-* `find John` returns `john` and `John Doe`
-* `find alex david` returns `Alex Yeoh`, `David Li`<br>
+**Behavior:**
+
+* **Name search:** Keywords match against person names (case-insensitive)
+  * The order of keywords does not matter. e.g. `Hans Bo` will match `Bo Hans`
+  * Only full words will be matched e.g. `Han` will not match `Hans`
+  * Persons matching at least one keyword will be returned (i.e. `OR` search)
+
+* **Tag search:** Tags match against person tags (case-insensitive)
+  * Persons with at least one matching tag will be returned (i.e. `OR` search)
+
+* **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least one tag (i.e. `AND` between name and tag criteria)
+
+**Examples:**
+
+* `find John` — Returns all persons with "John" in their name
+* `find alex david` — Returns `Alex Yeoh`, `David Li`, and anyone else with "alex" or "david" in their name
+* `find t/friends` — Returns all persons tagged with "friends"
+* `find t/colleagues t/important` — Returns all persons tagged with either "colleagues" or "important"
+* `find John t/friends` — Returns persons with "John" in their name who are also tagged with "friends"<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
 ### Deleting a person : `delete`

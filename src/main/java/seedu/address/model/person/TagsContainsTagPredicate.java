@@ -18,7 +18,7 @@ public class TagsContainsTagPredicate implements Predicate<Person> {
 
     @Override
     public boolean test(Person person) {
-        return person.tags.stream().anyMatch(tag -> tags.contains(tag));
+        return tags.stream().anyMatch(tag -> person.containsTag(tag));
     }
 
     @Override

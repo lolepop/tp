@@ -65,6 +65,10 @@ public sealed class Person permits Person.MutablePerson, TeachingStaff {
         return Collections.unmodifiableSet(tags);
     }
 
+    public boolean containsTag(AbstractTag tag) {
+        return tags.contains(tag);
+    }
+
     /**
      * Returns true if both persons have the same name.
      * This defines a weaker notion of equality between two persons.
