@@ -54,6 +54,13 @@ public class TeachingStaffTest {
     }
 
     @Test
+    public void equals_sameReference_returnsTrue() {
+        TeachingStaff staff = (TeachingStaff) new PersonBuilder().withName("Grace")
+                .withPosition(Position.PROFESSORS).build();
+        assertEquals(staff, staff);
+    }
+
+    @Test
     public void equals_differentAvailability_returnsFalse() {
         Name name = new Name("Eve");
         Phone phone = new Phone("81234567");

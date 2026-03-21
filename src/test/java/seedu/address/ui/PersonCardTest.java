@@ -19,7 +19,12 @@ import seedu.address.model.person.Position;
 import seedu.address.model.person.TeachingStaff;
 import seedu.address.model.person.TimeSlot;
 import seedu.address.model.person.Username;
+import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.Tag;
+import seedu.address.model.tag.restricted.CourseTagSchema;
+import seedu.address.model.tag.restricted.LabTagSchema;
+import seedu.address.model.tag.restricted.RestrictedTag;
+import seedu.address.model.tag.restricted.TutorialTagSchema;
 import seedu.address.testutil.PersonBuilder;
 
 /**
@@ -84,6 +89,23 @@ public class PersonCardTest {
     public void constructor_withTags_displaysTagLabels() {
         Person person = new PersonBuilder().withName("Dan").withTags("alpha", "beta").build();
         PersonCard card = new PersonCard(person, 5);
+        assertEquals(person, card.person);
+    }
+
+    @Test
+    public void constructor_restrictedTags_coversAllTagStyleClasses() {
+        Set<AbstractTag> tags = new HashSet<>();
+        tags.add(new Tag("friends"));
+        tags.add(new RestrictedTag(new TutorialTagSchema(), "tut:8"));
+        tags.add(new RestrictedTag(new LabTagSchema(), "lab:D24"));
+        tags.add(new RestrictedTag(new CourseTagSchema(), "course:CS2103T"));
+        Person person = new Person(
+                new Name("Alex"),
+                new Phone("81234567"),
+                new Email("alex@example.com"),
+                new Username("alex"),
+                tags);
+        PersonCard card = new PersonCard(person, 1);
         assertEquals(person, card.person);
     }
 }

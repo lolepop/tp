@@ -77,6 +77,12 @@ public class TimeSlotTest {
     }
 
     @Test
+    public void isValidTimeSlot_nonNumericParts_returnsFalse() {
+        assertFalse(TimeSlot.isValidTimeSlot("mon-10-ab"));
+        assertFalse(TimeSlot.isValidTimeSlot("mon-xy-12"));
+    }
+
+    @Test
     public void toString_formatsCorrectly() {
         TimeSlot slot = new TimeSlot("sat-15-17");
         assertEquals("sat-15-17", slot.toString());
@@ -100,6 +106,12 @@ public class TimeSlotTest {
         assertNotEquals(a, null);
         assertNotEquals(a, "mon-10-12");
         assertNotEquals(a, c);
+    }
+
+    @Test
+    public void toDisplayString_variousDays() {
+        assertTrue(new TimeSlot("wed-10-12").toDisplayString().contains("Wed"));
+        assertTrue(new TimeSlot("sun-0-23").toDisplayString().contains("Sun"));
     }
 
     @Test
