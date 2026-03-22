@@ -44,7 +44,7 @@ public class CsvExporterTest {
                 .withTags()
                 .build();
 
-        String csv = CsvExporter.convertToCSV(student);
+        String csv = CsvExporter.convertToCsv(student);
 
         assertEquals("John Doe,91234567,johndoe,john@example.com,,Student,", csv);
     }
@@ -59,7 +59,7 @@ public class CsvExporterTest {
                 .withTags("cs2103", "tutee")
                 .build();
 
-        String csv = CsvExporter.convertToCSV(student);
+        String csv = CsvExporter.convertToCsv(student);
 
         assertTrue(csv.contains("Alice Smith"));
         assertTrue(csv.contains("cs2103;tutee") || csv.contains("tutee;cs2103"));
@@ -77,7 +77,7 @@ public class CsvExporterTest {
                 .withTags()
                 .build();
 
-        String csv = CsvExporter.convertToCSV(staff);
+        String csv = CsvExporter.convertToCsv(staff);
 
         assertEquals("Prof Benson,87654321,profbenson,prof@example.com,,Teaching Assistant,", csv);
     }
@@ -96,7 +96,7 @@ public class CsvExporterTest {
                 Collections.singleton(new Tag("lecturer")),
                 java.util.Set.of(slot1, slot2));
 
-        String csv = CsvExporter.convertToCSV(staff);
+        String csv = CsvExporter.convertToCsv(staff);
 
         assertTrue(csv.contains("Prof Alice"));
         assertTrue(csv.contains("Professors"));
@@ -208,7 +208,7 @@ public class CsvExporterTest {
                 .withTags("tag1")
                 .build();
 
-        String csv = CsvExporter.convertToCSV(person);
+        String csv = CsvExporter.convertToCsv(person);
 
         String[] fields = csv.split(",");
         assertEquals(6, fields.length); // Name, Phone, Username, Email, Tags, Position, Availability

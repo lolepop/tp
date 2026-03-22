@@ -13,6 +13,21 @@ import seedu.address.model.Model;
 import seedu.address.model.person.Person;
 import seedu.address.model.person.TeachingStaff;
 
+/**
+ * Utility class for exporting contacts to CSV format.
+ *
+ * <p>
+ * CsvExporter provides static methods to export contacts from the address book
+ * to a CSV file. It handles both students and teaching staff, including their
+ * associated information such as tags, position, and availability slots.
+ * </p>
+ *
+ * <p>
+ * The default export location is {@value #DEFAULT_FILE_PATH}. If the file already
+ * exists, it will be overwritten. The CSV file includes columns for:
+ * Name, Phone, Username, Email, Tags, Position, and Availability.
+ * </p>
+ */
 public class CsvExporter {
 
     public static final String DEFAULT_FILE_PATH = "./data/export.csv";
@@ -46,7 +61,7 @@ public class CsvExporter {
         requireNonNull(model);
         List<Person> persons = model.getFilteredPersonList();
         String contents = HEADERS + persons.stream()
-                .map(CsvExporter::convertToCSV)
+                .map(CsvExporter::convertToCsv)
                 .collect(Collectors.joining("\n"));
         if (filePath == null) {
             filePath = DEFAULT_FILE_PATH;
@@ -72,7 +87,7 @@ public class CsvExporter {
      * @return CSV string representation of the person with 7 comma-separated fields
      *         (Name,Phone,Username,Email,Tags,Position,Availability)
      */
-    public static String convertToCSV(Person person) {
+    public static String convertToCsv(Person person) {
         StringBuilder sb = new StringBuilder();
         sb.append(person.getName() + ",");
         sb.append(person.getPhone() + ",");
