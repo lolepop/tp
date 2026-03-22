@@ -96,7 +96,6 @@ public class FindCommand extends Command {
 
         public FindPersonDescriptor() {}
 
-
         /**
          * Copy constructor.
          * A defensive copy of {@code tags} is used internally.
@@ -113,7 +112,7 @@ public class FindCommand extends Command {
         }
 
         public Optional<Set<String>> getName() {
-            return (name != null) ? Optional.of(Collections.unmodifiableSet(name)) : Optional.empty();
+            return Optional.ofNullable(name).map(Collections::unmodifiableSet);
         }
 
         public Predicate<Person> getNamePredicate() {
@@ -125,7 +124,7 @@ public class FindCommand extends Command {
         }
 
         public Optional<Set<Phone>> getPhone() {
-            return (phone != null) ? Optional.of(Collections.unmodifiableSet(phone)) : Optional.empty();
+            return Optional.ofNullable(phone).map(Collections::unmodifiableSet);
         }
 
         public void setEmail(Set<Email> email) {
@@ -133,7 +132,7 @@ public class FindCommand extends Command {
         }
 
         public Optional<Set<Email>> getEmail() {
-            return (email != null) ? Optional.of(Collections.unmodifiableSet(email)) : Optional.empty();
+            return Optional.ofNullable(email).map(Collections::unmodifiableSet);
         }
 
         /**
@@ -150,7 +149,7 @@ public class FindCommand extends Command {
          * Returns {@code Optional#empty()} if {@code tags} is null.
          */
         public Optional<Set<AbstractTag>> getTags() {
-            return (tags != null) ? Optional.of(Collections.unmodifiableSet(tags)) : Optional.empty();
+            return Optional.ofNullable(tags).map(Collections::unmodifiableSet);
         }
 
         public Predicate<Person> getTagsPredicate() {
@@ -173,6 +172,7 @@ public class FindCommand extends Command {
                     && Objects.equals(email, otherFindPersonDescriptor.email)
                     && Objects.equals(tags, otherFindPersonDescriptor.tags);
         }
+
         @Override
         public String toString() {
             return new ToStringBuilder(this)
