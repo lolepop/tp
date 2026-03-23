@@ -23,22 +23,23 @@ import seedu.address.model.person.TeachingStaff;
  * </p>
  *
  * <p>
- * The default export location is {@value #DEFAULT_FILE_PATH}. If the file already
+ * The default export location is {@value #DEFAULT_FILE_PATH}. If the file
+ * already
  * exists, it will be overwritten. The CSV file includes columns for:
- * Name, Phone, Username, Email, Tags, Position, and Availability.
+ * Position, Name, Phone, Username, Email, Tags, and Availability.
  * </p>
  */
 public class CsvExporter {
 
     public static final String DEFAULT_FILE_PATH = "./export.csv";
-    public static final String HEADERS = "Name,Phone,Username,Email,Tags,Position,Availability\n";
+    public static final String HEADERS = "Position,Name,Phone,Username,Email,Tags,Availability\n";
 
     /**
      * Exports all contacts from the model to a CSV file.
      *
      * <p>
      * The exported file contains a header row with column names:
-     * Name, Phone, Username, Email, Tags, Position, Availability
+     * Position, Name, Phone, Username, Email, Tags, Availability
      * </p>
      *
      * <p>
@@ -73,7 +74,7 @@ public class CsvExporter {
 
     /**
      * Converts a Person to a CSV string representation.
-     * Format: Name,Phone,Username,Email,Tags,Position,Availability
+     * Format: Position,Name,Phone,Username,Email,Tags,Availability
      *
      * <p>
      * For students (base Person): Position field is set to "Student" and
@@ -85,10 +86,21 @@ public class CsvExporter {
      *
      * @param person the person to convert (can be a Student or TeachingStaff)
      * @return CSV string representation of the person with 7 comma-separated fields
-     *         (Name,Phone,Username,Email,Tags,Position,Availability)
+     *         (Position,Name,Phone,Username,Email,Tags,Availability)
      */
     public static String convertToCsv(Person person) {
         StringBuilder sb = new StringBuilder();
+        String avail = "";
+        if (person instanceof TeachingStaff staff) {
+            sb.append(staff.getPosition() + ",");
+            avail = staff
+                    .getAvailability()
+                    .stream()
+                    .map(slot -> slot.toString())
+                    .collect(Collectors.joining(";"));
+        } else {
+            sb.append("Student" + ",");
+        }
         sb.append(person.getName() + ",");
         sb.append(person.getPhone() + ",");
         sb.append(person.getUsername() + ",");
@@ -97,16 +109,7 @@ public class CsvExporter {
                 .stream()
                 .map(tag -> tag.getTagName())
                 .collect(Collectors.joining(";")) + ",");
-        if (person instanceof TeachingStaff staff) {
-            sb.append(staff.getPosition() + ",");
-            sb.append(staff
-                    .getAvailability()
-                    .stream()
-                    .map(slot -> slot.toString())
-                    .collect(Collectors.joining(";")));
-        } else {
-            sb.append("Student" + ",");
-        }
+        sb.append(avail);
         return sb.toString();
     }
 
