@@ -23,7 +23,9 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
@@ -33,7 +35,7 @@ public class CsvImporterTest {
     public Path tempDir;
 
     @Test
-    public void deserialisePerson_studentStrRepWithoutTags_returnsValidPerson() throws DeserialisePersonException {
+    public void deserialisePerson_studentStrRepWithoutTags_returnsValidPerson() {
         String studentStrRep = "Student,John Doe,91234567,johndoe,john@example.com,";
         Person student = assertDoesNotThrow(() ->
                         CsvImporter.deserialisePerson(studentStrRep),
@@ -274,6 +276,4 @@ public class CsvImporterTest {
         assertDoesNotThrow(() -> CsvImporter.importContacts(model, filePath.toString()));
         assertEquals(expectedModel, model);
     }
-    // TODO: need test parsing of command (in another file)
-
 }
