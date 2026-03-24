@@ -14,7 +14,6 @@ bin
 /preferences.json
 /*.log.*
 hs_err_pid[0-9]*.log
-/*.log
 
 # Test sandbox files
 src/test/data/sandbox/
@@ -25,3 +24,4 @@ docs/_site/
 
 /node_modules/
 data/
+*.csv

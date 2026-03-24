@@ -24,6 +24,7 @@ import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
 import seedu.address.logic.commands.ExitCommand;
+import seedu.address.logic.commands.ExportCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.FindCommand.FindPersonDescriptor;
 import seedu.address.logic.commands.HelpCommand;
@@ -121,6 +122,11 @@ public class AddressBookParserTest {
     }
 
     @Test
+    public void parseCommand_export() throws Exception {
+        assertTrue(parser.parseCommand(ExportCommand.COMMAND_WORD) instanceof ExportCommand);
+    }
+
+    @Test
     public void parseCommand_tutorslot() throws Exception {
         TimeSlot slot = new TimeSlot("mon-10-12");
         TutorSlotCommand expected = new TutorSlotCommand(Index.fromOneBased(1), slot);
@@ -129,8 +135,9 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_unrecognisedInput_throwsParseException() {
-        assertThrows(ParseException.class, String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), ()
-            -> parser.parseCommand(""));
+        assertThrows(ParseException.class,
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, HelpCommand.MESSAGE_USAGE), (
+                ) -> parser.parseCommand(""));
     }
 
     @Test

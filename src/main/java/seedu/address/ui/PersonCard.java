@@ -76,7 +76,7 @@ public class PersonCard extends UiPart<Region> {
         person.getTags().stream()
                 .sorted(Comparator.comparing(tag -> tag.getTagType().getUiPriority()))
                 .forEach(tag -> {
-                    Label label = new Label(tag.tagName);
+                    Label label = new Label(tag.getTagName());
                     label.getStyleClass().add(getStyleClassForTagType(tag.getTagType()));
                     tags.getChildren().add(label);
                 });

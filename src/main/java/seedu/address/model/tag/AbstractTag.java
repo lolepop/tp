@@ -9,7 +9,7 @@ import java.util.Objects;
  * Guarantees: immutable; name is valid as declared in {@link #isValidTagName(String)}
  */
 public abstract class AbstractTag {
-    public final String tagName;
+    protected final String tagName;
 
     /**
      * Constructs a {@code Tag}.
@@ -40,6 +40,10 @@ public abstract class AbstractTag {
     @Override
     public int hashCode() {
         return Objects.hash(tagName, getTagType());
+    }
+
+    public String getTagName() {
+        return tagName;
     }
 
     /**

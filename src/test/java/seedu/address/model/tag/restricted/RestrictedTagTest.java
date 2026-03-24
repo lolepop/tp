@@ -51,7 +51,7 @@ public class RestrictedTagTest {
     public void constructor_validTagName_success() {
         TagSchemaStub schema = new TagSchemaStub(VALID_PREFIX);
         var restrictedTag = new RestrictedTag(schema, VALID_TAG_WITH_DELIMITER);
-        assertEquals(VALID_TAG_WITH_DELIMITER, restrictedTag.tagName);
+        assertEquals(VALID_TAG_WITH_DELIMITER, restrictedTag.getTagName());
     }
 
     @Test

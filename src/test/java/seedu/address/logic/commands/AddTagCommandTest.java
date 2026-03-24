@@ -31,8 +31,8 @@ public class AddTagCommandTest {
 
     @Test
     public void addTag_normal_success() {
-        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
-        tagsToExpect.addAll(BENSON.getTags());
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(BENSON.getTags());
+        tagsToExpect.addAll(TAGS_TO_ADD);
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
         AddTagCommand addTagCommand = new AddTagCommand(INDEX_SECOND_PERSON, TAGS_TO_ADD);
@@ -53,8 +53,8 @@ public class AddTagCommandTest {
     public void addTag_filteredList_success() {
         showPersonAtIndex(model, INDEX_SECOND_PERSON);
 
-        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAGS_TO_ADD);
-        tagsToExpect.addAll(BENSON.getTags());
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(BENSON.getTags());
+        tagsToExpect.addAll(TAGS_TO_ADD);
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         AddTagCommand addTagCommand = new AddTagCommand(INDEX_FIRST_PERSON, TAGS_TO_ADD);
