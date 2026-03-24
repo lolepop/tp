@@ -72,6 +72,12 @@ title: User Guide
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines as space characters surrounding line-breaks may be omitted when copied over to the application.
 </div>
 
+### Input history
+The `up` and `down` arrow keys can be used to navigate previously entered commands within the same session.
+
+**Behavior:**
+* Only past commands that were successfully executed (did not provide an error) will be accessible
+
 ### Viewing help : `help`
 
 Shows a message explaining how to access the help page.

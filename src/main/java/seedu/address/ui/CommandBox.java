@@ -1,8 +1,11 @@
 package seedu.address.ui;
 
+import java.util.Optional;
+
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.Region;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -17,6 +20,7 @@ public class CommandBox extends UiPart<Region> {
     private static final String FXML = "CommandBox.fxml";
 
     private final CommandExecutor commandExecutor;
+    private final InputHistoryBuffer inputHistory;
 
     @FXML
     private TextField commandTextField;
@@ -27,8 +31,32 @@ public class CommandBox extends UiPart<Region> {
     public CommandBox(CommandExecutor commandExecutor) {
         super(FXML);
         this.commandExecutor = commandExecutor;
+        inputHistory = new InputHistoryBuffer();
+
         // calls #setStyleToDefault() whenever there is a change to the text of the command box.
         commandTextField.textProperty().addListener((unused1, unused2, unused3) -> setStyleToDefault());
+        commandTextField.addEventFilter(KeyEvent.KEY_PRESSED, event -> handleKeyPressed(event));
+    }
+
+    private void handleKeyPressed(KeyEvent keyEvent) {
+        // CHECKSTYLE.OFF: Indentation
+        switch (keyEvent.getCode()) {
+            case UP -> {
+                Optional<String> prevCommand = inputHistory.moveCursorUp();
+                prevCommand.ifPresent(commandTextField::setText);
+                commandTextField.end();
+                keyEvent.consume();
+            }
+            case DOWN -> {
+                Optional<String> nextCommand = inputHistory.moveCursorDown();
+                nextCommand.ifPresent(commandTextField::setText);
+                commandTextField.end();
+                keyEvent.consume();
+            }
+            default -> {
+            }
+        }
+        // CHECKSTYLE.ON: Indentation
     }
 
     /**
@@ -43,6 +71,7 @@ public class CommandBox extends UiPart<Region> {
 
         try {
             commandExecutor.execute(commandText);
+            inputHistory.pushHistory(commandText);
             commandTextField.setText("");
         } catch (CommandException | ParseException e) {
             setStyleToIndicateCommandFailure();
