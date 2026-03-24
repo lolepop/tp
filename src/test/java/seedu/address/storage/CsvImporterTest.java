@@ -141,6 +141,108 @@ public class CsvImporterTest {
     }
 
     @Test
+    public void deserialisePerson_noPosField_throwsDeserialisePersonException() {
+        String personStrRep = "";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_noNameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_noPhoneField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Prof Alice";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_noUsernameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Prof Alice,91111111";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_noEmailField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Prof Alice,91111111,profalice";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_emptyPosField_throwsDeserialisePersonException() {
+        String personStrRep = ",Prof Alice,91111111,profalice,profalice@example.com,lecturer,mon-10-12;wed-14-16";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidPosField_throwsDeserialisePersonException() {
+        String personStrRep = "invalid,Prof Alice,91111111,profalice,profalice@example.com,lecturer,mon-10-12;wed-14-16";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_emptyNameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,,91111111,profalice,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidNameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student, whitespaceAsFirstChar,91111111,profalice,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_emptyPhoneField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,,profalice,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidPhoneField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,invalidphone,profalice,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_emptyUsernameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,91111111,,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidUsernameField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,91111111,**invalidusername**,profalice@example.com,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_emptyEmailField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,91111111,profalice,,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidEmailField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,91111111,profalice,invalidemail,lecturer";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidTagField_throwsDeserialisePersonException() {
+        String personStrRep = "Student,Alice,91111111,profalice,profalice@example.com,*not-alphanumeric";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
+    public void deserialisePerson_invalidTimeslotField_throwsDeserialisePersonException() {
+        String personStrRep = "Professors,Alice,91111111,profalice,invalidemail,lecturer,invalid-timeslot";
+        assertThrows(DeserialisePersonException.class, () -> CsvImporter.deserialisePerson(personStrRep));
+    }
+
+    @Test
     public void importContacts_contactsAddedToModel_successful() throws IOException, DeserialisePersonException {
         Model expectedModel = new ModelManager();
         expectedModel.addPerson(ALICE);
@@ -172,7 +274,6 @@ public class CsvImporterTest {
         assertDoesNotThrow(() -> CsvImporter.importContacts(model, filePath.toString()));
         assertEquals(expectedModel, model);
     }
-    // TODO: need test other incorrect csv formats, like missing fields, wrong format of fields, etc
     // TODO: need test parsing of command (in another file)
 
 }

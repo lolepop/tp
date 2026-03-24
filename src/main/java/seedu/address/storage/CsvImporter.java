@@ -85,6 +85,15 @@ public class CsvImporter {
             String errMsg = String.format("%s is missing 'Position' field", rawPersonData);
             throw new DeserialisePersonException(errMsg);
         }
+        Position position = null;
+        try {
+            position = new Position(positionStrRep);
+        } catch (Exception e) {
+            if (!positionStrRep.equals("Student")) {
+                String errMsg = String.format("%s has invalid 'Position' field: %s", rawPersonData, positionStrRep);
+                throw new DeserialisePersonException(errMsg, e);
+            }
+        }
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Name' field", rawPersonData);
@@ -95,7 +104,13 @@ public class CsvImporter {
             String errMsg = String.format("%s is missing 'Name' field", rawPersonData);
             throw new DeserialisePersonException(errMsg);
         }
-        Name name = new Name(nameStrRep);
+        Name name;
+        try {
+            name = new Name(nameStrRep);
+        } catch (Exception e) {
+            String errMsg = String.format("%s has invalid 'Name' field: %s", rawPersonData, nameStrRep);
+            throw new DeserialisePersonException(errMsg, e);
+        }
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Phone' field", rawPersonData);
@@ -106,7 +121,13 @@ public class CsvImporter {
             String errMsg = String.format("%s is missing 'Phone' field", rawPersonData);
             throw new DeserialisePersonException(errMsg);
         }
-        Phone phone = new Phone(phoneStrRep);
+        Phone phone;
+        try {
+            phone = new Phone(phoneStrRep);
+        } catch (Exception e) {
+            String errMsg = String.format("%s has invalid 'Phone' field: %s", rawPersonData, phoneStrRep);
+            throw new DeserialisePersonException(errMsg, e);
+        }
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Username' field", rawPersonData);
@@ -117,7 +138,13 @@ public class CsvImporter {
             String errMsg = String.format("%s is missing 'Username' field", rawPersonData);
             throw new DeserialisePersonException(errMsg);
         }
-        Username username = new Username(usernameStrRep);
+        Username username;
+        try {
+            username = new Username(usernameStrRep);
+        } catch (Exception e) {
+            String errMsg = String.format("%s has invalid 'Username' field: %s", rawPersonData, usernameStrRep);
+            throw new DeserialisePersonException(errMsg, e);
+        }
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Email' field", rawPersonData);
@@ -128,7 +155,13 @@ public class CsvImporter {
             String errMsg = String.format("%s is missing 'Email' field", rawPersonData);
             throw new DeserialisePersonException(errMsg);
         }
-        Email email = new Email(emailStrRep);
+        Email email;
+        try {
+            email = new Email(emailStrRep);
+        } catch (Exception e) {
+            String errMsg = String.format("%s has invalid 'Email' field: %s", rawPersonData, emailStrRep);
+            throw new DeserialisePersonException(errMsg, e);
+        }
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Tags' field", rawPersonData);
@@ -138,13 +171,20 @@ public class CsvImporter {
         Iterator<String> tagsStream = Arrays.asList(tagsStrRep.split(";")).iterator();
         Set<AbstractTag> tags = new HashSet<>();
         while (!tagsStrRep.isEmpty() && tagsStream.hasNext()) {
-            tags.add(TagFactory.create(tagsStream.next()));
+            String tagStrRep = tagsStream.next();
+            AbstractTag tag;
+            try {
+                tag = TagFactory.create(tagStrRep);
+            } catch (Exception e) {
+                String errMsg = String.format("%s has invalid 'Tag' field: %s", rawPersonData, tagsStrRep);
+                throw new DeserialisePersonException(errMsg, e);
+            }
+            tags.add(tag);
         }
 
         if (positionStrRep.equals("Student")) {
             return new Person(name, phone, email, username, tags);
         }
-        Position position = new Position(positionStrRep);
 
         if (!fieldsStream.hasNext()) {
             String errMsg = String.format("%s is missing 'Availability' field", rawPersonData);
@@ -154,7 +194,15 @@ public class CsvImporter {
         Iterator<String> availabilityStream = Arrays.asList(availabilityStrReps.split(";")).iterator();
         Set<TimeSlot> availability = new HashSet<>();
         while (!availabilityStrReps.isEmpty() && availabilityStream.hasNext()) {
-            availability.add(new TimeSlot(availabilityStream.next()));
+            String timeSlotStrRep = availabilityStream.next();
+            TimeSlot timeSlot;
+            try {
+                timeSlot = new TimeSlot(timeSlotStrRep);
+            } catch (Exception e) {
+                String errMsg = String.format("%s has invalid 'Availability' field: %s", rawPersonData, timeSlotStrRep);
+                throw new DeserialisePersonException(errMsg, e);
+            }
+            availability.add(timeSlot);
         }
         return new TeachingStaff(name, phone, email, username, position, tags, availability);
     }
