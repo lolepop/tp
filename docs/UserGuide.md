@@ -40,6 +40,8 @@ title: User Guide
 
    * `delete 3` : Deletes the 3rd person shown in the current list (works for both students and staff).
 
+   * `export` : Exports all contacts to a CSV file.
+
    * `clear` : Deletes all contacts.
 
    * `exit` : Exits the app.
@@ -295,6 +297,28 @@ Exits the program.
 
 Format: `exit`
 
+### Exporting contacts : `export`
+
+Exports all contacts in the address book to a CSV file. This allows you to share or back up your contacts data.
+
+**Format:** `export [f/FILE_PATH]`
+
+**Parameters:**
+
+* `f/FILE_PATH`: Optional. The file path where contacts should be exported. If not provided, exports to the default location (`./export.csv`).
+
+**Behavior:**
+
+* Exports all contacts (both students and teaching staff) in the current address book to a CSV file.
+* If the file already exists, it will be overwritten.
+* The CSV file includes contact details such as name, phone, email, username, position, and tags.
+
+**Examples:**
+
+* `export` — Exports contacts to `./export.csv` (default location).
+* `export f/contacts.csv` — Exports contacts to `contacts.csv` in the current directory.
+* `export f/backup/students.csv` — Exports contacts to `backup/students.csv`.
+
 ### Saving the data
 
 Doritus data are saved in the hard disk automatically after any command that changes the data. There is no need to save manually.
@@ -343,5 +367,6 @@ _Details coming soon ..._
 | **Find** | `find KEYWORD [MORE_KEYWORDS]` <br> e.g., `find James Jake` |
 | **Delete** | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students) |
 | **Clear** | `clear` |
+| **Export** | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv` |
 | **Help** | `help` |
 | **Exit** | `exit` |
