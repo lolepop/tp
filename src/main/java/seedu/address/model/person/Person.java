@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import seedu.address.commons.util.ToStringBuilder;
+import seedu.address.model.person.TeachingStaff.MutableTeachingStaff;
 import seedu.address.model.person.exceptions.ImmutableEscapedScopeException;
 import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.Tag;
@@ -18,7 +19,7 @@ import seedu.address.model.tag.Tag;
  * Represents a Person (student) in the address book.
  * Guarantees: details are present and not null, field values are validated, immutable.
  */
-public sealed class Person permits Person.MutablePerson, TeachingStaff {
+public sealed class Person permits TeachingStaff {
 
     // Identity fields
     protected Name name;
@@ -122,6 +123,17 @@ public sealed class Person permits Person.MutablePerson, TeachingStaff {
                 .toString();
     }
 
+    protected Person clone() {
+        return new Person(name, phone, email, username, tags);
+    }
+
+    protected <T extends MutablePerson> Person cloneIntoInner(Consumer<T> delegate, T contract) {
+        requireNonNull(delegate);
+        delegate.accept(contract);
+        contract.markComplete();
+        return contract.getPerson();
+    }
+
     /**
      * Creates a temporarily mutable copy of this Person, allowing modification
      * through a delegate function. This is useful for operations that
@@ -132,11 +144,8 @@ public sealed class Person permits Person.MutablePerson, TeachingStaff {
      * @throws NullPointerException if the delegate is null.
      */
     public Person cloneInto(Consumer<MutablePerson> delegate) {
-        requireNonNull(delegate);
-        var clonedPerson = new MutablePerson(name, phone, email, username, tags);
-        delegate.accept(clonedPerson);
-        clonedPerson.markComplete();
-        return clonedPerson;
+        var clonedPerson = new MutablePerson(clone());
+        return cloneIntoInner(delegate, clonedPerson);
     }
 
     /**
@@ -154,49 +163,55 @@ public sealed class Person permits Person.MutablePerson, TeachingStaff {
      * @see ImmutableEscapedScopeException
      * @see Tag
      */
-    public static final class MutablePerson extends Person {
+    public static sealed class MutablePerson permits MutableTeachingStaff {
+        protected final Person person;
+
         // mutable object rendered immutable with runtime check, ensures that this
         // object cannot be modified in an outer scope
         private boolean isEditable = true;
 
-        MutablePerson(Name name, Phone phone, Email email, Username username, Set<AbstractTag> tags) {
-            super(name, phone, email, username, tags);
+        MutablePerson(Person person) {
+            this.person = person;
         }
 
         public void setName(Name name) {
             checkEditable();
             requireNonNull(name);
-            this.name = name;
+            person.name = name;
         }
 
         public void setPhone(Phone phone) {
             checkEditable();
             requireNonNull(phone);
-            this.phone = phone;
+            person.phone = phone;
         }
 
         public void setEmail(Email email) {
             checkEditable();
             requireNonNull(email);
-            this.email = email;
+            person.email = email;
         }
 
         public void setUsername(Username username) {
             checkEditable();
             requireNonNull(username);
-            this.username = username;
+            person.username = username;
         }
 
         public void setTags(Set<AbstractTag> tags) {
             checkEditable();
             requireNonNull(tags);
-            this.tags = Collections.unmodifiableSet(tags);
+            person.tags = new HashSet<>(tags);
         }
 
-        private void checkEditable() {
+        protected void checkEditable() {
             if (!isEditable) {
                 throw new ImmutableEscapedScopeException();
             }
+        }
+
+        public Person getPerson() {
+            return person;
         }
 
         public void markComplete() {
