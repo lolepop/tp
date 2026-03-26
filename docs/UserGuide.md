@@ -237,7 +237,7 @@ Edits an existing person in the address book. For teaching staff, you can also c
 
 Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
-**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...]`
+**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...]`
 
 **Note:** At least one keyword or tag must be provided.
 
@@ -250,6 +250,9 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 
 * **Tag search:** Tags match against person tags (case-insensitive)
   * Persons with at least one matching tag will be returned (i.e. `OR` search)
+
+* **Email search:** Keywords match against person emails (case-insensitive)
+    * Persons matching at least one keyword will be returned (i.e. `OR` search)
 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least one tag (i.e. `AND` between name and tag criteria)
 
