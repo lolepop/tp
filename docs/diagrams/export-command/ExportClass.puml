@@ -1,0 +1,21 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+Class "{abstract}\nCommand" as Command {
+  +execute(Model): CommandResult
+}
+Class ExportCommand {
+  +COMMAND_WORD: String
+  +MESSAGE_USAGE: String
+  +MESSAGE_SUCCESS: String
+  +MESSAGE_IO_EXCEPTION: String
+  -filePath: String
+  +execute(Model): CommandResult
+}
+Class CommandException
+
+ExportCommand -up-|> Command
+Command ..> CommandException: throws >
+ExportCommand .right.> CommandException: throws >
+@enduml
