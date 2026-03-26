@@ -8,7 +8,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.person.Person;
 
 /**
- * Tests that a {@code Person}'s {@code Name} matches any of the keywords given.
+ * Tests that a {@code Person}'s {@code Username} matches any of the keywords given.
  */
 public class UsernameContainsKeywordsPredicate implements Predicate<Person> {
     private final List<String> keywords;
@@ -19,6 +19,7 @@ public class UsernameContainsKeywordsPredicate implements Predicate<Person> {
 
     @Override
     public boolean test(Person person) {
+        assert keywords != null;
         return keywords.stream()
                 .anyMatch(keyword -> StringUtil.containsSubstringIgnoreCase(person.getUsername().toString(), keyword));
     }

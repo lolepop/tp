@@ -5,7 +5,7 @@ skinparam classAttributeIconSize 0
 Class CsvExporter {
   +DEFAULT_FILE_PATH: String
   +HEADERS: String
-  +exportContacts(Model, String): CommandResult
+  +exportContacts(Model, String)
   +convertToCsv(Person): String
 }
 

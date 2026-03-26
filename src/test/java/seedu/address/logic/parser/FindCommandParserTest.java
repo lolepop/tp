@@ -18,7 +18,8 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_emptyArg_throwsParseException() {
-        assertParseFailure(parser, "     ", String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "     ", String.format(MESSAGE_INVALID_COMMAND_FORMAT,
+                FindCommand.MESSAGE_USAGE));
     }
 
     @Test
@@ -106,5 +107,31 @@ public class FindCommandParserTest {
         fd.setUsername(Set.of("aliceee"));
         FindCommand expectedFindCommand = new FindCommand(fd);
         assertParseSuccess(parser, " u/aliceee", expectedFindCommand);
+    }
+
+    @Test
+    public void parse_validArgsWithPhone_returnsFindCommand() {
+        // name keywords with tag
+        FindPersonDescriptor fd = new FindPersonDescriptor();
+        fd.setName(Set.of("Alice", "Bob"));
+        fd.setTags(Set.of(new Tag("friends")));
+        fd.setEmail(Set.of("alice"));
+        fd.setUsername(Set.of("aliceee"));
+        fd.setPhone(Set.of("817624"));
+        FindCommand expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, "Alice Bob t/friends u/aliceee e/alice p/817624", expectedFindCommand);
+
+        // multiple whitespaces with tags
+        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends \n\t e/alice u/aliceee  p/817624",
+                expectedFindCommand);
+    }
+
+    @Test
+    public void parse_validArgsWithPhoneOnly_returnsFindCommand() {
+        // tag only, no name keywords
+        FindPersonDescriptor fd = new FindPersonDescriptor();
+        fd.setPhone(Set.of("5253"));
+        FindCommand expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " p/5253", expectedFindCommand);
     }
 }

@@ -2,6 +2,7 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_USERNAME;
 
@@ -27,13 +28,15 @@ public class FindCommandParser implements Parser<FindCommand> {
      * @throws ParseException if the user input does not conform the expected format
      */
     public FindCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_EMAIL, PREFIX_USERNAME, PREFIX_TAG);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_EMAIL, PREFIX_PHONE, PREFIX_USERNAME,
+                PREFIX_TAG);
 
         String preamble = argMultimap.getPreamble().trim();
 
         if (preamble.isEmpty()
                 && argMultimap.getAllValues(PREFIX_EMAIL).isEmpty()
                 && argMultimap.getAllValues(PREFIX_USERNAME).isEmpty()
+                && argMultimap.getAllValues(PREFIX_PHONE).isEmpty()
                 && argMultimap.getAllValues(PREFIX_TAG).isEmpty()) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
@@ -54,6 +57,10 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         if (!argMultimap.getAllValues(PREFIX_USERNAME).isEmpty()) {
             fd.setUsername(new HashSet<>(argMultimap.getAllValues(PREFIX_USERNAME)));
+        }
+
+        if (!argMultimap.getAllValues(PREFIX_PHONE).isEmpty()) {
+            fd.setPhone(new HashSet<>(argMultimap.getAllValues(PREFIX_PHONE)));
         }
 
         if (!tagList.isEmpty()) {

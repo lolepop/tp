@@ -1,0 +1,47 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Command {
+  + execute(Model): CommandResult
+}
+class FindCommand {
+  + COMMAND_WORD: String
+  + MESSAGE_USAGE: String
+  - findPersonDescriptor: FindPersonDescriptor
+  + execute(Model): CommandResult
+  + equals(Object): boolean
+  + toString(): String
+}
+class FindPersonDescriptor {
+  - PREDICATE_TRUE: Predicate<Person>
+  - phone: Set<String>
+  - tags: Set<AbstractTag>
+  - name: Set<String>
+  - email: Set<String>
+  - username: Set<String>
+  + setEmail(Set<String>): void
+  + getUsername(): Optional<Set<String>>
+  + setTags(Set<T>): void
+  + toString(): String
+  + getEmail(): Optional<Set<String>>
+  + equals(Object): boolean
+  + getPhonePredicate(): Predicate<Person>
+  + getUsernamePredicate(): Predicate<Person>
+  + getTagsPredicate(): Predicate<Person>
+  + getTags(): Optional<Set<AbstractTag>>
+  + getNamePredicate(): Predicate<Person>
+  + getEmailPredicate(): Predicate<Person>
+  + setUsername(Set<String>): void
+  + getPhone(): Optional<Set<String>>
+  + getName(): Optional<Set<String>>
+  + setPhone(Set<String>): void
+  + setName(Set<String>): void
+}
+
+FindCommand           -[#000082,plain]-^  Command
+FindCommand          "1" *-[#595959,plain]-> "findPersonDescriptor\n1" FindPersonDescriptor
+FindPersonDescriptor  +-[#820000,plain]-  FindCommand
+@enduml

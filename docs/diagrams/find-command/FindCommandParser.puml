@@ -1,0 +1,19 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+class Command {
+  + execute(Model): CommandResult
+}
+class FindCommandParser {
+  + parse(String): FindCommand
+}
+interface Parser<T> << interface >> {
+  + parse(String): T
+}
+
+FindCommandParser  -[#008200,dashed]-^  Parser
+Parser             -[#595959,dashed]->  Command
+@enduml

@@ -1,0 +1,25 @@
+@startuml
+
+!theme plain
+top to bottom direction
+skinparam linetype ortho
+
+annotation FunctionalInterface << annotation >>
+interface Predicate<T> << interface >> {
+  + or(Predicate<T>): Predicate<T>
+  + isEqual(Object): Predicate<T>
+  + not(Predicate<T>): Predicate<T>
+  + and(Predicate<T>): Predicate<T>
+  + test(T): boolean
+  + negate(): Predicate<T>
+}
+class UsernameContainsKeywordsPredicate {
+  - keywords: List<String>
+  + test(Person): boolean
+  + toString(): String
+  + equals(Object): boolean
+}
+
+Predicate                          -[#999900,dotted]-  FunctionalInterface
+UsernameContainsKeywordsPredicate  -[#008200,dashed]-^  Predicate
+@enduml

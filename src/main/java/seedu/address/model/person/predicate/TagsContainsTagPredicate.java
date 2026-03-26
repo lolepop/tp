@@ -8,7 +8,7 @@ import seedu.address.model.person.Person;
 import seedu.address.model.tag.AbstractTag;
 
 /**
- * Tests that a {@code Person}'s {@code Name} matches any of the keywords given.
+ * Tests that a {@code Person}'s {@code Tags} matches any of the keywords given.
  */
 public class TagsContainsTagPredicate implements Predicate<Person> {
     private final Set<AbstractTag> tags;
@@ -19,6 +19,7 @@ public class TagsContainsTagPredicate implements Predicate<Person> {
 
     @Override
     public boolean test(Person person) {
+        assert tags != null;
         return tags.stream().anyMatch(tag -> person.containsTag(tag));
     }
 
