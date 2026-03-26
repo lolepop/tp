@@ -19,7 +19,9 @@ import org.junit.jupiter.api.Test;
 import seedu.address.commons.core.index.Index;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.AddTagCommand;
+import seedu.address.logic.commands.AnswerConfirmationCommand;
 import seedu.address.logic.commands.ClearCommand;
+import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.EditCommand.EditPersonDescriptor;
@@ -29,6 +31,7 @@ import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.FindCommand.FindPersonDescriptor;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.RequireConfirmationCommand;
 import seedu.address.logic.commands.StaffListCommand;
 import seedu.address.logic.commands.StudentListCommand;
 import seedu.address.logic.commands.TutorSlotCommand;
@@ -61,14 +64,19 @@ public class AddressBookParserTest {
 
     @Test
     public void parseCommand_clear() throws Exception {
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD) instanceof ClearCommand);
-        assertTrue(parser.parseCommand(ClearCommand.COMMAND_WORD + " 3") instanceof ClearCommand);
+        Command command = parser.parseCommand(ClearCommand.COMMAND_WORD);
+        assertTrue(command instanceof RequireConfirmationCommand);
+        assertTrue(((RequireConfirmationCommand) command).getPendingCommand() instanceof ClearCommand);
+        command = parser.parseCommand(ClearCommand.COMMAND_WORD + " 3");
+        assertTrue(command instanceof RequireConfirmationCommand);
+        assertTrue(((RequireConfirmationCommand) command).getPendingCommand() instanceof ClearCommand);
     }
 
     @Test
     public void parseCommand_delete() throws Exception {
-        DeleteCommand command = (DeleteCommand) parser.parseCommand(
-                DeleteCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased());
+        DeleteCommand command = (DeleteCommand) ((RequireConfirmationCommand) parser.parseCommand(
+                DeleteCommand.COMMAND_WORD + " " + INDEX_FIRST_PERSON.getOneBased()))
+                .getPendingCommand();
         assertEquals(new DeleteCommand(INDEX_FIRST_PERSON), command);
     }
 
@@ -131,6 +139,18 @@ public class AddressBookParserTest {
         TimeSlot slot = new TimeSlot("mon-10-12");
         TutorSlotCommand expected = new TutorSlotCommand(Index.fromOneBased(1), slot);
         assertEquals(expected, parser.parseCommand(TutorSlotCommand.COMMAND_WORD + " 1 mon-10-12"));
+    }
+
+    @Test
+    public void parseCommand_answer_yes() throws Exception {
+        Command answerYesCommand = new AnswerConfirmationCommand(AnswerConfirmationCommand.AnswerType.YES);
+        assertEquals(answerYesCommand, parser.parseCommand(AnswerConfirmationCommand.COMMAND_WORD_YES));
+    }
+
+    @Test
+    public void parseCommand_answer_no() throws Exception {
+        Command answerYesCommand = new AnswerConfirmationCommand(AnswerConfirmationCommand.AnswerType.NO);
+        assertEquals(answerYesCommand, parser.parseCommand(AnswerConfirmationCommand.COMMAND_WORD_NO));
     }
 
     @Test
