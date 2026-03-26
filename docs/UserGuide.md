@@ -40,6 +40,8 @@ title: User Guide
 
    * `delete 3` : Deletes the 3rd person shown in the current list (works for both students and staff).
 
+   * `export` : Exports all contacts to a CSV file.
+
    * `clear` : Deletes all contacts.
 
    * `exit` : Exits the app.
@@ -78,6 +80,12 @@ title: User Guide
   - Tutorial groups: begins with `tut:`, followed by an optional uppercase letter and maximally 2 digits (e.g. `tut:A11`, `tut:17`, `tut:2`)
   - Lab groups: begins with `lab:`, followed by an optional uppercase letter and maximally 2 digits (e.g. `lab:A11`, `lab:17`, `lab:2`)
   - Course: begins with `course:`, followed 2-4 uppercase letters, proceeded by 4 digits and an optional uppercase suffix letter (e.g. `course:CS2103`, `course:CS2103T`, `course:GESS1000T`)
+
+### Input history
+The `up` and `down` arrow keys can be used to navigate previously entered commands within the same session.
+
+**Behavior:**
+* Only past commands that were successfully executed (did not provide an error) will be accessible
 
 ### Viewing help : `help`
 
@@ -266,7 +274,7 @@ Appends tags to an existing person, without having to respecify all existing tag
 
 Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
-**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...]`
+**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...]`
 
 **Note:** At least one keyword or tag must be provided.
 
@@ -279,6 +287,9 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 
 * **Tag search:** Tags match against person tags (case-insensitive)
   * Persons with at least one matching tag will be returned (i.e. `OR` search)
+
+* **Email search:** Keywords match against person emails (case-insensitive)
+    * Persons matching at least one keyword will be returned (i.e. `OR` search)
 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least one tag (i.e. `AND` between name and tag criteria)
 
@@ -323,6 +334,28 @@ Format: `clear`
 Exits the program.
 
 Format: `exit`
+
+### Exporting contacts : `export`
+
+Exports all contacts in the address book to a CSV file. This allows you to share or back up your contacts data.
+
+**Format:** `export [f/FILE_PATH]`
+
+**Parameters:**
+
+* `f/FILE_PATH`: Optional. The file path where contacts should be exported. If not provided, exports to the default location (`./export.csv`).
+
+**Behavior:**
+
+* Exports all contacts (both students and teaching staff) in the current address book to a CSV file.
+* If the file already exists, it will be overwritten.
+* The CSV file includes contact details such as name, phone, email, username, position, and tags.
+
+**Examples:**
+
+* `export` — Exports contacts to `./export.csv` (default location).
+* `export f/contacts.csv` — Exports contacts to `contacts.csv` in the current directory.
+* `export f/backup/students.csv` — Exports contacts to `backup/students.csv`.
 
 ### Saving the data
 
@@ -372,5 +405,6 @@ _Details coming soon ..._
 | **Find** | `find KEYWORD [MORE_KEYWORDS]` <br> e.g., `find James Jake` |
 | **Delete** | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students) |
 | **Clear** | `clear` |
+| **Export** | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv` |
 | **Help** | `help` |
 | **Exit** | `exit` |

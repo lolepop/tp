@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
+import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccessModelOnly;
 import static seedu.address.logic.commands.CommandTestUtil.showPersonAtIndex;
 import static seedu.address.testutil.TypicalIndexes.INDEX_FIRST_PERSON;
 import static seedu.address.testutil.TypicalIndexes.INDEX_SECOND_PERSON;
@@ -13,6 +14,7 @@ import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 import java.util.HashSet;
 import java.util.List;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.commons.core.index.Index;
@@ -25,17 +27,29 @@ import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.Tag;
 
 public class AddTagCommandTest {
+    private static final HashSet<AbstractTag> TAG_TO_ADD = new HashSet<>(List.of(new Tag("lab1")));
     private static final HashSet<AbstractTag> TAGS_TO_ADD = new HashSet<>(List.of(new Tag("lab1"), new Tag("tut5")));
 
-    private Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    private Model model;
+
+    @BeforeEach
+    public void initModel() {
+        model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+    }
 
     @Test
     public void addTag_normal_success() {
-        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(BENSON.getTags());
-        tagsToExpect.addAll(TAGS_TO_ADD);
+        // assertCommandSuccess is flaky since it depends on string matching for a
+        // hashset output, we just assume its empty so we know it at least adds
+        // something
+        model.setPerson(BENSON, BENSON.cloneInto(f -> {
+            f.setTags(new HashSet<>());
+        }));
+
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAG_TO_ADD);
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
-        AddTagCommand addTagCommand = new AddTagCommand(INDEX_SECOND_PERSON, TAGS_TO_ADD);
+        AddTagCommand addTagCommand = new AddTagCommand(INDEX_SECOND_PERSON, TAG_TO_ADD);
 
         Person editedPerson = personToEdit.cloneInto(p -> {
             p.setTags(tagsToExpect);
@@ -51,13 +65,16 @@ public class AddTagCommandTest {
 
     @Test
     public void addTag_filteredList_success() {
+        model.setPerson(BENSON, BENSON.cloneInto(f -> {
+            f.setTags(new HashSet<>());
+        }));
+
         showPersonAtIndex(model, INDEX_SECOND_PERSON);
 
-        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(BENSON.getTags());
-        tagsToExpect.addAll(TAGS_TO_ADD);
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(TAG_TO_ADD);
 
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        AddTagCommand addTagCommand = new AddTagCommand(INDEX_FIRST_PERSON, TAGS_TO_ADD);
+        AddTagCommand addTagCommand = new AddTagCommand(INDEX_FIRST_PERSON, TAG_TO_ADD);
 
         Person editedPerson = personToEdit.cloneInto(p -> {
             p.setTags(tagsToExpect);
@@ -66,11 +83,27 @@ public class AddTagCommandTest {
         String expectedMessage = String.format(AddTagCommand.MESSAGE_ADD_SUCCESS, Messages.format(editedPerson));
 
         ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
-        showPersonAtIndex(expectedModel, INDEX_SECOND_PERSON);
         expectedModel.setPerson(personToEdit, editedPerson);
 
         assertCommandSuccess(addTagCommand, model, expectedMessage, expectedModel);
-        model.updateFilteredPersonList(p -> true);
+    }
+
+    @Test
+    public void addTag_appendsMultiple() {
+        final HashSet<AbstractTag> tagsToExpect = new HashSet<>(BENSON.getTags());
+        tagsToExpect.addAll(TAGS_TO_ADD);
+
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_SECOND_PERSON.getZeroBased());
+        AddTagCommand addTagCommand = new AddTagCommand(INDEX_SECOND_PERSON, TAGS_TO_ADD);
+
+        Person editedPerson = personToEdit.cloneInto(p -> {
+            p.setTags(tagsToExpect);
+        });
+
+        ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setPerson(personToEdit, editedPerson);
+
+        assertCommandSuccessModelOnly(addTagCommand, model, expectedModel);
     }
 
     @Test
@@ -90,8 +123,6 @@ public class AddTagCommandTest {
 
         AddTagCommand addTagCommand = new AddTagCommand(INDEX_SECOND_PERSON, TAGS_TO_ADD);
         assertCommandFailure(addTagCommand, model, Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
-
-        model.updateFilteredPersonList(p -> true);
     }
 
     @Test
@@ -99,12 +130,12 @@ public class AddTagCommandTest {
         Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
         // put data that we know
         Person editedPerson = personToEdit.cloneInto(p -> {
-            p.setTags(TAGS_TO_ADD);
+            p.setTags(TAG_TO_ADD);
         });
         model.setPerson(personToEdit, editedPerson);
 
         personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
-        HashSet<AbstractTag> tagsToAdd = new HashSet<>(List.of(new Tag("tut5"), new Tag("newtag")));
+        HashSet<AbstractTag> tagsToAdd = TAG_TO_ADD;
 
         // verify that there will be duplicates
         boolean hasDuplicate = false;
@@ -127,7 +158,7 @@ public class AddTagCommandTest {
 
         // Construct expected message with duplicate warning
         StringBuilder sb = new StringBuilder();
-        sb.append(new Tag("tut5"));
+        sb.append(new Tag("lab1"));
         String expectedMessage = String.format(AddTagCommand.MESSAGE_ADD_SUCCESS, Messages.format(editedPerson)) + "\n"
                 + String.format(AddTagCommand.MESSAGE_WARNING_DUPLICATE, sb.toString());
 

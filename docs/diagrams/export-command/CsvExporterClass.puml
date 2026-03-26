@@ -1,0 +1,13 @@
+@startuml
+hide circle
+skinparam classAttributeIconSize 0
+
+Class CsvExporter {
+  +DEFAULT_FILE_PATH: String
+  +HEADERS: String
+  +exportContacts(Model, String): CommandResult
+  +convertToCsv(Person): String
+}
+
+CsvExporter ..> IOException: throws >
+@enduml

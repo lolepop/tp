@@ -15,6 +15,7 @@ import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.model.Model;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.predicate.EmailContainsKeywordsPredicate;
 import seedu.address.model.person.predicate.NameContainsKeywordsPredicate;
 import seedu.address.model.person.predicate.TagsContainsTagPredicate;
 import seedu.address.model.tag.AbstractTag;
@@ -52,6 +53,7 @@ public class FindCommand extends Command {
         requireNonNull(model);
 
         Predicate<Person> predicate = findPersonDescriptor.getNamePredicate()
+                .and(findPersonDescriptor.getEmailPredicate())
                 .and(findPersonDescriptor.getTagsPredicate());
 
         model.updateFilteredPersonList(predicate);
@@ -131,6 +133,10 @@ public class FindCommand extends Command {
 
         public Optional<Set<String>> getEmail() {
             return Optional.ofNullable(email).map(Collections::unmodifiableSet);
+        }
+
+        public Predicate<Person> getEmailPredicate() {
+            return (email != null) ? new EmailContainsKeywordsPredicate(new ArrayList<>(email)) : PREDICATE_TRUE;
         }
 
         /**

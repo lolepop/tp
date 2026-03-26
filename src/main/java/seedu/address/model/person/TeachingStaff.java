@@ -1,11 +1,13 @@
 package seedu.address.model.person;
 
+import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.CollectionUtil.requireAllNonNull;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.model.tag.AbstractTag;
@@ -149,4 +151,42 @@ public non-sealed class TeachingStaff extends Person {
                 .add("availability", availability)
                 .toString();
     }
+
+    @Override
+    protected Person clone() {
+        return new TeachingStaff(name, phone, email, username, position, new HashSet<>(tags));
+    }
+
+    /**
+     * Creates a temporarily mutable copy of this TeachingStaff, allowing modification
+     * through a delegate function. This is useful for operations that
+     * require temporary mutability (e.g., editing) before finalizing the object.
+     *
+     * @param delegate A consumer that receives the mutable copy and can modify it
+     * @return An immutable TeachingStaff instance that has been modified by the delegate.
+     * @throws NullPointerException if the delegate is null.
+     */
+    public TeachingStaff cloneIntoTeachingStaff(Consumer<MutableTeachingStaff> delegate) {
+        var clonedPerson = new MutableTeachingStaff((TeachingStaff) clone());
+        return (TeachingStaff) cloneIntoInner(delegate, clonedPerson);
+    }
+
+    /**
+     * A temporarily mutable version of TeachingStaff, allowing modification of its fields.
+     * Allows clean editing of an object without violating the functional
+     * immutability requirements of TeachingStaff
+     */
+    public static final class MutableTeachingStaff extends MutablePerson {
+        MutableTeachingStaff(TeachingStaff person) {
+            super(person);
+        }
+
+        public void setPosition(Position position) {
+            checkEditable();
+            requireNonNull(position);
+            var p = (TeachingStaff) person;
+            p.position = position;
+        }
+    }
+
 }

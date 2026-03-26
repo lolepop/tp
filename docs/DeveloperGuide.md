@@ -259,6 +259,45 @@ The following sequence diagram shows how the `tutordashboard` command is execute
   * Pros: Decouples availability from the person model; easier to query across all staff.
   * Cons: Adds complexity; requires cross-referencing persons by identity.
 
+### Export Contacts Feature
+
+#### Overview
+
+The `export` command allows users to export all contacts in the address book to a CSV file. This feature enables users to back up their data or share contacts with others in a common CSV format.
+
+#### Implementation
+
+The feature is implemented across the following components:
+
+**Logic:**
+* `ExportCommand` — Takes a file path as a parameter. On execution, it:
+  1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts to the specified file.
+  2. Returns a `CommandResult` with a success message containing the file path.
+  3. Throws `CommandException` if an `IOException` occurs during the export process.
+* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the default location (`./export.csv`).
+
+**Storage:**
+* `CsvExporter` — Utility class responsible for:
+  1. Converting each `Person` to CSV format using `convertToCSV(Person)`.
+  2. Writing all contacts to the specified CSV file.
+  3. Handling both students and teaching staff, including tags and time slots for staff.
+
+**Command Format:**
+* `export` — Exports to `./export.csv` (default location).
+* `export f/FILE_PATH` — Exports to the specified file path.
+
+#### Design Considerations
+
+**Aspect: Where to place export logic**
+
+* **Alternative 1 (current choice):** Place export logic in `CsvExporter` utility class in the storage component.
+  * Pros: Separates export logic from command logic; reusable; easy to add other export formats.
+  * Cons: Storage component has some export responsibilities.
+
+* **Alternative 2:** Place all export logic in `ExportCommand`.
+  * Pros: Command-specific logic is contained in the command.
+  * Cons: Harder to test independently; less reusable.
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation
