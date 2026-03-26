@@ -36,6 +36,10 @@ public class FindPersonDescriptorTest {
         fdTwo.setName(Set.of("test4", "test5", "test6"));
         assertFalse(fdOne.equals(fdTwo));
 
+        // test copy -> returns true
+        fdOne = new FindPersonDescriptor(fdTwo);
+        assertTrue(fdOne.equals(fdOne));
+
         // different phone -> returns false
         fdOne = new FindPersonDescriptor();
         fdOne.setPhone(Set.of("11111111", "22222222", "3333333"));
@@ -63,6 +67,8 @@ public class FindPersonDescriptorTest {
         fdTwo = new FindPersonDescriptor();
         fdTwo.setUsername(Set.of("colleagues", "students"));
         assertFalse(fdOne.equals(fdTwo));
+
+
     }
 
     @Test
