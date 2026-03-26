@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.AddCommand;
+import seedu.address.logic.commands.AnswerConfirmationCommand;
 import seedu.address.logic.commands.CommandResult;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -61,7 +62,7 @@ public class LogicManagerTest {
     @Test
     public void execute_commandExecutionError_throwsCommandException() {
         String deleteCommand = "delete 9";
-        assertCommandException(deleteCommand, MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertCommandRequiresConfirmationException(deleteCommand, MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
     }
 
     @Test
@@ -137,6 +138,47 @@ public class LogicManagerTest {
     private void assertCommandFailure(String inputCommand, Class<? extends Throwable> expectedException,
             String expectedMessage, Model expectedModel) {
         assertThrows(expectedException, expectedMessage, () -> logic.execute(inputCommand));
+        assertEquals(expectedModel, model);
+    }
+
+    /**
+     * Executes the command that requires user confirmation.
+     * Confirms that a CommandException is thrown and that the result message is correct.
+     * @see #assertCommandFailure(String, Class, String, Model)
+     */
+    private void assertCommandRequiresConfirmationException(String inputCommand, String expectedMessage) {
+        assertCommandRequiresConfirmationFailure(inputCommand, CommandException.class, expectedMessage);
+    }
+
+    /**
+     * Executes the command that requires user confirmation.
+     * Confirms that a CommandException is thrown and that the result message is correct.
+     * @see #assertCommandFailure(String, Class, String, Model)
+     */
+    private void assertCommandRequiresConfirmationFailure(
+            String inputCommand,
+            Class<? extends Throwable> expectedException,
+            String expectedMessage) {
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        assertCommandRequiresConfirmationFailure(inputCommand, expectedException, expectedMessage, expectedModel);
+    }
+
+    /**
+     * Executes the command that requires user confirmation and confirms that
+     * - the {@code expectedException} is thrown <br>
+     * - the resulting error message is equal to {@code expectedMessage} <br>
+     * - the internal model manager state is the same as that in {@code expectedModel} <br>
+     * @see #assertCommandSuccess(String, String, Model)
+     */
+    private void assertCommandRequiresConfirmationFailure(
+            String inputCommand,
+            Class<? extends Throwable> expectedException,
+            String expectedMessage,
+            Model expectedModel) {
+        assertThrows(expectedException, expectedMessage, () -> {
+            logic.execute(inputCommand);
+            logic.execute(AnswerConfirmationCommand.COMMAND_WORD_YES);
+        });
         assertEquals(expectedModel, model);
     }
 

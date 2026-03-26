@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 
 import java.util.HashSet;
@@ -25,11 +26,13 @@ public class FindCommandParser implements Parser<FindCommand> {
      * @throws ParseException if the user input does not conform the expected format
      */
     public FindCommand parse(String args) throws ParseException {
-        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_TAG);
+        ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_EMAIL, PREFIX_TAG);
 
         String preamble = argMultimap.getPreamble().trim();
 
-        if (preamble.isEmpty() && argMultimap.getAllValues(PREFIX_TAG).isEmpty()) {
+        if (preamble.isEmpty()
+                && argMultimap.getAllValues(PREFIX_EMAIL).isEmpty()
+                && argMultimap.getAllValues(PREFIX_TAG).isEmpty()) {
             throw new ParseException(
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
@@ -42,6 +45,11 @@ public class FindCommandParser implements Parser<FindCommand> {
         if (!preamble.isEmpty()) {
             fd.setName(new HashSet<>(List.of(nameKeywords)));
         }
+
+        if (!argMultimap.getAllValues(PREFIX_EMAIL).isEmpty()) {
+            fd.setEmail(new HashSet<>(argMultimap.getAllValues(PREFIX_EMAIL)));
+        }
+
         if (!tagList.isEmpty()) {
             fd.setTags(tagList);
         }

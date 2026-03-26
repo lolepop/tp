@@ -60,4 +60,27 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, " t/friends", expectedFindCommand);
     }
 
+    @Test
+    public void parse_validArgsWithEmail_returnsFindCommand() {
+        // name keywords with tag
+        FindPersonDescriptor fd = new FindPersonDescriptor();
+        fd.setName(Set.of("Alice", "Bob"));
+        fd.setTags(Set.of(new Tag("friends")));
+        fd.setEmail(Set.of("alice"));
+        FindCommand expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, "Alice Bob t/friends e/alice", expectedFindCommand);
+
+        // multiple whitespaces with tags
+        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends \n\t e/alice", expectedFindCommand);
+    }
+
+    @Test
+    public void parse_validArgsWithEmailOnly_returnsFindCommand() {
+        // tag only, no name keywords
+        FindPersonDescriptor fd = new FindPersonDescriptor();
+        fd.setEmail(Set.of("alice"));
+        FindCommand expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " e/alice", expectedFindCommand);
+    }
+
 }

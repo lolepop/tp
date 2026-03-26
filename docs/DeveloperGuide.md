@@ -177,6 +177,19 @@ The address book holds a single list of `Person` objects. Two types of persons a
 
 The UI and commands treat both types uniformly as `Person` where possible (e.g. `find`, `delete` by index). The filtered list in the model can show all persons (`list`), only teaching staff (`staffslist`), or only students (`studentslist`) by setting a predicate on the underlying list. `edit` supports an optional `pos/POSITION` field that applies only to teaching staff.
 
+### Tagging System
+`AbstractTag`s are optionally allowed to be added to any Person/TeachingStaff. These are further divided into two groups: `Tag` and `RestrictedTag`. (See [Model Component](#model-component))
+
+Either variant of tag can constructed using `TagFactory.create(tag)`. Which one created depends on the format of the tag provided. The following rule is utilised: a `RestrictedTag` will use `:` as a delimiter (e.g. tut:A10). Otherwise, it is treated as `Tag`.
+
+#### Tag Validation Flow
+- Tag: A simple Regex is used to determine if it is valid (alphanumeric only)
+- RestrictedTag (`prefix`:`value`)
+  1. A schema of the registered `prefix` is selected (See `TagFactory.getAssociatedSchema()`)
+  2. A `RestrictedTag` is constructed with the corresponding schema
+  3. `RestrictedTag`'s constructor will pass `value` into the schema to check against its own specified validation method
+  4. Should validation fail, an error is thrown
+
 ### Tutor Availability Scheduling
 
 #### Overview

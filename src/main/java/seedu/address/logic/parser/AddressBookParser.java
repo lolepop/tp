@@ -10,8 +10,10 @@ import java.util.regex.Pattern;
 import seedu.address.commons.core.LogsCenter;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.AddTagCommand;
+import seedu.address.logic.commands.AnswerConfirmationCommand;
 import seedu.address.logic.commands.ClearCommand;
 import seedu.address.logic.commands.Command;
+import seedu.address.logic.commands.CriticalCommand;
 import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.EditCommand;
 import seedu.address.logic.commands.ExitCommand;
@@ -19,6 +21,7 @@ import seedu.address.logic.commands.ExportCommand;
 import seedu.address.logic.commands.FindCommand;
 import seedu.address.logic.commands.HelpCommand;
 import seedu.address.logic.commands.ListCommand;
+import seedu.address.logic.commands.RequireConfirmationCommand;
 import seedu.address.logic.commands.StaffListCommand;
 import seedu.address.logic.commands.StudentListCommand;
 import seedu.address.logic.commands.TutorDashboardCommand;
@@ -57,6 +60,25 @@ public class AddressBookParser {
         // Lower level log messages are used sparingly to minimize noise in the code.
         logger.fine("Command word: " + commandWord + "; Arguments: " + arguments);
 
+        Command command = parseCommandWord(commandWord, arguments, userInput);
+
+        if (command instanceof CriticalCommand) {
+            return new RequireConfirmationCommand(userInput, command);
+        } else {
+            return command;
+        }
+    }
+
+    /**
+     * Parses command word and arguments into command for execution.
+     *
+     * @param commandWord the command word extracted from user input
+     * @param arguments the arguments extracted from user input
+     * @param userInput full user input string
+     * @return the command parsed from the command word and arguments
+     * @throws ParseException if the command word is unknown
+     */
+    public Command parseCommandWord(String commandWord, String arguments, String userInput) throws ParseException {
         switch (commandWord) {
 
         case AddCommand.COMMAND_WORD:
@@ -104,10 +126,15 @@ public class AddressBookParser {
         case TutorDashboardCommand.COMMAND_WORD:
             return new TutorDashboardCommand();
 
+        case AnswerConfirmationCommand.COMMAND_WORD_YES:
+            return new AnswerConfirmationCommand(AnswerConfirmationCommand.AnswerType.YES);
+
+        case AnswerConfirmationCommand.COMMAND_WORD_NO:
+            return new AnswerConfirmationCommand(AnswerConfirmationCommand.AnswerType.NO);
+
         default:
             logger.finer("This user input caused a ParseException: " + userInput);
             throw new ParseException(MESSAGE_UNKNOWN_COMMAND);
         }
     }
-
 }
