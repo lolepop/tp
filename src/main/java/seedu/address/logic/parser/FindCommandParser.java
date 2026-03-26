@@ -53,7 +53,7 @@ public class FindCommandParser implements Parser<FindCommand> {
         }
 
         if (!argMultimap.getAllValues(PREFIX_USERNAME).isEmpty()) {
-            fd.setEmail(new HashSet<>(argMultimap.getAllValues(PREFIX_USERNAME)));
+            fd.setUsername(new HashSet<>(argMultimap.getAllValues(PREFIX_USERNAME)));
         }
 
         if (!tagList.isEmpty()) {

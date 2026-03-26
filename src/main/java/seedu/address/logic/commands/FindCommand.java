@@ -107,6 +107,7 @@ public class FindCommand extends Command {
             setName(toCopy.name);
             setPhone(toCopy.phone);
             setEmail(toCopy.email);
+            setUsername(toCopy.username);
             setTags(toCopy.tags);
         }
 
