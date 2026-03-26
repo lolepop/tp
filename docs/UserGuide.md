@@ -274,7 +274,7 @@ Appends tags to an existing person, without having to respecify all existing tag
 
 Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
-**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...]`
+**Format:** `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...] [u/USERNAME [USERNAMES]...]`
 
 **Note:** At least one keyword or tag must be provided.
 
@@ -289,6 +289,9 @@ Finds persons whose names contain any of the given keywords and/or who have any 
   * Persons with at least one matching tag will be returned (i.e. `OR` search)
 
 * **Email search:** Keywords match against person emails (case-insensitive)
+    * Persons matching at least one keyword will be returned (i.e. `OR` search)
+
+* **Username search:** Keywords match against person username (case-insensitive)
     * Persons matching at least one keyword will be returned (i.e. `OR` search)
 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least one tag (i.e. `AND` between name and tag criteria)
