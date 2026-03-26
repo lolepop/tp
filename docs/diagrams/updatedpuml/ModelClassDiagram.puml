@@ -22,6 +22,14 @@ Class Username
 Class Position
 Class TimeSlot
 Class "<<abstract>>\nAbstractTag" as AbstractTag
+Class Tag
+Class RestrictedTag
+
+Class "<<abstract>>\nTagSchema" as TagSchema
+Class "<<abstract>>\nRegexTagSchema" as RegexTagSchema
+Class LabTagSchema
+Class TutorialTagSchema
+Class CourseTagSchema
 
 Class I #FFFFFF
 }
@@ -56,6 +64,14 @@ UniquePersonList -[hidden]right-> I
 Name -[hidden]right-> Phone
 Phone -[hidden]right-> Email
 Email -[hidden]right-> Username
+
+Tag .up.|> AbstractTag
+RestrictedTag .up.|> AbstractTag
+RestrictedTag *--> "1" TagSchema
+RegexTagSchema .up.|> TagSchema
+LabTagSchema .up.|> RegexTagSchema
+TutorialTagSchema .up.|> RegexTagSchema
+CourseTagSchema .up.|> RegexTagSchema
 
 ModelManager --> "~* filtered" Person
 @enduml
