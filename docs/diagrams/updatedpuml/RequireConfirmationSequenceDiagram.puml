@@ -1,0 +1,57 @@
+@startuml
+!include ../style.puml
+skinparam ArrowFontStyle plain
+
+box Logic LOGIC_COLOR_T1
+participant ":LogicManager" as LogicManager LOGIC_COLOR
+participant ":AddressBookParser" as AddressBookParser LOGIC_COLOR
+participant "rc:RequireConfirmationCommand" as RequireConfirmationCommand LOGIC_COLOR
+participant "r:CommandResult" as CommandResult LOGIC_COLOR
+end box
+
+box Model MODEL_COLOR_T1
+participant "m:Model" as Model MODEL_COLOR
+end box
+
+[-> LogicManager : execute("delete 1")
+activate LogicManager
+
+LogicManager -> AddressBookParser : parseCommand("delete 1")
+activate AddressBookParser
+
+note over AddressBookParser : Parses inner DeleteCommand\n(see Delete sequence diagram)
+
+create RequireConfirmationCommand
+AddressBookParser -> RequireConfirmationCommand : new RequireConfirmationCommand\n("delete 1", innerCmd)
+activate RequireConfirmationCommand
+RequireConfirmationCommand --> AddressBookParser
+deactivate RequireConfirmationCommand
+
+AddressBookParser --> LogicManager : rc
+deactivate AddressBookParser
+
+LogicManager -> RequireConfirmationCommand : execute(m)
+activate RequireConfirmationCommand
+
+RequireConfirmationCommand -> Model : setPendingCommand(innerCmd)
+activate Model
+Model --> RequireConfirmationCommand
+deactivate Model
+
+create CommandResult
+RequireConfirmationCommand -> CommandResult : new CommandResult(..., pending=true)
+activate CommandResult
+CommandResult --> RequireConfirmationCommand
+deactivate CommandResult
+
+RequireConfirmationCommand --> LogicManager : r
+deactivate RequireConfirmationCommand
+RequireConfirmationCommand -[hidden]-> LogicManager
+destroy RequireConfirmationCommand
+
+note over LogicManager : r.isPending() == true\npendingCommand is NOT cleared
+
+[<-- LogicManager : r (confirmation prompt)
+deactivate LogicManager
+
+@enduml

@@ -411,6 +411,30 @@ The feature is implemented across the following components:
     * Pros: The logic is contained within a single class, making it easy to read and understand.
     * Cons: Difficult to test deserialisation logic separately.
 
+### Double Confirmation
+
+#### Overview
+
+Certain commands that are destructive or irreversible — currently `delete` and `clear` — require the user to explicitly confirm before they are executed. These commands implement the `CriticalCommand` marker interface, which causes `AddressBookParser` to intercept them and wrap them in a `RequireConfirmationCommand` instead of executing them directly.
+
+#### Implementation
+
+The feature introduces the following classes:
+
+* `CriticalCommand` — Marker interface. Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution.
+* `RequireConfirmationCommand` — Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
+* `AnswerConfirmationCommand` — Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
+* `CommandResult#isPending()` — Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
+* `Model#pendingCommand` — Field in `ModelManager` that holds the deferred command between the two interactions.
+
+The following sequence diagram shows how a critical command (e.g. `delete 1`) is intercepted and a confirmation prompt is issued:
+
+<img src="images/RequireConfirmationSequenceDiagram.png" />
+
+The following sequence diagram shows how the user's answer (`Y` to confirm, `N` to cancel) is handled:
+
+<img src="images/AnswerConfirmationSequenceDiagram.png" />
+
 ### \[Proposed\] Undo/redo feature
 
 #### Proposed Implementation

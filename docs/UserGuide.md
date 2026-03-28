@@ -349,6 +349,7 @@ Deletes the specified person from the address book. Works for both students and 
 * Permanently removes the person at that index. The list may be the full list (`list`), only staff (`staffslist`), or
   only students (`studentslist`).
 * Operation cannot be undone.
+* You will be asked to [confirm](#double-confirmation) before the deletion is carried out.
 
 **Examples:**
 
@@ -363,6 +364,33 @@ Deletes the specified person from the address book. Works for both students and 
 Clears all entries from the address book.
 
 Format: `clear`
+
+<div markdown="span" class="alert alert-warning">:exclamation: **Caution:**
+This permanently deletes all contacts and cannot be undone. You will be asked to <a href="#double-confirmation">confirm</a> before the operation is carried out.
+</div>
+
+---
+
+### Double confirmation
+
+Some commands that are **irreversible** — currently `delete` and `clear` — require you to explicitly confirm before they are executed.
+
+**How it works:**
+
+1. Enter a critical command (e.g. `delete 1` or `clear`).
+2. Doritus displays a prompt:
+   ```
+   Are you sure you want to execute the following command?
+   "delete 1"
+   Please type Y to confirm or N to cancel.
+   ```
+3. Type `Y` and press Enter to proceed, or `N` and press Enter to cancel.
+
+**Behavior:**
+
+* Typing `Y` executes the original command.
+* Typing `N` cancels the command and displays `Command Cancelled!`.
+* Entering any other command while a confirmation is pending will execute that command instead and **discard** the pending one.
 
 ---
 
