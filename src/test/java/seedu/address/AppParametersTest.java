@@ -68,6 +68,21 @@ public class AppParametersTest {
         assertFalse(appParameters.equals(otherAppParameters));
     }
 
+    @Test
+    public void hashCode_nullConfigPath_success() {
+        AppParameters appParameters = new AppParameters();
+        assertEquals(0, appParameters.hashCode());
+    }
+
+    @Test
+    public void hashCode_sameConfigPath_sameHash() {
+        AppParameters a = new AppParameters();
+        a.setConfigPath(Paths.get("config.json"));
+        AppParameters b = new AppParameters();
+        b.setConfigPath(Paths.get("config.json"));
+        assertEquals(a.hashCode(), b.hashCode());
+    }
+
     private static class ParametersStub extends Application.Parameters {
         private Map<String, String> namedParameters = new HashMap<>();
 

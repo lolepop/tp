@@ -139,4 +139,91 @@ public class AddCommandIntegrationTest {
                 expectedModel);
     }
 
+    @Test
+    public void execute_emailOnlyCollision_resolvesSuffixOne() {
+        TeachingStaff toAdd = new TeachingStaff(new Name("Casey Tan"));
+        model.addPerson(new PersonBuilder()
+                .withName("Existing Student")
+                .withPhone("81235555")
+                .withEmail(toAdd.getEmail().value)
+                .withUsername("existingstudent")
+                .build());
+
+        Name name = toAdd.getName();
+        TeachingStaff expectedAdded = new TeachingStaff(
+                name,
+                TeachingStaff.generateDefaultPhone(name, 1),
+                TeachingStaff.generateDefaultEmail(name, 1),
+                TeachingStaff.generateDefaultUsername(name, 1),
+                new Position(TeachingStaff.DEFAULT_POSITION_VALUE),
+                Collections.emptySet());
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.addPerson(expectedAdded);
+
+        assertCommandSuccess(new AddCommand(toAdd), model,
+                String.format("New teaching staff added: %1$s", Messages.format(expectedAdded)),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_usernameOnlyCollision_resolvesSuffixOne() {
+        TeachingStaff toAdd = new TeachingStaff(new Name("Jordan Lim"));
+        model.addPerson(new PersonBuilder()
+                .withName("Existing Student")
+                .withPhone("81236666")
+                .withEmail("existingstudent2@example.com")
+                .withUsername(toAdd.getUsername().value)
+                .build());
+
+        Name name = toAdd.getName();
+        TeachingStaff expectedAdded = new TeachingStaff(
+                name,
+                TeachingStaff.generateDefaultPhone(name, 1),
+                TeachingStaff.generateDefaultEmail(name, 1),
+                TeachingStaff.generateDefaultUsername(name, 1),
+                new Position(TeachingStaff.DEFAULT_POSITION_VALUE),
+                Collections.emptySet());
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.addPerson(expectedAdded);
+
+        assertCommandSuccess(new AddCommand(toAdd), model,
+                String.format("New teaching staff added: %1$s", Messages.format(expectedAdded)),
+                expectedModel);
+    }
+
+    @Test
+    public void execute_suffixOnePhoneTaken_resolvesSuffixTwo() {
+        TeachingStaff toAdd = new TeachingStaff(new Name("Morgan Lee"));
+        Name name = toAdd.getName();
+        model.addPerson(new PersonBuilder()
+                .withName("Existing Student")
+                .withPhone("81237777")
+                .withEmail("existingstudent3@example.com")
+                .withUsername(toAdd.getUsername().value)
+                .build());
+        model.addPerson(new PersonBuilder()
+                .withName("Another Existing Student")
+                .withPhone(TeachingStaff.generateDefaultPhone(name, 1).value)
+                .withEmail("anotherexisting@example.com")
+                .withUsername("anotherexisting")
+                .build());
+
+        TeachingStaff expectedAdded = new TeachingStaff(
+                name,
+                TeachingStaff.generateDefaultPhone(name, 2),
+                TeachingStaff.generateDefaultEmail(name, 2),
+                TeachingStaff.generateDefaultUsername(name, 2),
+                new Position(TeachingStaff.DEFAULT_POSITION_VALUE),
+                Collections.emptySet());
+
+        Model expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.addPerson(expectedAdded);
+
+        assertCommandSuccess(new AddCommand(toAdd), model,
+                String.format("New teaching staff added: %1$s", Messages.format(expectedAdded)),
+                expectedModel);
+    }
+
 }
