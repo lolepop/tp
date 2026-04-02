@@ -135,4 +135,16 @@ public class TimeSlot implements Comparable<TimeSlot> {
         }
         return start.compareTo(other.start);
     }
+
+    /**
+     * Returns true if this slot overlaps with {@code other} on the same day.
+     * Touching boundaries (e.g., 10-12 and 12-14) are not considered overlapping.
+     */
+    public boolean overlapsWith(TimeSlot other) {
+        requireNonNull(other);
+        if (!day.equals(other.day)) {
+            return false;
+        }
+        return start.isBefore(other.end) && other.start.isBefore(end);
+    }
 }

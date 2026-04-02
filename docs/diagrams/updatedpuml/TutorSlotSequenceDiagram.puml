@@ -57,7 +57,7 @@ activate Model
 Model --> TutorSlotCommand : personList
 deactivate Model
 
-note right of TutorSlotCommand: Validates TeachingStaff type\nand no duplicate slot
+note right of TutorSlotCommand: Validates TeachingStaff type\nand no overlapping slot
 
 TutorSlotCommand -> Model : setPerson(target, updatedStaff)
 activate Model

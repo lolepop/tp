@@ -74,7 +74,18 @@ public class TutorSlotCommandTest {
         first.execute(model);
 
         TutorSlotCommand duplicate = new TutorSlotCommand(indexBenson, slot);
-        assertCommandFailure(duplicate, model, TutorSlotCommand.MESSAGE_DUPLICATE_SLOT);
+        assertCommandFailure(duplicate, model, TutorSlotCommand.MESSAGE_OVERLAPPING_SLOT);
+    }
+
+    @Test
+    public void execute_overlappingSlot_throwsCommandException() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        Index indexBenson = Index.fromOneBased(2);
+        TutorSlotCommand first = new TutorSlotCommand(indexBenson, new TimeSlot("mon-10-12"));
+        first.execute(model);
+
+        TutorSlotCommand overlapping = new TutorSlotCommand(indexBenson, new TimeSlot("mon-10-11"));
+        assertCommandFailure(overlapping, model, TutorSlotCommand.MESSAGE_OVERLAPPING_SLOT);
     }
 
     @Test

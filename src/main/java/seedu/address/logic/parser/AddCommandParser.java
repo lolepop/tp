@@ -37,6 +37,13 @@ public class AddCommandParser implements Parser<AddCommand> {
      * @throws ParseException If the arguments do not conform to the expected format.
      */
     public AddCommand parse(String args) throws ParseException {
+        String trimmedArgs = args.trim();
+        if (trimmedArgs.startsWith("staff")
+                && trimmedArgs.length() > "staff".length()
+                && !Character.isWhitespace(trimmedArgs.charAt("staff".length()))) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+        }
+
         ArgumentMultimap argMultimap =
                 ArgumentTokenizer.tokenize(args, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
                         PREFIX_USERNAME, PREFIX_POSITION, PREFIX_TAG);
@@ -78,43 +85,28 @@ public class AddCommandParser implements Parser<AddCommand> {
 
     /**
      * Parses arguments for adding a teaching staff member.
-     * Only name is required; if any of phone/email/username/position are given, all four must be given.
+     * Requires name, phone, email and username. Position is optional and defaults to Teaching Assistant.
      *
      * @param argMultimap The tokenized arguments.
      * @return An AddCommand that adds teaching staff.
-     * @throws ParseException If name is missing or optional fields are partially provided.
+     * @throws ParseException If required prefixes are missing or values invalid.
      */
     private AddCommand parseStaff(ArgumentMultimap argMultimap) throws ParseException {
-        if (!arePrefixesPresent(argMultimap, PREFIX_NAME)) {
+        if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_USERNAME)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_STAFF_USAGE));
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL,
                 PREFIX_USERNAME, PREFIX_POSITION);
         Name name = ParserUtil.parseName(argMultimap.getValue(PREFIX_NAME).get());
-
-        boolean anyOptionalPresent = argMultimap.getValue(PREFIX_PHONE).isPresent()
-                || argMultimap.getValue(PREFIX_EMAIL).isPresent()
-                || argMultimap.getValue(PREFIX_USERNAME).isPresent()
-                || argMultimap.getValue(PREFIX_POSITION).isPresent();
-        boolean allOptionalPresent = arePrefixesPresent(argMultimap,
-                PREFIX_PHONE, PREFIX_EMAIL, PREFIX_USERNAME, PREFIX_POSITION);
-
-        if (anyOptionalPresent && !allOptionalPresent) {
-            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_STAFF_USAGE));
-        }
-
-        if (allOptionalPresent) {
-            Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
-            Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
-            Username username = ParserUtil.parseUsername(argMultimap.getValue(PREFIX_USERNAME).get());
-            Position position = ParserUtil.parsePosition(argMultimap.getValue(PREFIX_POSITION).get());
-            Set<AbstractTag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-            return new AddCommand(new TeachingStaff(name, phone, email, username, position, tagList));
-        }
-
+        Phone phone = ParserUtil.parsePhone(argMultimap.getValue(PREFIX_PHONE).get());
+        Email email = ParserUtil.parseEmail(argMultimap.getValue(PREFIX_EMAIL).get());
+        Username username = ParserUtil.parseUsername(argMultimap.getValue(PREFIX_USERNAME).get());
+        Position position = argMultimap.getValue(PREFIX_POSITION).isPresent()
+                ? ParserUtil.parsePosition(argMultimap.getValue(PREFIX_POSITION).get())
+                : new Position(TeachingStaff.DEFAULT_POSITION_VALUE);
         Set<AbstractTag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
-        return new AddCommand(new TeachingStaff(name, tagList));
+        return new AddCommand(new TeachingStaff(name, phone, email, username, position, tagList));
     }
 
     /**

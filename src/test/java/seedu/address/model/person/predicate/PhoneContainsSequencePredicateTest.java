@@ -74,7 +74,7 @@ public class PhoneContainsSequencePredicateTest {
 
         // Keywords match name, email and username, but does not match phone
         predicate = new PhoneContainsSequencePredicate(Arrays.asList("Alicee", "Alicee", "alicebee"));
-        assertFalse(predicate.test(new PersonBuilder().withName("Alicee").withPhone("12345678")
+        assertFalse(predicate.test(new PersonBuilder().withName("Alicee").withPhone("81234567")
                 .withEmail("alice@email.com").withUsername("alicebee").build()));
     }
 

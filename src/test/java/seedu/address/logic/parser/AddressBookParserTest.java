@@ -34,6 +34,7 @@ import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.RequireConfirmationCommand;
 import seedu.address.logic.commands.StaffListCommand;
 import seedu.address.logic.commands.StudentListCommand;
+import seedu.address.logic.commands.TutorDashboardCommand;
 import seedu.address.logic.commands.TutorSlotCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Person;
@@ -127,6 +128,13 @@ public class AddressBookParserTest {
     public void parseCommand_studentslist() throws Exception {
         assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD) instanceof StudentListCommand);
         assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD + " 2") instanceof StudentListCommand);
+        assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD + " ??? extra-input")
+                instanceof StudentListCommand);
+    }
+
+    @Test
+    public void parseCommand_studentlistAlias_throwsParseException() {
+        assertThrows(ParseException.class, MESSAGE_UNKNOWN_COMMAND, () -> parser.parseCommand("studentlist"));
     }
 
     @Test
@@ -139,6 +147,13 @@ public class AddressBookParserTest {
         TimeSlot slot = new TimeSlot("mon-10-12");
         TutorSlotCommand expected = new TutorSlotCommand(Index.fromOneBased(1), slot);
         assertEquals(expected, parser.parseCommand(TutorSlotCommand.COMMAND_WORD + " 1 mon-10-12"));
+    }
+
+    @Test
+    public void parseCommand_tutordashboard() throws Exception {
+        assertTrue(parser.parseCommand(TutorDashboardCommand.COMMAND_WORD) instanceof TutorDashboardCommand);
+        assertTrue(parser.parseCommand(TutorDashboardCommand.COMMAND_WORD + " foo")
+                instanceof TutorDashboardCommand);
     }
 
     @Test

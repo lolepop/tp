@@ -189,7 +189,7 @@ public class CsvExporterTest {
     public void convertToCsv_outputContainsAllRequiredFields() {
         Person person = new PersonBuilder()
                 .withName("Test Person")
-                .withPhone("12345678")
+                .withPhone("81234567")
                 .withEmail("test@example.com")
                 .withUsername("testuser")
                 .withTags("tag1")
@@ -197,7 +197,7 @@ public class CsvExporterTest {
 
         String csv = CsvExporter.convertToCsv(person);
         // Verify CSV format contains all required fields in correct order
-        assertEquals("Student,Test Person,12345678,testuser,test@example.com,tag1", csv);
+        assertEquals("Student,Test Person,81234567,testuser,test@example.com,tag1", csv);
     }
 
     @Test

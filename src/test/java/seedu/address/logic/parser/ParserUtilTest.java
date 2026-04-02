@@ -35,7 +35,7 @@ public class ParserUtilTest {
     private static final String INVALID_TAG_RESTRICTED = "asdfgh:123";
 
     private static final String VALID_NAME = "Rachel Walker";
-    private static final String VALID_PHONE = "12345678";
+    private static final String VALID_PHONE = "81234567";
     private static final String VALID_USERNAME = "rachelwalker";
     private static final String VALID_POSITION = "Teaching Assistant";
     private static final String VALID_EMAIL = "rachel@example.com";

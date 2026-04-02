@@ -35,8 +35,8 @@ fast, Doritus can get your contact management tasks done faster than traditional
 
     * `add n/John Doe p/98765432 e/johnd@example.com u/johndoe123 t/friends` : Adds a student.
 
-    * `add staff n/Jane Smith` : Adds a teaching staff (tutor) with name only; phone, email, username and position use
-      defaults.
+    * `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` : Adds a teaching staff (tutor). Position
+      defaults to `Teaching Assistant` if omitted.
 
     * `staffslist` : Lists only teaching staff. `studentslist` : Lists only students.
 
@@ -77,9 +77,13 @@ fast, Doritus can get your contact management tasks done faster than traditional
 * Parameters can be in any order.<br>
   e.g. if the command specifies `n/NAME p/PHONE_NUMBER`, `p/PHONE_NUMBER n/NAME` is also acceptable.
 
-* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `exit` and `clear`) will be
+* Extraneous parameters for commands that do not take in parameters (such as `help`, `list`, `staffslist`,
+  `studentslist`, `tutordashboard`, `exit` and `clear`) will be
   ignored.<br>
   e.g. if the command specifies `help 123`, it will be interpreted as `help`.
+  e.g. if the command specifies `staffslist anything`, it will be interpreted as `staffslist`.
+  e.g. if the command specifies `studentslist 1`, it will be interpreted as `studentslist`.
+  e.g. if the command specifies `tutordashboard foo`, it will be interpreted as `tutordashboard`.
 
 * If you are using a PDF version of this document, be careful when copying and pasting commands that span multiple lines
   as space characters surrounding line-breaks may be omitted when copied over to the application.
@@ -122,7 +126,7 @@ Adds a student to the address book.
 **Parameters:**
 
 * `NAME`: Alphanumeric characters and single spaces only (cannot be blank; consecutive spaces not allowed).
-* `PHONE`: Exactly 8 digits. Must be unique.
+* `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
 * `EMAIL`: Valid email format. Must be unique.
 * `USERNAME`: Alphanumeric characters only (no spaces or special characters). Must be unique.
 * `TAG`: Optional; can be used multiple times. See [Types of tags](#types-of-tags) for more details.
@@ -130,7 +134,7 @@ Adds a student to the address book.
 **Examples:**
 
 * `add n/John Doe p/98765432 e/johnd@example.com u/johndoe123`
-* `add n/Betsy Crowe p/12345678 e/betsycrowe@example.com u/betsycrowe t/friend`
+* `add n/Betsy Crowe p/81234567 e/betsycrowe@example.com u/betsycrowe t/friend`
 * `add n/John Doe p/98765432 e/johnd@example.com u/johndoe123 t/course:CS2103` - Adds the student John Doe belonging to
   the course CS2103
 
@@ -138,15 +142,16 @@ Adds a student to the address book.
 
 ### Adding teaching staff: `add staff`
 
-Adds a teaching staff (tutor) to the address book. You can provide only the name, or all optional fields together.
+Adds a teaching staff (tutor) to the address book.
 
-**Format:** `add staff n/NAME [p/PHONE e/EMAIL u/USERNAME pos/POSITION] [t/TAG]…​`
+**Format:** `add staff n/NAME p/PHONE e/EMAIL u/USERNAME [pos/POSITION] [t/TAG]…​`
 
 **Parameters:**
 
 * `NAME`: Required. Alphanumeric characters and single spaces only (cannot be blank; consecutive spaces not allowed).
-* `p/`, `e/`, `u/`, `pos/`: Optional. If you provide any one of these, you must provide all four.
-* `PHONE`: Exactly 8 digits. Must be unique.
+* `p/`, `e/`, `u/`: Required.
+* `pos/`: Optional.
+* `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
 * `EMAIL`: Valid email format. Must be unique.
 * `USERNAME`: Alphanumeric only. Must be unique.
 * `POSITION`: Must be one of: `Teaching Assistant`, `Professors`. If omitted, defaults to `Teaching Assistant`.
@@ -154,12 +159,12 @@ Adds a teaching staff (tutor) to the address book. You can provide only the name
 
 **Behavior:**
 
-* Name only: Phone, email, username and position are generated or set to defaults (position = Teaching Assistant).
-* When providing optional fields, all of phone, email, username and position must be provided together.
+* Position defaults to `Teaching Assistant` when `pos/` is omitted.
 
 **Examples:**
 
-* `add staff n/Jane Smith` — Adds teaching staff with default position "Teaching Assistant".
+* `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` — Adds teaching staff with default position
+  "Teaching Assistant".
 * `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors t/colleagues` — Adds teaching staff with full
   details.
 
@@ -203,11 +208,12 @@ available to teach.
 * `SLOT`: Must be in format `DAY-START-END`, where:
     * `DAY` is one of: `mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun` (case-insensitive).
     * `START` and `END` are hours (0–23). `START` must be before `END`.
+    * Slots that cross midnight are not supported in the current format.
 
 **Behavior:**
 
 * The person at the given index must be a teaching staff member (not a student).
-* Duplicate time slots (same day, same start/end) are not allowed for the same person.
+* Overlapping time slots on the same day are not allowed for the same person (including exact duplicates).
 * Time slots are displayed in the UI beneath the staff member's contact details.
 * Time slots are persisted in the data file.
 
@@ -488,7 +494,7 @@ the data from your previous Doritus home folder.
 | Action                 | Format, Examples                                                                                                                                                                                           |
 |------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Add student**        | `add n/NAME p/PHONE e/EMAIL u/USERNAME [t/TAG]…​` <br> e.g., `add n/James Ho p/82224345 e/jamesho@example.com u/jamesho t/friend`                                                                          |
-| **Add staff**          | `add staff n/NAME` or `add staff n/NAME p/PHONE e/EMAIL u/USERNAME pos/POSITION [t/TAG]…​` <br> e.g., `add staff n/Jane Smith` or `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors` |
+| **Add staff**          | `add staff n/NAME p/PHONE e/EMAIL u/USERNAME [pos/POSITION] [t/TAG]…​` <br> e.g., `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` or `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors` |
 | **List all**           | `list`                                                                                                                                                                                                     |
 | **List staff only**    | `staffslist`                                                                                                                                                                                               |
 | **List students only** | `studentslist`                                                                                                                                                                                             |

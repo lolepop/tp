@@ -33,8 +33,8 @@ public class TutorSlotCommand extends Command {
     public static final String MESSAGE_SUCCESS = "Added time slot to %1$s: %2$s";
     public static final String MESSAGE_NOT_TEACHING_STAFF =
             "The person at index %1$d is not a teaching staff member.";
-    public static final String MESSAGE_DUPLICATE_SLOT =
-            "This time slot already exists for this teaching staff member.";
+    public static final String MESSAGE_OVERLAPPING_SLOT =
+            "This time slot overlaps with an existing slot for this teaching staff member.";
 
     private static final Logger logger = LogsCenter.getLogger(TutorSlotCommand.class);
 
@@ -70,9 +70,10 @@ public class TutorSlotCommand extends Command {
                     String.format(MESSAGE_NOT_TEACHING_STAFF, targetIndex.getOneBased()));
         }
 
-        if (staff.getAvailability().contains(timeSlot)) {
-            logger.fine("Tutorslot rejected: duplicate slot " + timeSlot + " for " + staff.getName());
-            throw new CommandException(MESSAGE_DUPLICATE_SLOT);
+        boolean hasOverlap = staff.getAvailability().stream().anyMatch(existing -> existing.overlapsWith(timeSlot));
+        if (hasOverlap) {
+            logger.fine("Tutorslot rejected: overlapping slot " + timeSlot + " for " + staff.getName());
+            throw new CommandException(MESSAGE_OVERLAPPING_SLOT);
         }
 
         Set<TimeSlot> updatedSlots = new HashSet<>(staff.getAvailability());

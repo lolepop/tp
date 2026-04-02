@@ -18,8 +18,8 @@ if (Is person TeachingStaff?) then ([person is not TeachingStaff])
 else ([person is TeachingStaff])
 endif
 
-if (Does slot already exist?) then ([time slot already exists])
-    :Show error: duplicate slot;
+if (Does slot overlap an existing slot?) then ([overlap detected])
+    :Show error: overlapping slot;
     stop
 else ([slot is new])
 endif

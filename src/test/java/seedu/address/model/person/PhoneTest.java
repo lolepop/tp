@@ -41,11 +41,16 @@ public class PhoneTest {
         assertFalse(Phone.isValidPhone("a1234567")); // letter at start
         assertFalse(Phone.isValidPhone("00000000 ")); // trailing space
         assertFalse(Phone.isValidPhone(" 00000000")); // leading space
+        assertFalse(Phone.isValidPhone("09123456")); // starts with 0
+        assertFalse(Phone.isValidPhone("11111111")); // starts with 1
+        assertFalse(Phone.isValidPhone("22222222")); // starts with 2
+        assertFalse(Phone.isValidPhone("77777777")); // starts with 7
 
         // valid phone numbers
         assertTrue(Phone.isValidPhone("93121534")); // exactly 8 digits
-        assertTrue(Phone.isValidPhone("12345678"));
-        assertTrue(Phone.isValidPhone("00000000")); // all zeros
+        assertTrue(Phone.isValidPhone("61234567"));
+        assertTrue(Phone.isValidPhone("31234567"));
+        assertTrue(Phone.isValidPhone("81234567"));
         assertTrue(Phone.isValidPhone("99999999")); // all nines
     }
 

@@ -119,4 +119,16 @@ public class TimeSlotTest {
         assertTrue(mon.compareTo(tue) < 0);
         assertEquals(0, mon.compareTo(new TimeSlot("mon-10-12")));
     }
+
+    @Test
+    public void overlapsWith() {
+        TimeSlot a = new TimeSlot("mon-10-12");
+        TimeSlot b = new TimeSlot("mon-11-13");
+        TimeSlot c = new TimeSlot("mon-12-14");
+        TimeSlot d = new TimeSlot("tue-10-12");
+
+        assertTrue(a.overlapsWith(b));
+        assertFalse(a.overlapsWith(c));
+        assertFalse(a.overlapsWith(d));
+    }
 }
