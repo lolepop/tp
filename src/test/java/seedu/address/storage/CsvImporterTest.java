@@ -294,7 +294,7 @@ public class CsvImporterTest {
     }
 
     @Test
-    public void importContacts_emptyCsvFile_throwsEOFException() throws IOException {
+    public void importContacts_emptyCsvFile_throwsEofException() throws IOException {
         Model model = new ModelManager();
         String csv = "";
 
