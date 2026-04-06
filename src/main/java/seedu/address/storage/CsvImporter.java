@@ -2,6 +2,7 @@ package seedu.address.storage;
 
 import static java.util.Objects.requireNonNull;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -25,6 +26,7 @@ import seedu.address.model.person.Username;
 import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.TagFactory;
 import seedu.address.storage.exceptions.DeserialisePersonException;
+import seedu.address.storage.exceptions.InvalidHeaderRowException;
 
 
 /**
@@ -46,14 +48,25 @@ public class CsvImporter {
      *                                    such as:
      *                                    - the file path does not exist
      *                                    - permission denied for reading from the file
+     * @throws EOFException               if the file is empty
+     * @throws InvalidHeaderRowException  if given csv file has invalid header row, i.e not {@value CsvExporter#HEADERS}
      * @throws DeserialisePersonException if unable to deserialise string representation of a Person
      * @throws InvalidPathException       if the file path is invalid
      * @throws NullPointerException       if the model is null
      */
-    public static void importContacts(Model model, String filePath) throws IOException, DeserialisePersonException {
+    public static void importContacts(Model model, String filePath)
+            throws IOException, InvalidHeaderRowException, DeserialisePersonException {
         requireNonNull(model);
         Path path = Paths.get(filePath);
         List<String> rawContactsData = Files.readAllLines(path);
+        if (rawContactsData.isEmpty()) {
+            String errMsg = String.format("%s is an empty file", filePath);
+            throw new EOFException(errMsg);
+        }
+        if (!rawContactsData.get(0).equals(CsvExporter.HEADERS.trim())) {
+            String errMsg = String.format("%s has invalid header row", filePath);
+            throw new InvalidHeaderRowException(errMsg);
+        }
         // skip header row
         rawContactsData = rawContactsData.subList(1, rawContactsData.size());
         for (String data : rawContactsData) {

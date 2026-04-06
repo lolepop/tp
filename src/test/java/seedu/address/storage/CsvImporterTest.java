@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static seedu.address.testutil.TypicalPersons.ALICE;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
+import java.io.EOFException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,6 +29,7 @@ import seedu.address.model.person.Username;
 import seedu.address.model.tag.AbstractTag;
 import seedu.address.model.tag.TagFactory;
 import seedu.address.storage.exceptions.DeserialisePersonException;
+import seedu.address.storage.exceptions.InvalidHeaderRowException;
 import seedu.address.testutil.PersonBuilder;
 
 public class CsvImporterTest {
@@ -248,7 +250,7 @@ public class CsvImporterTest {
     }
 
     @Test
-    public void importContacts_contactsAddedToModel_successful() throws IOException, DeserialisePersonException {
+    public void importContacts_contactsAddedToModel_successful() throws IOException {
         Model expectedModel = new ModelManager();
         expectedModel.addPerson(ALICE);
         expectedModel.addPerson(BOB);
@@ -278,5 +280,81 @@ public class CsvImporterTest {
 
         assertDoesNotThrow(() -> CsvImporter.importContacts(model, filePath.toString()));
         assertEquals(expectedModel, model);
+    }
+
+    @Test
+    public void importContacts_onlyValidHeaderRow_successful() throws IOException {
+        Model model = new ModelManager();
+        String csv = CsvExporter.HEADERS;
+
+        Path filePath = tempDir.resolve("contacts.csv");
+        Files.writeString(filePath, csv);
+
+        assertDoesNotThrow(() -> CsvImporter.importContacts(model, filePath.toString()));
+    }
+
+    @Test
+    public void importContacts_emptyCsvFile_throwsEOFException() throws IOException {
+        Model model = new ModelManager();
+        String csv = "";
+
+        Path filePath = tempDir.resolve("contacts.csv");
+        Files.writeString(filePath, csv);
+
+        assertThrows(EOFException.class, () -> CsvImporter.importContacts(model, filePath.toString()));
+    }
+
+    @Test
+    public void importContacts_invalidHeaderRow_throwsInvalidHeaderRowException() throws IOException {
+        Model model = new ModelManager();
+
+        String aliceCsvRep = "Student,";
+        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += ALICE.getPhone().value + ",";
+        aliceCsvRep += ALICE.getUsername().value + ",";
+        aliceCsvRep += ALICE.getEmail().value + ",";
+        aliceCsvRep += ALICE.getTags().stream().map(AbstractTag::getTagName).collect(Collectors.joining(";"));
+        aliceCsvRep += "\n";
+        String csv = "2we3r24g54123r4dknefbibrg\n" + aliceCsvRep;
+
+        Path filePath = tempDir.resolve("contacts.csv");
+        Files.writeString(filePath, csv);
+
+        assertThrows(InvalidHeaderRowException.class, () -> CsvImporter.importContacts(model, filePath.toString()));
+    }
+
+    @Test
+    public void importContacts_emptyHeaderRow_throwsInvalidHeaderRowException() throws IOException {
+        Model model = new ModelManager();
+        String aliceCsvRep = "Student,";
+        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += ALICE.getPhone().value + ",";
+        aliceCsvRep += ALICE.getUsername().value + ",";
+        aliceCsvRep += ALICE.getEmail().value + ",";
+        aliceCsvRep += ALICE.getTags().stream().map(AbstractTag::getTagName).collect(Collectors.joining(";"));
+        aliceCsvRep += "\n";
+        String csv = "\n" + aliceCsvRep;
+
+        Path filePath = tempDir.resolve("contacts.csv");
+        Files.writeString(filePath, csv);
+
+        assertThrows(InvalidHeaderRowException.class, () -> CsvImporter.importContacts(model, filePath.toString()));
+    }
+
+    @Test
+    public void importContacts_noHeaderRow_throwsInvalidHeaderRowException() throws IOException {
+        Model model = new ModelManager();
+        String aliceCsvRep = "Student,";
+        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += ALICE.getPhone().value + ",";
+        aliceCsvRep += ALICE.getUsername().value + ",";
+        aliceCsvRep += ALICE.getEmail().value + ",";
+        aliceCsvRep += ALICE.getTags().stream().map(AbstractTag::getTagName).collect(Collectors.joining(";"));
+        aliceCsvRep += "\n";
+
+        Path filePath = tempDir.resolve("contacts.csv");
+        Files.writeString(filePath, aliceCsvRep);
+
+        assertThrows(InvalidHeaderRowException.class, () -> CsvImporter.importContacts(model, filePath.toString()));
     }
 }
