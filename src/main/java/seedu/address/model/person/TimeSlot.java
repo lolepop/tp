@@ -11,12 +11,12 @@ import java.util.Objects;
 /**
  * Represents a tutor's availability time slot.
  * Format: DAY-START-END, e.g. "mon-10-12" means Monday 10:00 to 12:00.
- * Guarantees: immutable; is valid as declared in {@link #isValidTimeSlot(String)}
+ * Guarantees: immutable; is valid as declared in
+ * {@link #isValidTimeSlot(String)}
  */
 public class TimeSlot implements Comparable<TimeSlot> {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Time slots must be in format DAY-START-END, e.g. mon-10-12. "
+    public static final String MESSAGE_CONSTRAINTS = "Time slots must be in format DAY-START-END, e.g. mon-10-12. "
             + "DAY is mon/tue/wed/thu/fri/sat/sun. "
             + "START and END are hours (0-23), and START must be before END.";
 
@@ -27,8 +27,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
             "thu", DayOfWeek.THURSDAY,
             "fri", DayOfWeek.FRIDAY,
             "sat", DayOfWeek.SATURDAY,
-            "sun", DayOfWeek.SUNDAY
-    );
+            "sun", DayOfWeek.SUNDAY);
 
     private static final Map<DayOfWeek, String> DAY_ABBREV = Map.of(
             DayOfWeek.MONDAY, "mon",
@@ -37,8 +36,7 @@ public class TimeSlot implements Comparable<TimeSlot> {
             DayOfWeek.THURSDAY, "thu",
             DayOfWeek.FRIDAY, "fri",
             DayOfWeek.SATURDAY, "sat",
-            DayOfWeek.SUNDAY, "sun"
-    );
+            DayOfWeek.SUNDAY, "sun");
 
     public final DayOfWeek day;
     public final LocalTime start;

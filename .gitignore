@@ -25,3 +25,5 @@ docs/_site/
 /node_modules/
 data/
 *.csv
+
+.vscode/

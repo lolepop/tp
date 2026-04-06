@@ -9,11 +9,14 @@ import static seedu.address.testutil.TypicalPersons.BOB;
 import java.io.EOFException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.InvalidPathException;
 import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.model.Model;
@@ -356,5 +359,21 @@ public class CsvImporterTest {
         Files.writeString(filePath, aliceCsvRep);
 
         assertThrows(InvalidHeaderRowException.class, () -> CsvImporter.importContacts(model, filePath.toString()));
+    }
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS) // the paths here are only considered invalid in Windows, valid in Linux and MacOS
+    public void importContacts_windowsInvalidFilePath_throwsInvalidPathException() {
+        Model model = new ModelManager();
+        String invalidFilePath = "<bad>.csv";
+        assertThrows(InvalidPathException.class, () -> CsvImporter.importContacts(model, invalidFilePath));
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    public void importContacts_linuxAndMacInvalidFilePath_throwsInvalidPathException() {
+        Model model = new ModelManager();
+        String invalidFilePath = "invalid" + '\0' + ".csv";
+        assertThrows(InvalidPathException.class, () -> CsvImporter.importContacts(model, invalidFilePath));
     }
 }

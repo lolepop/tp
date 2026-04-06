@@ -2,12 +2,15 @@ package seedu.address.logic.commands;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -35,6 +38,43 @@ public class ExportCommandTest {
 
         String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
         assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    @EnabledOnOs({OS.WINDOWS})
+    public void execute_invalidFilePath_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        String invalidFilePath = "<bad>.csv";
+
+        ExportCommand exportCommand = new ExportCommand(invalidFilePath);
+
+        CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
+        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX})
+    public void execute_invalidFilePathLinux_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        // Test with null character which is invalid in Linux file paths
+        String invalidFilePath = "test" + '\0' + ".csv";
+
+        ExportCommand exportCommand = new ExportCommand(invalidFilePath);
+
+        CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
+        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
+    }
+
+    @Test
+    public void execute_missingDirectory_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        // Test with a path to a non-existent directory
+        String missingDirPath = "/nonexistent/directory/contacts.csv";
+
+        ExportCommand exportCommand = new ExportCommand(missingDirPath);
+
+        CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
+        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
     }
 
     @Test

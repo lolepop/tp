@@ -14,6 +14,8 @@ import java.nio.file.Path;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.io.TempDir;
 
 import seedu.address.logic.commands.exceptions.CommandException;
@@ -63,6 +65,33 @@ public class ImportCommandTest {
 
         String expectedMessage = String.format(ImportCommand.MESSAGE_SUCCESS, filePath);
         assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS) // the paths here are only considered invalid in Windows, valid in Linux and MacOS
+    public void execute_windowsInvalidFilePath_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        String invalidFilePath = "<bad>.csv";
+        ImportCommand importCommand = new ImportCommand(invalidFilePath);
+        assertThrows(
+                CommandException.class,
+                ImportCommand.MESSAGE_INVALID_PATH_EXCEPTION, () -> importCommand.execute(model)
+        );
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    public void execute_linuxAndMacInvalidFilePath_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        String invalidFilePath = "invalid" + '\0' + ".csv";
+        ImportCommand importCommand = new ImportCommand(invalidFilePath);
+        assertThrows(
+                CommandException.class,
+                ImportCommand.MESSAGE_INVALID_PATH_EXCEPTION, () -> importCommand.execute(model)
+        );
     }
 
     @Test

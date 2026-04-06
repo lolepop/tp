@@ -1,6 +1,7 @@
 package seedu.address.logic.commands;
 
 import java.io.IOException;
+import java.nio.file.InvalidPathException;
 import java.util.Objects;
 
 import seedu.address.commons.util.ToStringBuilder;
@@ -47,6 +48,8 @@ public class ExportCommand extends Command {
         try {
             String res = CsvExporter.exportContacts(model, filePath);
             return new CommandResult(String.format(MESSAGE_SUCCESS, res));
+        } catch (InvalidPathException e) {
+            throw new CommandException(MESSAGE_IO_EXCEPTION);
         } catch (IOException e) {
             throw new CommandException(MESSAGE_IO_EXCEPTION);
         }
