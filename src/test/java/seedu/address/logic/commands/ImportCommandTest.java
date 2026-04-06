@@ -70,10 +70,23 @@ public class ImportCommandTest {
 
     @Test
     @EnabledOnOs(OS.WINDOWS) // the paths here are only considered invalid in Windows, valid in Linux and MacOS
-    public void execute_windowsInvalidFilePath_throwsCommandException() throws CommandException {
+    public void execute_windowsInvalidFilePath_throwsCommandException() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
         String invalidFilePath = "<bad>.csv";
+        ImportCommand importCommand = new ImportCommand(invalidFilePath);
+        assertThrows(
+                CommandException.class,
+                ImportCommand.MESSAGE_INVALID_PATH_EXCEPTION, () -> importCommand.execute(model)
+        );
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    public void execute_linuxAndMacInvalidFilePath_throwsCommandException() {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        String invalidFilePath = "invalid" + '\0' + ".csv";
         ImportCommand importCommand = new ImportCommand(invalidFilePath);
         assertThrows(
                 CommandException.class,

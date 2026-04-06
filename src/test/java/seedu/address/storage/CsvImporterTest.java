@@ -368,4 +368,12 @@ public class CsvImporterTest {
         String invalidFilePath = "<bad>.csv";
         assertThrows(InvalidPathException.class, () -> CsvImporter.importContacts(model, invalidFilePath));
     }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC})
+    public void importContacts_linuxAndMacInvalidFilePath_throwsInvalidPathException() {
+        Model model = new ModelManager();
+        String invalidFilePath = "invalid" + '\0' + ".csv";
+        assertThrows(InvalidPathException.class, () -> CsvImporter.importContacts(model, invalidFilePath));
+    }
 }
