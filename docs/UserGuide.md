@@ -413,7 +413,7 @@ Format: `exit`
 
 ### Exporting contacts : `export`
 
-Exports all contacts in the address book to a CSV file. This allows you to share or back up your contacts data.
+Exports all contacts currently listed in the address book to a CSV file. This allows you to share or back up your contacts data.
 
 **Format:** `export [f/FILE_PATH]`
 
