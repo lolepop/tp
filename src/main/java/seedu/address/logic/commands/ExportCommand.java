@@ -24,6 +24,7 @@ public class ExportCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "Exported successfully to %s";
     public static final String MESSAGE_IO_EXCEPTION = "Error occurred while writing to file";
+    public static final String MESSAGE_INVALID_PATH_EXCEPTION = "Error occurred, invalid file path given";
 
     private final String filePath;
 
@@ -37,7 +38,8 @@ public class ExportCommand extends Command {
     }
 
     /**
-     * Executes the export command by exporting all contacts to the specified file path.
+     * Executes the export command by exporting all contacts to the specified file
+     * path.
      *
      * @param model the model containing the address book data
      * @return a CommandResult with the export success message

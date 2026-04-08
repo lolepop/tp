@@ -424,7 +424,7 @@ Exports all contacts currently listed in the address book to a CSV file. This al
 
 **Behavior:**
 
-* Exports all contacts (both students and teaching staff) in the current address book to a CSV file.
+* Exports all contacts currently listed (both students and teaching staff) in the current address book to a CSV file.
 * If the file already exists, it will be overwritten.
 * The CSV file includes contact details such as name, phone, email, username, position, and tags.
 

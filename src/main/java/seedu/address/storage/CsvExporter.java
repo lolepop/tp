@@ -101,7 +101,7 @@ public class CsvExporter {
         } else {
             sb.append("Student" + ",");
         }
-        sb.append(person.getName() + ",");
+        sb.append(String.format("\"%s\",", person.getName()));
         sb.append(person.getPhone() + ",");
         sb.append(person.getUsername() + ",");
         sb.append(person.getEmail() + ",");

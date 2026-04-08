@@ -53,7 +53,7 @@ public class ExportCommandTest {
     }
 
     @Test
-    @EnabledOnOs({OS.LINUX})
+    @EnabledOnOs({OS.LINUX, OS.MAC})
     public void execute_invalidFilePathLinux_throwsCommandException() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         // Test with null character which is invalid in Linux file paths

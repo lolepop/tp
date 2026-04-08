@@ -45,7 +45,7 @@ public class CsvExporterTest {
 
         String csv = CsvExporter.convertToCsv(student);
 
-        assertEquals("Student,John Doe,91234567,johndoe,john@example.com,", csv);
+        assertEquals("Student,\"John Doe\",91234567,johndoe,john@example.com,", csv);
     }
 
     @Test
@@ -59,7 +59,7 @@ public class CsvExporterTest {
                 .build();
 
         String csv = CsvExporter.convertToCsv(student);
-        assertEquals("Student,Alice Smith,81234567,alicesmith,alice@example.com,cs2103;tutee", csv);
+        assertEquals("Student,\"Alice Smith\",81234567,alicesmith,alice@example.com,cs2103;tutee", csv);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class CsvExporterTest {
 
         String csv = CsvExporter.convertToCsv(staff);
 
-        assertEquals("Teaching Assistant,Prof Benson,87654321,profbenson,prof@example.com,,", csv);
+        assertEquals("Teaching Assistant,\"Prof Benson\",87654321,profbenson,prof@example.com,,", csv);
     }
 
     @Test
@@ -197,7 +197,7 @@ public class CsvExporterTest {
 
         String csv = CsvExporter.convertToCsv(person);
         // Verify CSV format contains all required fields in correct order
-        assertEquals("Student,Test Person,81234567,testuser,test@example.com,tag1", csv);
+        assertEquals("Student,\"Test Person\",81234567,testuser,test@example.com,tag1", csv);
     }
 
     @Test
