@@ -306,7 +306,7 @@ Appends tags to an existing person, without having to respecify all existing tag
 Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
 **Format:**
-`find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...] [u/USERNAME [USERNAMES]...]`
+`find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...] [u/USERNAME [USERNAMES]...] [p/PHONE_SEQUENCE [PHONE_SEQUENCEs]...]`
 
 **Note:** At least one keyword or tag must be provided.
 
@@ -327,6 +327,10 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 * **Username search:** Keywords match against person username (case-insensitive)
     * Persons matching at least one keyword will be returned (i.e. `OR` search)
     * Keywords is matched using substring e.g. `ice` will match `alice`
+
+* **Phone Sequence search:** Sequence match against person phone (numeric only)
+    * Persons phone matching at least one sequence will be returned (i.e. `OR` search)
+    * Keywords is matched using substring e.g. `456` will match `91234567`
 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least
   one tag (i.e. `AND` between name and tag criteria)
@@ -494,20 +498,20 @@ the data from your previous Doritus home folder.
 
 ## Command summary
 
-| Action                 | Format, Examples                                                                                                                                                                                           |
-|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Add student**        | `add n/NAME p/PHONE e/EMAIL u/USERNAME [t/TAG]…​` <br> e.g., `add n/James Ho p/82224345 e/jamesho@example.com u/jamesho t/friend`                                                                          |
+| Action                 | Format, Examples                                                                                                                                                                                                                 |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Add student**        | `add n/NAME p/PHONE e/EMAIL u/USERNAME [t/TAG]…​` <br> e.g., `add n/James Ho p/82224345 e/jamesho@example.com u/jamesho t/friend`                                                                                                |
 | **Add staff**          | `add staff n/NAME p/PHONE e/EMAIL u/USERNAME [pos/POSITION] [t/TAG]…​` <br> e.g., `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` or `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors` |
-| **List all**           | `list`                                                                                                                                                                                                     |
-| **List staff only**    | `staffslist`                                                                                                                                                                                               |
-| **List students only** | `studentslist`                                                                                                                                                                                             |
-| **Tutor slot**         | `tutorslot INDEX SLOT` <br> e.g., `tutorslot 1 mon-10-12`                                                                                                                                                  |
-| **Tutor dashboard**    | `tutordashboard`                                                                                                                                                                                           |
-| **Edit**               | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [u/USERNAME] [pos/POSITION] [t/TAG]…​` <br> e.g., `edit 2 n/James Lee e/jameslee@example.com` or `edit 1 pos/Professors` (staff only)                             |
-| **Find**               | `find KEYWORD [MORE_KEYWORDS]` <br> e.g., `find James Jake`                                                                                                                                                |
-| **Delete**             | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students)                                                                                                                   |
-| **Clear**              | `clear`                                                                                                                                                                                                    |
-| **Import**             | `import f/FILE` <br> e.g., `import f/./contacts.csv`                                                                                                                                                       |
-| **Export**             | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv`                                                                                                                                      |
-| **Help**               | `help`                                                                                                                                                                                                     |
-| **Exit**               | `exit`                                                                                                                                                                                                     |
+| **List all**           | `list`                                                                                                                                                                                                                           |
+| **List staff only**    | `staffslist`                                                                                                                                                                                                                     |
+| **List students only** | `studentslist`                                                                                                                                                                                                                   |
+| **Tutor slot**         | `tutorslot INDEX SLOT` <br> e.g., `tutorslot 1 mon-10-12`                                                                                                                                                                        |
+| **Tutor dashboard**    | `tutordashboard`                                                                                                                                                                                                                 |
+| **Edit**               | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [u/USERNAME] [pos/POSITION] [t/TAG]…​` <br> e.g., `edit 2 n/James Lee e/jameslee@example.com` or `edit 1 pos/Professors` (staff only)                                                   |
+| **Find**               | `find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...] [u/USERNAME [USERNAMES]...] [p/PHONE_SEQUENCE [PHONE_SEQUENCES]...]` <br> e.g., `find James Jake t/friends e/james u/jake p/123`            |
+| **Delete**             | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students)                                                                                                                                         |
+| **Clear**              | `clear`                                                                                                                                                                                                                          |
+| **Import**             | `import f/FILE` <br> e.g., `import f/./contacts.csv`                                                                                                                                                                             |
+| **Export**             | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv`                                                                                                                                                            |
+| **Help**               | `help`                                                                                                                                                                                                                           |
+| **Exit**               | `exit`                                                                                                                                                                                                                           |
