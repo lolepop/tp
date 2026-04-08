@@ -24,7 +24,7 @@ import seedu.address.testutil.PersonBuilder;
 public class PersonDeserialiserTest {
 
     @Test
-    public void deserialisePerson_studentStrRepWithoutTags_returnsValidPerson() {
+    public void deserialise_studentStrRepWithoutTags_returnsValidPerson() {
         String studentStrRep = "Student,\"John Doe\",91234567,johndoe,john@example.com,";
         PersonDeserialiser deserialiser = new PersonDeserialiser(studentStrRep);
         Person student = assertDoesNotThrow(() -> deserialiser.deserialise(),
@@ -41,7 +41,7 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_studentStrRepWithTags_returnsValidPerson() {
+    public void deserialise_studentStrRepWithTags_returnsValidPerson() {
         String studentStrRep = "Student,\"Alice Smith\",81234567,alicesmith,alice@example.com,cs2103;tutee";
         PersonDeserialiser deserialiser = new PersonDeserialiser(studentStrRep);
         Person student = assertDoesNotThrow(() -> deserialiser.deserialise(),
@@ -58,7 +58,7 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_teachingStaffNoAvailNoTags_returnsValidTeachingStaff() {
+    public void deserialise_teachingStaffNoAvailNoTags_returnsValidTeachingStaff() {
         String staffStrRep = "Teaching Assistant,\"Prof Benson\",87654321,profbenson,prof@example.com,,";
         PersonDeserialiser deserialiser = new PersonDeserialiser(staffStrRep);
         Person staff = assertDoesNotThrow(() -> deserialiser.deserialise(),
@@ -75,7 +75,7 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_teachingStaffNoAvailWithTags_returnsValidTeachingStaff() {
+    public void deserialise_teachingStaffNoAvailWithTags_returnsValidTeachingStaff() {
         String staffStrRep = "Teaching Assistant,\"Prof Benson\",87654321,profbenson,prof@example.com,cs2103;tutee,";
         PersonDeserialiser deserialiser = new PersonDeserialiser(staffStrRep);
         Person staff = assertDoesNotThrow(() -> deserialiser.deserialise(),
@@ -92,7 +92,7 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_teachingStaffWithAvailNoTags_returnsValidTeachingStaff() {
+    public void deserialise_teachingStaffWithAvailNoTags_returnsValidTeachingStaff() {
         TimeSlot slot1 = new TimeSlot("mon-10-12");
         TimeSlot slot2 = new TimeSlot("wed-14-16");
         TeachingStaff expectedStaff = new TeachingStaff(
@@ -112,7 +112,7 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_teachingStaffWithAvailWithTags_returnsValidTeachingStaff() {
+    public void deserialise_teachingStaffWithAvailWithTags_returnsValidTeachingStaff() {
         TimeSlot slot1 = new TimeSlot("mon-10-12");
         TimeSlot slot2 = new TimeSlot("wed-14-16");
         TeachingStaff expectedStaff = new TeachingStaff(
@@ -133,49 +133,49 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_noPosField_throwsDeserialisePersonException() {
+    public void deserialise_noPosField_throwsDeserialisePersonException() {
         String personStrRep = "";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_noNameField_throwsDeserialisePersonException() {
+    public void deserialise_noNameField_throwsDeserialisePersonException() {
         String personStrRep = "Student";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_noPhoneField_throwsDeserialisePersonException() {
+    public void deserialise_noPhoneField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Prof Alice\"";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_noUsernameField_throwsDeserialisePersonException() {
+    public void deserialise_noUsernameField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Prof Alice\",91111111";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_noEmailField_throwsDeserialisePersonException() {
+    public void deserialise_noEmailField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Prof Alice\",91111111,profalice";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_emptyPosField_throwsDeserialisePersonException() {
+    public void deserialise_emptyPosField_throwsDeserialisePersonException() {
         String personStrRep = ",\"Prof Alice\",91111111,profalice,profalice@example.com,lecturer,mon-10-12;wed-14-16";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidPosField_throwsDeserialisePersonException() {
+    public void deserialise_invalidPosField_throwsDeserialisePersonException() {
         String personStrRep =
                 "invalid,\"Prof Alice\",91111111,profalice,profalice@example.com,lecturer,mon-10-12;wed-14-16";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
@@ -183,70 +183,70 @@ public class PersonDeserialiserTest {
     }
 
     @Test
-    public void deserialisePerson_emptyNameField_throwsDeserialisePersonException() {
+    public void deserialise_emptyNameField_throwsDeserialisePersonException() {
         String personStrRep = "Student,,91111111,profalice,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidNameField_throwsDeserialisePersonException() {
+    public void deserialise_invalidNameField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\" whitespaceAsFirstChar\",91111111,profalice,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_emptyPhoneField_throwsDeserialisePersonException() {
+    public void deserialise_emptyPhoneField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",,profalice,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidPhoneField_throwsDeserialisePersonException() {
+    public void deserialise_invalidPhoneField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",invalidphone,profalice,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_emptyUsernameField_throwsDeserialisePersonException() {
+    public void deserialise_emptyUsernameField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",91111111,,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidUsernameField_throwsDeserialisePersonException() {
+    public void deserialise_invalidUsernameField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",91111111,**invalidusername**,profalice@example.com,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_emptyEmailField_throwsDeserialisePersonException() {
+    public void deserialise_emptyEmailField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",91111111,profalice,,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidEmailField_throwsDeserialisePersonException() {
+    public void deserialise_invalidEmailField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",91111111,profalice,invalidemail,lecturer";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidTagField_throwsDeserialisePersonException() {
+    public void deserialise_invalidTagField_throwsDeserialisePersonException() {
         String personStrRep = "Student,\"Alice\",91111111,profalice,profalice@example.com,*not-alphanumeric";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
     }
 
     @Test
-    public void deserialisePerson_invalidTimeslotField_throwsDeserialisePersonException() {
+    public void deserialise_invalidTimeslotField_throwsDeserialisePersonException() {
         String personStrRep = "Professors,\"Alice\",91111111,profalice,profalice@example.com,lecturer,invalid-timeslot";
         PersonDeserialiser deserialiser = new PersonDeserialiser(personStrRep);
         assertThrows(DeserialisePersonException.class, () -> deserialiser.deserialise());
