@@ -39,7 +39,7 @@ public class ImportCommandTest {
     public void execute_validFilePath_success() throws CommandException {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         String aliceCsvRep = "Student,";
-        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += String.format("\"%s\",", ALICE.getName().fullName);
         aliceCsvRep += ALICE.getPhone().value + ",";
         aliceCsvRep += ALICE.getUsername().value + ",";
         aliceCsvRep += ALICE.getEmail().value + ",";
@@ -48,7 +48,7 @@ public class ImportCommandTest {
 
         TeachingStaff bob = (TeachingStaff) BOB;
         String bobCsvRep = bob.getPosition().value + ",";
-        bobCsvRep += bob.getName().fullName + ",";
+        bobCsvRep += String.format("\"%s\",", bob.getName().fullName);
         bobCsvRep += bob.getPhone().value + ",";
         bobCsvRep += bob.getUsername().value + ",";
         bobCsvRep += bob.getEmail().value + ",";
@@ -115,7 +115,7 @@ public class ImportCommandTest {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
         String aliceCsvRep = "Student,";
-        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += String.format("\"%s\",", ALICE.getName().fullName);
         aliceCsvRep += ALICE.getPhone().value + ",";
         aliceCsvRep += ALICE.getUsername().value + ",";
         aliceCsvRep += ALICE.getEmail().value + ",";
@@ -140,7 +140,7 @@ public class ImportCommandTest {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
         String aliceCsvRep = "Student,";
-        aliceCsvRep += ALICE.getName().fullName + ",";
+        aliceCsvRep += String.format("\"%s\",", ALICE.getName().fullName);
         aliceCsvRep += ALICE.getPhone().value + ",";
         aliceCsvRep += ALICE.getUsername().value + ",";
         aliceCsvRep += ALICE.getEmail().value + ",";
