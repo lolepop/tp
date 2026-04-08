@@ -8,7 +8,7 @@ a Command Line Interface** (CLI) while still having the benefits of a Graphical 
 fast, Doritus can get your contact management tasks done faster than traditional GUI apps.
 
 * Table of Contents
-{:toc}
+  {:toc}
 
 --------------------------------------------------------------------------------------------------------------------
 
@@ -331,7 +331,6 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least
   one tag (i.e. `AND` between name and tag criteria)
 
-
 **Examples:**
 
 * `find John` — Returns all persons with "John" in their name
@@ -382,7 +381,8 @@ This permanently deletes all contacts and cannot be undone. You will be asked to
 
 ### Double confirmation
 
-Some commands that are **irreversible** — currently `delete` and `clear` — require you to explicitly confirm before they are executed.
+Some commands that are **irreversible** — currently `delete` and `clear` — require you to explicitly confirm before they
+are executed.
 
 **How it works:**
 
@@ -399,7 +399,8 @@ Some commands that are **irreversible** — currently `delete` and `clear` — r
 
 * Typing `Y` executes the original command.
 * Typing `N` cancels the command and displays `Command Cancelled!`.
-* Entering any other command while a confirmation is pending will execute that command instead and **discard** the pending one.
+* Entering any other command while a confirmation is pending will execute that command instead and **discard** the
+  pending one.
 
 ---
 
@@ -413,7 +414,8 @@ Format: `exit`
 
 ### Exporting contacts : `export`
 
-Exports all contacts currently listed in the address book to a CSV file. This allows you to share or back up your contacts data.
+Exports all contacts currently listed in the address book to a CSV file. This allows you to share or back up your
+contacts data.
 
 **Format:** `export [f/FILE_PATH]`
 
@@ -449,6 +451,7 @@ Import contacts from the given file path of a .csv file.
 **Behavior:**
 
 * Only the contacts who are not currently in the address book will be added.
+* If an error occurs during the import, none of the contacts from the csv file will be added.
 
 **Examples:**
 
@@ -494,20 +497,20 @@ the data from your previous Doritus home folder.
 
 ## Command summary
 
-| Action                 | Format, Examples                                                                                                                                                                                           |
-|------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **Add student**        | `add n/NAME p/PHONE e/EMAIL u/USERNAME [t/TAG]…​` <br> e.g., `add n/James Ho p/82224345 e/jamesho@example.com u/jamesho t/friend`                                                                          |
+| Action                 | Format, Examples                                                                                                                                                                                                                 |
+|------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **Add student**        | `add n/NAME p/PHONE e/EMAIL u/USERNAME [t/TAG]…​` <br> e.g., `add n/James Ho p/82224345 e/jamesho@example.com u/jamesho t/friend`                                                                                                |
 | **Add staff**          | `add staff n/NAME p/PHONE e/EMAIL u/USERNAME [pos/POSITION] [t/TAG]…​` <br> e.g., `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` or `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors` |
-| **List all**           | `list`                                                                                                                                                                                                     |
-| **List staff only**    | `staffslist`                                                                                                                                                                                               |
-| **List students only** | `studentslist`                                                                                                                                                                                             |
-| **Tutor slot**         | `tutorslot INDEX SLOT` <br> e.g., `tutorslot 1 mon-10-12`                                                                                                                                                  |
-| **Tutor dashboard**    | `tutordashboard`                                                                                                                                                                                           |
-| **Edit**               | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [u/USERNAME] [pos/POSITION] [t/TAG]…​` <br> e.g., `edit 2 n/James Lee e/jameslee@example.com` or `edit 1 pos/Professors` (staff only)                             |
-| **Find**               | `find KEYWORD [MORE_KEYWORDS]` <br> e.g., `find James Jake`                                                                                                                                                |
-| **Delete**             | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students)                                                                                                                   |
-| **Clear**              | `clear`                                                                                                                                                                                                    |
-| **Import**             | `import f/FILE` <br> e.g., `import f/./contacts.csv`                                                                                                                                                       |
-| **Export**             | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv`                                                                                                                                      |
-| **Help**               | `help`                                                                                                                                                                                                     |
-| **Exit**               | `exit`                                                                                                                                                                                                     |
+| **List all**           | `list`                                                                                                                                                                                                                           |
+| **List staff only**    | `staffslist`                                                                                                                                                                                                                     |
+| **List students only** | `studentslist`                                                                                                                                                                                                                   |
+| **Tutor slot**         | `tutorslot INDEX SLOT` <br> e.g., `tutorslot 1 mon-10-12`                                                                                                                                                                        |
+| **Tutor dashboard**    | `tutordashboard`                                                                                                                                                                                                                 |
+| **Edit**               | `edit INDEX [n/NAME] [p/PHONE] [e/EMAIL] [u/USERNAME] [pos/POSITION] [t/TAG]…​` <br> e.g., `edit 2 n/James Lee e/jameslee@example.com` or `edit 1 pos/Professors` (staff only)                                                   |
+| **Find**               | `find KEYWORD [MORE_KEYWORDS]` <br> e.g., `find James Jake`                                                                                                                                                                      |
+| **Delete**             | `delete INDEX` <br> e.g., `delete 3` (index from current list: full, staff, or students)                                                                                                                                         |
+| **Clear**              | `clear`                                                                                                                                                                                                                          |
+| **Import**             | `import f/FILE` <br> e.g., `import f/./contacts.csv`                                                                                                                                                                             |
+| **Export**             | `export [f/FILE_PATH]` <br> e.g., `export` or `export f/contacts.csv`                                                                                                                                                            |
+| **Help**               | `help`                                                                                                                                                                                                                           |
+| **Exit**               | `exit`                                                                                                                                                                                                                           |
