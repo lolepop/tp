@@ -13,6 +13,9 @@ public class Phone {
     public static final String MESSAGE_CONSTRAINTS =
             "Phone numbers must be valid Singapore numbers: exactly 8 digits and starting with 3, 6, 8, or 9";
     public static final String VALIDATION_REGEX = "[3689]\\d{7}";
+
+    public static final String MESSAGE_FIND_PHONE_VALIDATE_ERROR = "Phone number sequence can contain up to 8 numbers";
+    public static final String FIND_SEQUENCE_REGEX = "\\d{1,8}";
     public final String value;
 
     /**

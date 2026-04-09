@@ -14,6 +14,8 @@ public class Username {
 
     public static final String VALIDATION_REGEX = "[a-zA-Z0-9]+";
 
+    public static final String MESSAGE_FIND_USERNAME_VALIDATE_ERROR =
+            "Usernames should only contain alphanumeric characters";
     public final String value;
 
     /**

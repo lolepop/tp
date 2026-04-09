@@ -17,6 +17,8 @@ public class Name {
      * Consecutive spaces are not allowed.
      */
     public static final String VALIDATION_REGEX = "[\\p{Alnum}]+(\\s[\\p{Alnum}]+)*";
+    public static final String MESSAGE_FIND_NAME_VALIDATE_ERROR =
+            "Names should only contain alphanumeric characters and single spaces";
 
     public final String fullName;
 
