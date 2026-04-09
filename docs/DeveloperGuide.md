@@ -10,7 +10,7 @@ title: Developer Guide
 
 ## **Acknowledgements**
 
-* Original codebase based off of [AB3](https://github.com/NUS-CS2103-AY2526-S2/tp)
+* Original codebase based on [AB3](https://github.com/NUS-CS2103-AY2526-S2/tp)
 * Libraries used
   * [Jackson](https://github.com/fasterxml/jackson)
   * [JUnit](https://junit.org/)
@@ -220,7 +220,7 @@ teaching staff.
 ### Tagging System
 `AbstractTag`s are optionally allowed to be added to any Person/TeachingStaff. These are further divided into two groups: `Tag` and `RestrictedTag`. (See [Model Component](#model-component))
 
-Either variant of tag can constructed using `TagFactory.create(tag)`. Which one created depends on the format of the tag provided. The following rule is utilised: a `RestrictedTag` will use `:` as a delimiter (e.g. tut:A10). Otherwise, it is treated as `Tag`.
+Either variant of tag can be constructed using `TagFactory.create(tag)`. Which one is created depends on the format of the tag provided. The following rule is utilised: a `RestrictedTag` will use `:` as a delimiter (e.g. tut:A10). Otherwise, it is treated as `Tag`.
 
 #### Tag Validation Flow
 - Tag: A simple Regex is used to determine if it is valid (alphanumeric only)
@@ -363,7 +363,7 @@ The feature is implemented across the following components:
 #### Overview
 
 The `import` command allows users to import contacts in the address book from a CSV file.
-This allows users to a way restore accidentally deleted contacts and to add multiple contacts quickly.
+This allows users to a way to restore accidentally deleted contacts and to add multiple contacts quickly.
 
 #### Implementation
 
@@ -395,7 +395,7 @@ The feature is implemented across the following components:
 
 * **Alternative 1 (current choice):** Place import logic in `CsvImporter` utility class in the storage component.
     * Pros: Able to test the logic for deserialisation and import easily and separately from the command execution.
-    * Cons: Storage component contains deserialisation logic which is outside the scope of responsbilities of the
+    * Cons: Storage component contains deserialisation logic which is outside the scope of responsibilities of the
       storage
       component.
 
@@ -413,7 +413,7 @@ Certain commands that are destructive or irreversible — currently `delete` and
 
 The feature introduces the following classes:
 
-* `CriticalCommand` — Marker interface. Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution.
+* `CriticalCommand` — Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution, and have a verification step before requiring confirmation.
 * `RequireConfirmationCommand` — Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
 * `AnswerConfirmationCommand` — Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
 * `CommandResult#isPending()` — Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
@@ -475,7 +475,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
 | `* *`    | professor that teach many students | sort persons by name or ID                             | locate a person easily                                                 |
 | `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
-| `* *`    | forgetful user                     | do fuzzy and partially maching search                  | locate a person without remembring the full name of that person        |
+| `* *`    | forgetful user                     | perform fuzzy and partially maching searchs                  | locate a person without remembering the full name of that person        |
 | `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
 | `* *`    | user                               | see contextual error messages when a command fails     | know what is the problem and fix it                                    |
 | `*`      | user                               | access my input history                                | run similar commands easily                                            |
@@ -875,6 +875,6 @@ Prerequisites: At least 1 person exists in the displayed list
         Expected: the tags `friend` and `course:CS2103T` will be added to the existing list of tags for the person located at index `1`. The course tag is colour-coded and will appear before `friend`.
 2. Reject invalid tag
     1. Test case: `tag-add frie,nd`
-        Expected: Commands fails, explaining that the provided tag's format only accepts alphanumeric characters
+        Expected: Command fails, explaining that the provided tag's format only accepts alphanumeric characters
     2. Test case: `tag-add course:CS2103TTT`
-        Expected: Commands fails, explaining that the provided tag's format is invalid and provides the allowed syntax for course
+        Expected: Command fails, explaining that the provided tag's format is invalid and provides the allowed syntax for course

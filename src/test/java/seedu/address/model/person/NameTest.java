@@ -53,6 +53,17 @@ public class NameTest {
         assertFalse(Name.isValidName("peter  ")); // trailing double space
         assertFalse(Name.isValidName("a  b  c")); // multiple double spaces throughout
         assertFalse(Name.isValidName("James2sad l    eeeee Ho")); // multiple spaces in middle
+        assertFalse(Name.isValidName("James,"));
+        assertFalse(Name.isValidName(",James"));
+        assertFalse(Name.isValidName(",James,"));
+        assertFalse(Name.isValidName("(James"));
+        assertFalse(Name.isValidName("James)"));
+        assertFalse(Name.isValidName("James /"));
+        assertFalse(Name.isValidName("James ("));
+        assertFalse(Name.isValidName("James )"));
+        assertFalse(Name.isValidName("James, "));
+        assertFalse(Name.isValidName("James' "));
+        assertFalse(Name.isValidName("James-"));
 
         // valid name
         assertTrue(Name.isValidName("peter jack")); // alphabets only with single space
@@ -62,6 +73,11 @@ public class NameTest {
         assertTrue(Name.isValidName("David Roger Jackson Ray Jr 2nd")); // long names with single spaces
         assertTrue(Name.isValidName("a")); // single character
         assertTrue(Name.isValidName("a b c d")); // multiple single spaces
+        assertTrue(Name.isValidName("Lily-Rose"));
+        assertTrue(Name.isValidName("David, Tan Ah Khow"));
+        assertTrue(Name.isValidName("Ronald O'Donald"));
+        assertTrue(Name.isValidName("Soh La Min (Su La Min)"));
+        assertTrue(Name.isValidName("Child S/O Father"));
     }
 
     @Test

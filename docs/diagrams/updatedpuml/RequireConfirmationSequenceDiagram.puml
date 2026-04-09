@@ -33,6 +33,8 @@ deactivate AddressBookParser
 LogicManager -> RequireConfirmationCommand : execute(m)
 activate RequireConfirmationCommand
 
+note over RequireConfirmationCommand : execute preConfirmationVerify(model) of innerCmd:CriticalCommand
+
 RequireConfirmationCommand -> Model : setPendingCommand(innerCmd)
 activate Model
 Model --> RequireConfirmationCommand

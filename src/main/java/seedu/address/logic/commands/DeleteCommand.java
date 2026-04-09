@@ -66,4 +66,14 @@ public class DeleteCommand extends Command implements CriticalCommand {
                 .add("targetIndex", targetIndex)
                 .toString();
     }
+
+    @Override
+    public void preConfirmationVerify(Model model) throws CommandException {
+        requireNonNull(model);
+        List<Person> lastShownList = model.getFilteredPersonList();
+
+        if (targetIndex.getZeroBased() >= lastShownList.size()) {
+            throw new CommandException(Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        }
+    }
 }

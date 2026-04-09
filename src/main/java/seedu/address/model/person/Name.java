@@ -9,16 +9,11 @@ import static seedu.address.commons.util.AppUtil.checkArgument;
  */
 public class Name {
 
-    public static final String MESSAGE_CONSTRAINTS =
-            "Names should only contain alphanumeric characters and single spaces, and it should not be blank";
+    public static final String MESSAGE_CONSTRAINTS = getNameConstraintsMessage();
 
-    /*
-     * The first character must not be a whitespace.
-     * Consecutive spaces are not allowed.
-     */
-    public static final String VALIDATION_REGEX = "[\\p{Alnum}]+(\\s[\\p{Alnum}]+)*";
-    public static final String MESSAGE_FIND_NAME_VALIDATE_ERROR =
-            "Names should only contain alphanumeric characters and single spaces";
+    public static final String VALIDATION_REGEX = initValidationRegex();
+
+    public static final String MESSAGE_FIND_NAME_VALIDATE_ERROR = getNameConstraintsMessage();
 
     public final String fullName;
 
@@ -31,6 +26,30 @@ public class Name {
         requireNonNull(name);
         checkArgument(isValidName(name), MESSAGE_CONSTRAINTS);
         fullName = name;
+    }
+
+    private static String initValidationRegex() {
+        String mid = "[a-zA-Z0-9/,']";
+
+        String segment = "[a-zA-Z0-9](?:" + "(?:" + mid + "|(?:[ -](?![ -])))*" + "[a-zA-Z0-9])?";
+
+        return "^" + segment + "(?: \\(" + segment + "\\))?$";
+    }
+
+    private static String getNameConstraintsMessage() {
+        return "Constraints for names:\n"
+                + "- Use only letters, numbers, and symbols: / , - ' ( )\n"
+                + "- Cannot be empty or only whitespace.\n"
+                + "- Use only a single space or hyphen between words.\n"
+                + "- Must only start and end with alphanumeric character.\n"
+                + "- Parentheses must be at the end, properly ordered (), and non-empty.\n"
+                + "- Examples:\n"
+                + "  - John Doe\n"
+                + "  - David, Tan Ah Khow\n"
+                + "  - Lily-Rose\n"
+                + "  - Ronald O'Donald\n"
+                + "  - Soh La Min (Su La Min)\n"
+                + "  - Child S/O Father";
     }
 
     /**

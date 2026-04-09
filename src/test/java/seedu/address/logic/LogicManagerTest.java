@@ -1,6 +1,8 @@
 package seedu.address.logic;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.Messages.MESSAGE_UNKNOWN_COMMAND;
 import static seedu.address.logic.commands.CommandTestUtil.EMAIL_DESC_AMY;
@@ -18,9 +20,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
+import seedu.address.commons.core.GuiSettings;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.commands.AnswerConfirmationCommand;
+import seedu.address.logic.commands.Command;
 import seedu.address.logic.commands.CommandResult;
+import seedu.address.logic.commands.DeleteCommand;
 import seedu.address.logic.commands.ListCommand;
 import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.logic.parser.exceptions.ParseException;
@@ -86,6 +91,82 @@ public class LogicManagerTest {
     @Test
     public void getFilteredPersonList_modifyList_throwsUnsupportedOperationException() {
         assertThrows(UnsupportedOperationException.class, () -> logic.getFilteredPersonList().remove(0));
+    }
+
+    @Test
+    public void execute_parseExceptionWhilePendingCommand_clearsPendingCommand() {
+        // Arrange: manually set a pending command in the model
+        model.setPendingCommand(new ListCommand());
+
+        // Act: execute an invalid command that triggers a ParseException
+        assertThrows(ParseException.class, () -> logic.execute("uicfhmowqewca"));
+
+        // Assert: the pending command must have been cleared
+        assertNull(model.getPendingCommand());
+    }
+
+    @Test
+    public void execute_commandExceptionWhilePendingCommand_clearsPendingCommand() {
+        // Arrange: set a pending command that will throw CommandException when executed
+        Command throwingCommand = new Command() {
+            @Override
+            public CommandResult execute(Model m) throws CommandException {
+                throw new CommandException("forced failure");
+            }
+        };
+        model.setPendingCommand(throwingCommand);
+
+        // Act: "Y" triggers AnswerConfirmationCommand which calls the throwing pending command
+        assertThrows(CommandException.class, () -> logic.execute(AnswerConfirmationCommand.COMMAND_WORD_YES));
+
+        // Assert: the pending command must have been cleared
+        assertNull(model.getPendingCommand());
+    }
+
+    @Test
+    public void execute_pendingResult_doesNotClearPendingCommand() throws Exception {
+        // Arrange: add a person so that delete 1 is a valid index
+        model.addPerson(new PersonBuilder(AMY).build());
+
+        // Act: execute delete 1 — returns a pending CommandResult
+        logic.execute(DeleteCommand.COMMAND_WORD + " 1");
+
+        // Assert: pending command must still be set (not cleared)
+        assertNotNull(model.getPendingCommand());
+    }
+
+    @Test
+    public void execute_nonPendingResult_clearsPendingCommand() throws Exception {
+        // Arrange: manually set a pending command
+        model.setPendingCommand(new ListCommand());
+
+        // Act: execute a normal (non-pending) command
+        logic.execute(ListCommand.COMMAND_WORD);
+
+        // Assert: the pending command must have been cleared
+        assertNull(model.getPendingCommand());
+    }
+
+    @Test
+    public void getAddressBook_returnsModelAddressBook() {
+        assertEquals(model.getAddressBook(), logic.getAddressBook());
+    }
+
+    @Test
+    public void getAddressBookFilePath_returnsModelFilePath() {
+        assertEquals(model.getAddressBookFilePath(), logic.getAddressBookFilePath());
+    }
+
+    @Test
+    public void getGuiSettings_returnsModelGuiSettings() {
+        assertEquals(model.getGuiSettings(), logic.getGuiSettings());
+    }
+
+    @Test
+    public void setGuiSettings_updatesModelGuiSettings() {
+        GuiSettings newSettings = new GuiSettings(800, 600, 10, 20);
+        logic.setGuiSettings(newSettings);
+        assertEquals(newSettings, model.getGuiSettings());
     }
 
     /**

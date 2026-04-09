@@ -44,12 +44,16 @@ public class LogicManager implements Logic {
 
     @Override
     public CommandResult execute(String commandText) throws CommandException, ParseException {
-        logger.info("----------------[USER COMMAND][" + commandText + "]");
-
         CommandResult commandResult;
-        Command command = addressBookParser.parseCommand(commandText);
-
-        commandResult = command.execute(model);
+        try {
+            logger.info("----------------[USER COMMAND][" + commandText + "]");
+            Command command = addressBookParser.parseCommand(commandText);
+            commandResult = command.execute(model);
+        } catch (Exception e) {
+            model.setPendingCommand(null);
+            throw e;
+        }
+        assert commandResult != null;
 
         if (!commandResult.isPending()) {
             model.setPendingCommand(null);

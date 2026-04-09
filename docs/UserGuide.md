@@ -14,7 +14,7 @@ fast, Doritus can get your contact management tasks done faster than traditional
 
 ## Quick start
 
-1. Ensure you have Java `17` or above installed in your Computer.<br>
+1. Ensure you have Java `17` or above installed on your Computer.<br>
    **Mac users:** Ensure you have the precise JDK version
    prescribed [here](https://se-education.org/guides/tutorials/javaInstallationMac.html).
 
@@ -125,7 +125,20 @@ Adds a student to the address book.
 
 **Parameters:**
 
-* `NAME`: Alphanumeric characters and single spaces only (cannot be blank; consecutive spaces not allowed).
+* `NAME`: Required.
+    * Constraints for names:
+        * Use only letters, numbers, and symbols: `/`, `,`, `-`, `'`, `(` and `)`
+        * Cannot be empty or only whitespace.
+        * Use only a single space or hyphen between words.
+        * Must only start and end with alphanumeric character, i.e, no trailing non-alphanumeric characters.
+        * Parentheses must be at the end, properly ordered, i.e, open bracket `(` must always be followed with close bracket `)`, and non-empty.
+    * Valid Examples:
+        * John Doe
+        * David, Tan Ah Khow
+        * Lily-Rose
+        * Ronald O'Donald
+        * Soh La Min (Su La Min)
+        * Child S/O Father
 * `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
 * `EMAIL`: Valid email format. Must be unique.
 * `USERNAME`: Alphanumeric characters only (no spaces or special characters). Must be unique.
@@ -148,7 +161,20 @@ Adds a teaching staff (tutor) to the address book.
 
 **Parameters:**
 
-* `NAME`: Required. Alphanumeric characters and single spaces only (cannot be blank; consecutive spaces not allowed).
+* `NAME`: Required.
+  * Constraints for names:
+    * Use only letters, numbers, and symbols: `/`, `,`, `-`, `'`, `(` and `)`
+    * Cannot be empty or only whitespace.
+    * Use only a single space or hyphen between words. 
+    * Must only start and end with alphanumeric character, i.e, no trailing non-alphanumeric characters. 
+    * Parentheses must be at the end, properly ordered, i.e, open bracket `(` must always be followed with close bracket `)`, and non-empty.
+  * Valid Examples:
+    * John Doe 
+    * David, Tan Ah Khow 
+    * Lily-Rose 
+    * Ronald O'Donald 
+    * Soh La Min (Su La Min)
+    * Child S/O Father
 * `p/`, `e/`, `u/`: Required.
 * `pos/`: Optional.
 * `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
@@ -278,7 +304,7 @@ Edits an existing person in the address book. For teaching staff, you can also c
 
 ---
 
-### Adding tags to a person
+### Adding tags to a person : `tag-add`
 
 Appends tags to an existing person, without having to respecify all existing tags
 
@@ -403,7 +429,7 @@ Some commands that are **irreversible** — currently `delete` and `clear` — r
 
 * Typing `Y` executes the original command.
 * Typing `N` cancels the command and displays `Command Cancelled!`.
-* Entering any other command while a confirmation is pending will execute that command instead and **discard** the pending one.
+* Submitting any input while a command is pending (i.e. waiting for confirmation) will **discard** the pending command.
 
 ---
 
@@ -463,7 +489,7 @@ Import contacts from the given file path of a .csv file.
 
 ### Saving the data
 
-Doritus data are saved in the hard disk automatically after any command that changes the data. There is no need to save
+Doritus' data is saved on the hard disk automatically after any command that changes the data. There is no need to save
 manually.
 
 ### Editing the data file
