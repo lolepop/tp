@@ -116,7 +116,7 @@ public class EditCommand extends Command {
         if (personToEdit instanceof TeachingStaff staff) {
             Position updatedPosition = editPersonDescriptor.getPosition().orElse(staff.getPosition());
             return new TeachingStaff(updatedName, updatedPhone, updatedEmail,
-                    updatedUsername, updatedPosition, updatedTags);
+                    updatedUsername, updatedPosition, updatedTags, staff.getAvailability());
         }
 
         return new Person(updatedName, updatedPhone, updatedEmail, updatedUsername, updatedTags);

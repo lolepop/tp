@@ -193,7 +193,7 @@ public non-sealed class TeachingStaff extends Person {
 
     @Override
     protected Person clone() {
-        return new TeachingStaff(name, phone, email, username, position, new HashSet<>(tags));
+        return new TeachingStaff(name, phone, email, username, position, new HashSet<>(tags), availability);
     }
 
     /**
