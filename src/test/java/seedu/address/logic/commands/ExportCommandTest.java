@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -110,6 +112,24 @@ public class ExportCommandTest {
 
         String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
         assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_ioExceptionThrown_throwsCommandException() throws IOException {
+        // Create a regular file, then try to treat it as a parent directory
+        Path blocker = tempDir.resolve("blocker");
+        Files.writeString(blocker, "not a directory");
+
+        // This path asks for "blocker" to be a directory — it isn't, so
+        // createDirectories fails
+        String badPath = blocker.resolve("contacts.csv").toString();
+
+        ExportCommand command = new ExportCommand(badPath);
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        CommandException thrown = assertThrows(CommandException.class,
+                () -> command.execute(model));
+        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
     }
 
     @Test
