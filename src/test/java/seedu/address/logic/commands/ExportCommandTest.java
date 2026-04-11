@@ -127,8 +127,7 @@ public class ExportCommandTest {
         ExportCommand command = new ExportCommand(badPath);
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
 
-        CommandException thrown = assertThrows(CommandException.class,
-                () -> command.execute(model));
+        CommandException thrown = assertThrows(CommandException.class, () -> command.execute(model));
         assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
     }
 
