@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_USERNAME;
@@ -41,17 +42,18 @@ public class FindCommand extends Command {
     public static final String COMMAND_WORD = "find";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons who meets the following conditions:"
-            + "\n 1. name contains any of the specified keywords.\n"
+            + "\n 1. name contains any of the specified NAME keywords.\n"
             + " 2. username contains any of the specified username keywords. Each defined with " + PREFIX_USERNAME
-            + " 3. phone contains any of the specified sequence. Each defined with " + PREFIX_PHONE + ".\n"
+            + ".\n 3. phone contains any of the specified sequence. Each defined with " + PREFIX_PHONE + ".\n"
             + " 4. person who have the exact tags. Each defined with " + PREFIX_TAG + ".\n"
             + "Parameters: "
-            + "[KEYWORD [MORE_KEYWORDS]...] "
+            + "[" + PREFIX_NAME + "NAME [MORE_NAMES]...] "
             + "[" + PREFIX_EMAIL + "EMAIL [MORE_EMAIL]...] "
             + "[" + PREFIX_USERNAME + "USERNAME [MORE_USERNAMES]...] "
             + "[" + PREFIX_PHONE + "PHONE [MORE_PHONES]...] "
             + "[" + PREFIX_TAG + "TAG [MORE_TAGS]...]\n"
             + "Note: At least one of KEYWORD, EMAIL, USERNAME, PHONE or TAG must be provided.\n"
+            + "      Name keywords should not start or end with a symbol"
             + "Example: " + COMMAND_WORD + " alice bob " + PREFIX_TAG + "friends " + PREFIX_EMAIL + "email "
             + PREFIX_USERNAME + "username1 " + PREFIX_USERNAME + "username2 " + PREFIX_PHONE + "9123";
 
@@ -153,6 +155,8 @@ public class FindCommand extends Command {
         }
 
         public void setName(Set<String> name) {
+            name = cleanArgs(name, "^[^/\\-,'()](.*[^/\\-,'()])?$", String.format("%s%n%s",
+                    "Name keyword should not end with a symbol", MESSAGE_USAGE));
             name = cleanArgs(name, Name.VALIDATION_REGEX, Name.MESSAGE_FIND_NAME_VALIDATE_ERROR);
             if (!name.isEmpty()) {
                 this.name = name;
