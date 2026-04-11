@@ -98,7 +98,11 @@ public class AddressBookParser {
             return new ClearCommand();
 
         case FindCommand.COMMAND_WORD:
-            return new FindCommandParser().parse(arguments);
+            try {
+                return new FindCommandParser().parse(arguments);
+            } catch (IllegalArgumentException e) {
+                throw new ParseException(e.getMessage());
+            }
 
         case ListCommand.COMMAND_WORD:
             return new ListCommand();
