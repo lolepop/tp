@@ -155,9 +155,8 @@ public class FindCommand extends Command {
         }
 
         public void setName(Set<String> name) {
-            name = cleanArgs(name, "^[^/\\-,'()](.*[^/\\-,'()])?$", String.format("%s%n%s",
-                    "Name keyword should not end with a symbol", MESSAGE_USAGE));
-            name = cleanArgs(name, Name.VALIDATION_REGEX, Name.MESSAGE_FIND_NAME_VALIDATE_ERROR);
+            name = cleanArgs(name, Name.VALIDATION_REGEX, String.format("%s%n%s", "Name keyword violates constraints.",
+                    Name.MESSAGE_FIND_NAME_VALIDATE_ERROR));
             if (!name.isEmpty()) {
                 this.name = name;
             }
