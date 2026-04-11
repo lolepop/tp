@@ -137,14 +137,22 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_argsWithEmptyValues_returnsFindCommand() {
-        // Only empty values
+        // Only empty values (one arg)
         assertParseFailure(parser, " p/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         assertParseFailure(parser, " e/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         assertParseFailure(parser, " u/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
-        assertParseFailure(parser, " p/ e/ u/",
+
+        // Only empty values (two args)
+        assertParseFailure(parser, " p/ e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " p/ u/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+
+        // Only empty values (three args)
+        assertParseFailure(parser, " p/ u/ e/",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
 
         FindPersonDescriptor fd = new FindPersonDescriptor();
