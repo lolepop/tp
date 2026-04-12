@@ -113,8 +113,12 @@ fast, Doritus can get your contact management tasks done faster than traditional
 - Special tags: these tags follow a specific format:
     - Tutorial groups: begins with `tut:`, followed by an optional uppercase letter and maximally 2 digits (e.g.
       `tut:A11`, `tut:17`, `tut:2`)
+        - They can optionally be associated with **one** valid `course` separated by a dash (`-`). (e.g. `tut:A11-CS2103T`)
+        - The associated `course` tag does not have to already be assigned to the given person
     - Lab groups: begins with `lab:`, followed by an optional uppercase letter and maximally 2 digits (e.g. `lab:A11`,
       `lab:17`, `lab:2`)
+        - They can optionally be associated with **one** valid `course` separated by a dash (`-`). (e.g. `lab:A11-CS2103T`)
+        - The associated `course` tag does not have to already be assigned to the given person
     - Course: begins with `course:`, followed 2-4 uppercase letters, proceeded by 4 digits and an optional uppercase
       suffix letter (e.g. `course:CS2103`, `course:CS2103T`, `course:GESS1000T`)
 
@@ -356,6 +360,8 @@ Appends tags to an existing person, without having to respecify all existing tag
 
 * `tag-add 1 t/needsHelp t/course:CS2103T t/tut:10` - Adds tags to indicate that the first visible person is in the
   course CS2103T who resides in tutorial group 10 and needs help
+* `tag-add 1 t/course:CS2103T t/course:CS1231S t/tut:10-CS2103T` - Adds tags to indicate that the first visible person is in the
+  course CS2103T and CS1231S, specifically in tutorial group 10 of the course CS2103T
 
 ### Locating persons by name/tag: `find`
 
