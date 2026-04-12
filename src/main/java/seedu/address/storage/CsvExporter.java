@@ -68,6 +68,10 @@ public class CsvExporter {
             filePath = DEFAULT_FILE_PATH;
         }
         Path path = Paths.get(filePath);
+        Path parent = path.getParent();
+        if (parent != null) {
+            Files.createDirectories(parent);
+        }
         Files.writeString(path, contents);
         return filePath;
     }

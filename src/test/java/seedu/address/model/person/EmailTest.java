@@ -84,5 +84,8 @@ public class EmailTest {
 
         // different values -> returns false
         assertFalse(email.equals(new Email("other.valid@email")));
+
+        // same address differing only by case -> treated as equal (duplicate detection)
+        assertTrue(email.equals(new Email("VALID@EMAIL")));
     }
 }

@@ -235,6 +235,12 @@ public class FindCommand extends Command {
             return (tags != null) ? new TagsContainsTagPredicate(tags) : PREDICATE_TRUE;
         }
 
+        public boolean isValid() {
+            return (username != null && !username.isEmpty()) || (name != null && !name.isEmpty())
+                    || (tags != null && !tags.isEmpty()) || (phone != null && !phone.isEmpty())
+                    || (email != null && !email.isEmpty());
+        }
+
         @Override
         public boolean equals(Object other) {
             if (other == this) {

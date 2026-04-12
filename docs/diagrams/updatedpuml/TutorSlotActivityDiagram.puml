@@ -6,22 +6,22 @@ skinparam ArrowFontSize 12
 start
 :Get person at given index\nfrom filtered list;
 
-if (Is index valid?) then ([index out of bounds])
+if () then ([index out of bounds])
     :Show error: invalid index;
     stop
 else ([valid index])
 endif
 
-if (Is person TeachingStaff?) then ([person is not TeachingStaff])
+if () then ([person is not TeachingStaff])
     :Show error: not teaching staff;
     stop
 else ([person is TeachingStaff])
 endif
 
-if (Does slot overlap an existing slot?) then ([overlap detected])
+if () then ([overlap detected])
     :Show error: overlapping slot;
     stop
-else ([slot is new])
+else ([overlap not detected])
 endif
 
 :Create updated TeachingStaff\nwith new slot added;

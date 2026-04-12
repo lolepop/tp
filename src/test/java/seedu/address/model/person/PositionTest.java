@@ -1,5 +1,6 @@
 package seedu.address.model.person;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.Assert.assertThrows;
@@ -20,6 +21,12 @@ public class PositionTest {
     }
 
     @Test
+    public void constructor_caseInsensitiveInput_storesCanonicalValue() {
+        assertEquals("Teaching Assistant", new Position("teaching assistant").value);
+        assertEquals("Professors", new Position("PROFESSORS").value);
+    }
+
+    @Test
     public void isValidPosition() {
         // null position
         assertFalse(Position.isValidPosition(null));
@@ -34,6 +41,8 @@ public class PositionTest {
         // valid positions
         assertTrue(Position.isValidPosition("Teaching Assistant"));
         assertTrue(Position.isValidPosition("Professors"));
+        assertTrue(Position.isValidPosition("teaching assistant"));
+        assertTrue(Position.isValidPosition("PROFESSORS"));
         assertTrue(Position.isValidPosition(" Teaching Assistant ")); // trimmed
         assertTrue(Position.isValidPosition(" Professors ")); // trimmed
     }
@@ -44,6 +53,9 @@ public class PositionTest {
 
         // same values -> returns true
         assertTrue(position.equals(new Position("Teaching Assistant")));
+
+        // same canonical value after case-insensitive input -> returns true
+        assertTrue(position.equals(new Position("teaching assistant")));
 
         // same object -> returns true
         assertTrue(position.equals(position));

@@ -137,17 +137,27 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_argsWithEmptyValues_returnsFindCommand() {
-        // Only empty values
-        FindPersonDescriptor fd = new FindPersonDescriptor();
-        FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, " p/", expectedFindCommand);
-        assertParseSuccess(parser, " e/", expectedFindCommand);
-        assertParseSuccess(parser, " u/", expectedFindCommand);
-        assertParseSuccess(parser, " p/ e/ u/", expectedFindCommand);
+        // Only empty values (one arg)
+        assertParseFailure(parser, " p/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " u/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
 
-        fd = new FindPersonDescriptor();
+        // Only empty values (two args)
+        assertParseFailure(parser, " p/ e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " p/ u/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+
+        // Only empty values (three args)
+        assertParseFailure(parser, " p/ u/ e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+
+        FindPersonDescriptor fd = new FindPersonDescriptor();
         fd.setPhone(Set.of("5253"));
-        expectedFindCommand = new FindCommand(fd);
+        FindCommand expectedFindCommand = new FindCommand(fd);
         assertParseSuccess(parser, " e/ u/ p/5253", expectedFindCommand);
 
         fd = new FindPersonDescriptor();
@@ -156,8 +166,18 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, " e/alice u/ p/", expectedFindCommand);
 
         fd = new FindPersonDescriptor();
+        fd.setName(Set.of("alice"));
+        expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " alice e/ u/ p/", expectedFindCommand);
+
+        fd = new FindPersonDescriptor();
         fd.setUsername(Set.of("aliceee"));
         expectedFindCommand = new FindCommand(fd);
         assertParseSuccess(parser, " e/ u/aliceee p/", expectedFindCommand);
+
+        fd = new FindPersonDescriptor();
+        fd.setTags(Set.of(new Tag("alice")));
+        expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " e/ u/ p/ t/alice", expectedFindCommand);
     }
 }

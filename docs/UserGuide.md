@@ -22,9 +22,11 @@ fast, Doritus can get your contact management tasks done faster than traditional
 
 1. Copy the file to the folder you want to use as the _home folder_ for your Doritus data.
 
-1. Open a command terminal, `cd` into the folder you put the jar file in, and use the `java -jar addressbook.jar`
-   command to run the application.<br>
-   A GUI similar to the below should appear in a few seconds. Note how the app contains some sample data.<br>
+1. Open a command terminal, `cd` into the folder you put the jar file in, and use `java -jar` followed by the name of
+   the `.jar` file you downloaded (for example `java -jar doritus-v1.5.jar`), to run the application.<br>
+   A GUI similar to the below should appear in a few seconds. On a **first run with no data file yet**, the app loads
+   sample contacts; if a data file already exists at `[JAR location]/data/addressbook.json` (including an empty contact
+   list), that file is used instead and the list may start empty.<br>
    ![Ui](images/Ui.png)
 
 1. Type the command in the command box and press Enter to execute it. e.g. typing **`help`** and pressing Enter will
@@ -81,6 +83,7 @@ fast, Doritus can get your contact management tasks done faster than traditional
   `studentslist`, `tutordashboard`, `exit` and `clear`) will be
   ignored.<br>
   e.g. if the command specifies `help 123`, it will be interpreted as `help`.
+  e.g. if the command specifies `list 1`, it will be interpreted as `list`.
   e.g. if the command specifies `staffslist anything`, it will be interpreted as `staffslist`.
   e.g. if the command specifies `studentslist 1`, it will be interpreted as `studentslist`.
   e.g. if the command specifies `tutordashboard foo`, it will be interpreted as `tutordashboard`.
@@ -90,10 +93,24 @@ fast, Doritus can get your contact management tasks done faster than traditional
 
 </div>
 
+### Duplicate contacts
+
+* **Multiple contacts may share the same display name** (e.g. two different students both named `John Doe`) as long as
+  their **phone**, **email**, and **username** are all distinct.
+* A contact is rejected as a **duplicate person** only if it has the **same identity** as someone already in the book:
+  same name, phone, email, and username, and—for teaching staff—the same `pos/` value (compared **case-insensitively**;
+  stored as `Teaching Assistant` or `Professors`). The error message is:
+  `This person already exists in the address book.`
+* **Phone**, **email**, and **username** must each remain unique across contacts: two people cannot share the same
+  phone number, the same email (see below), or the same username.
+* **Email uniqueness** is checked in a **case-insensitive** way: addresses that differ only by letter case (e.g.
+  `A@EXAMPLE.COM` and `a@example.com`) are treated as the **same** email for duplicate detection. The app still stores
+  the email text as you typed it.
+
 ### Types of tags
 
 - General purpose tags: Alphanumeric characters only (e.g. `examDuty`)
-- Special tags: these tags follow a specific format
+- Special tags: these tags follow a specific format:
     - Tutorial groups: begins with `tut:`, followed by an optional uppercase letter and maximally 2 digits (e.g.
       `tut:A11`, `tut:17`, `tut:2`)
     - Lab groups: begins with `lab:`, followed by an optional uppercase letter and maximally 2 digits (e.g. `lab:A11`,
@@ -139,8 +156,9 @@ Adds a student to the address book.
         * Ronald O'Donald
         * Soh La Min (Su La Min)
         * Child S/O Father
-* `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
-* `EMAIL`: Valid email format. Must be unique.
+* `PHONE`: Valid Singapore phone number. Exactly **8 digits in one contiguous block** (no spaces or other characters),
+  must start with `3`, `6`, `8`, or `9`. Must be unique.
+* `EMAIL`: Valid email format. Must be unique (see [Duplicate contacts](#duplicate-contacts)).
 * `USERNAME`: Alphanumeric characters only (no spaces or special characters). Must be unique.
 * `TAG`: Optional; can be used multiple times. See [Types of tags](#types-of-tags) for more details.
 
@@ -177,10 +195,13 @@ Adds a teaching staff (tutor) to the address book.
     * Child S/O Father
 * `p/`, `e/`, `u/`: Required.
 * `pos/`: Optional.
-* `PHONE`: Valid Singapore phone number. Exactly 8 digits, must start with `3`, `6`, `8`, or `9`. Must be unique.
-* `EMAIL`: Valid email format. Must be unique.
+* `PHONE`: Valid Singapore phone number. Exactly **8 digits in one contiguous block** (no spaces or other characters),
+  must start with `3`, `6`, `8`, or `9`. Must be unique.
+* `EMAIL`: Valid email format. Must be unique (see [Duplicate contacts](#duplicate-contacts)).
 * `USERNAME`: Alphanumeric only. Must be unique.
-* `POSITION`: Must be one of: `Teaching Assistant`, `Professors`. If omitted, defaults to `Teaching Assistant`.
+* `POSITION`: Must be one of: `Teaching Assistant`, `Professors` (spelling must match; **letter case is ignored**). The
+  app stores and displays the canonical form (`Teaching Assistant` or `Professors`). If omitted, defaults to
+  `Teaching Assistant`.
 * `TAG`: Optional; can be used multiple times. See [Types of tags](#types-of-tags) for more details.
 
 **Behavior:**
@@ -229,19 +250,27 @@ available to teach.
 
 **Parameters:**
 
-* `INDEX`: Must be a positive integer (1, 2, 3, …) referring to the position of a **teaching staff member** in the *
-  *currently displayed** list.
+* `INDEX`: Must be a positive integer (1, 2, 3, …) referring to the position of a **teaching staff member** in the
+  **currently displayed** list.
 * `SLOT`: Must be in format `DAY-START-END`, where:
     * `DAY` is one of: `mon`, `tue`, `wed`, `thu`, `fri`, `sat`, `sun` (case-insensitive).
-    * `START` and `END` are hours (0–23). `START` must be before `END`.
+    * `START` and `END` are whole-hour values from **0 to 23**. `START` must be strictly before `END` on the same day.
+      For example, `mon-23-24` is invalid because `END` must be greater than `START` within the same day; slots that
+      span midnight (e.g. 23:00–01:00) are not supported.
     * Slots that cross midnight are not supported in the current format.
 
 **Behavior:**
 
-* The person at the given index must be a teaching staff member (not a student).
+* The person at the given index must be a teaching staff member (not a student). If you are viewing a mixed list
+  (`list`), use `staffslist` first so the index refers to a staff member, or expect an error if the person at that index
+  is a student.
 * Overlapping time slots on the same day are not allowed for the same person (including exact duplicates).
-* Time slots are displayed in the UI beneath the staff member's contact details.
+* Time slots are displayed in the UI beneath the staff member's contact details (each slot as its own label, with
+  spacing between multiple slots).
 * Time slots are persisted in the data file.
+* You can **add** multiple slots with repeated `tutorslot` commands, but there is **no command** to edit or remove one
+  slot only (append-only slot management). To change slots you may delete the staff contact and re-add them, or edit the
+  data file directly (advanced; see [Editing the data file](#editing-the-data-file)).
 
 **Examples:**
 
@@ -289,7 +318,8 @@ Edits an existing person in the address book. For teaching staff, you can also c
 
 * `INDEX`: Must be a positive integer (1, 2, 3, …​) referring to the position in the **currently displayed** list.
 * At least one optional field must be provided.
-* `pos/POSITION`: Only applies to teaching staff. Must be `Teaching Assistant` or `Professors`. Ignored for students.
+* `pos/POSITION`: Only applies to teaching staff. Must be `Teaching Assistant` or `Professors` (case-insensitive).
+  Ignored for students.
 
 **Behavior:**
 
@@ -354,9 +384,11 @@ Finds persons whose names contain any of the given keywords and/or who have any 
     * Persons matching at least one keyword will be returned (i.e. `OR` search)
     * Keywords is matched using substring e.g. `ice` will match `alice`
 
-* **Phone Sequence search:** Sequence match against person phone (numeric only)
-    * Persons phone matching at least one sequence will be returned (i.e. `OR` search)
-    * Keywords is matched using substring e.g. `456` will match `91234567`
+* **Phone Sequence search:** Each `p/` value is a **digit-only** sequence used to search within stored phone numbers.
+    * Each sequence must be **1 to 8 digits** (no spaces or other characters). Values with more than 8 digits are not
+      accepted.
+    * Matching is by **substring** on the person’s phone: e.g. `456` matches `91234567`.
+    * Persons whose phone matches at least one given sequence are returned (i.e. `OR` search across `p/` values).
 
 * **Combined search:** If both keywords and tags are provided, persons must match at least one keyword **AND** at least
   one tag (i.e. `AND` between name and tag criteria)

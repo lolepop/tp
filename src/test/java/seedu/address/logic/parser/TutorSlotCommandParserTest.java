@@ -29,8 +29,12 @@ public class TutorSlotCommandParserTest {
 
     @Test
     public void parse_invalidIndex_throwsParseException() {
-        assertParseFailure(parser, "notAnIndex mon-10-12",
-                String.format(MESSAGE_INVALID_COMMAND_FORMAT, TutorSlotCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, "notAnIndex mon-10-12", ParserUtil.MESSAGE_INVALID_INDEX);
+    }
+
+    @Test
+    public void parse_negativeIndex_throwsParseException() {
+        assertParseFailure(parser, "-1 mon-10-12", ParserUtil.MESSAGE_INVALID_INDEX);
     }
 
     @Test

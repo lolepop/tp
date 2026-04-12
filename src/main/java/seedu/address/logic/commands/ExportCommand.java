@@ -51,7 +51,7 @@ public class ExportCommand extends Command {
             String res = CsvExporter.exportContacts(model, filePath);
             return new CommandResult(String.format(MESSAGE_SUCCESS, res));
         } catch (InvalidPathException e) {
-            throw new CommandException(MESSAGE_IO_EXCEPTION);
+            throw new CommandException(MESSAGE_INVALID_PATH_EXCEPTION);
         } catch (IOException e) {
             throw new CommandException(MESSAGE_IO_EXCEPTION);
         }

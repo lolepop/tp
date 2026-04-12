@@ -32,7 +32,7 @@
       <Label fx:id="username" styleClass="cell_small_label" text="\$username" />
       <Label fx:id="email" styleClass="cell_small_label" text="\$email" />
       <Label fx:id="phone" styleClass="cell_small_label" text="\$phone" />
-      <FlowPane fx:id="availabilityPane" />
+      <FlowPane fx:id="availabilityPane" hgap="6" vgap="4" />
     </VBox>
   </GridPane>
 </HBox>

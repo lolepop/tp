@@ -34,8 +34,7 @@ public class TutorSlotCommandParser implements Parser<TutorSlotCommand> {
         try {
             index = ParserUtil.parseIndex(indexStr);
         } catch (ParseException pe) {
-            throw new ParseException(
-                    String.format(MESSAGE_INVALID_COMMAND_FORMAT, TutorSlotCommand.MESSAGE_USAGE), pe);
+            throw new ParseException(ParserUtil.MESSAGE_INVALID_INDEX, pe);
         }
 
         TimeSlot timeSlot = ParserUtil.parseTimeSlot(slotStr);

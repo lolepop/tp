@@ -3,9 +3,15 @@ package seedu.address.model.person;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 
+import java.util.Locale;
+
 /**
  * Represents a Person's email in the address book.
  * Guarantees: immutable; is valid as declared in {@link #isValidEmail(String)}
+ * <p>
+ * Two emails are considered the same for {@link #equals(Object)} and {@link #hashCode()} if they match after
+ * trimming and upper-casing (duplicate detection is case-insensitive); the stored value keeps the user's casing.
+ * </p>
  */
 public class Email {
 
@@ -18,12 +24,13 @@ public class Email {
             + "1. The local-part should only contain alphanumeric characters and these special characters, excluding "
             + "the parentheses, (" + SPECIAL_CHARACTERS + "). The local-part may not start or end with any special "
             + "characters.\n"
-            + "2. This is followed by a '@' and then a domain name. The domain name is made up of domain labels "
-            + "separated by periods.\n"
-            + "The domain name must:\n"
-            + "    - end with a domain label at least 2 characters long\n"
-            + "    - have each domain label start and end with alphanumeric characters\n"
-            + "    - have each domain label consist of alphanumeric characters, separated only by hyphens, if any.";
+            + "2. This is followed by a '@' and then a domain. The domain may use multiple labels separated by periods "
+            + "(e.g. user@mail.example.com), or valid forms accepted by the validator including some single-part "
+            + "domains (e.g. user@localhost).\n"
+            + "The domain must:\n"
+            + "    - end with a segment at least 2 characters long\n"
+            + "    - have each label start and end with alphanumeric characters\n"
+            + "    - have each label consist of alphanumeric characters, separated only by hyphens, if any.";
     // alphanumeric and special characters
     private static final String ALPHANUMERIC_NO_UNDERSCORE = "[^\\W_]+"; // alphanumeric characters except underscore
     private static final String LOCAL_PART_REGEX = "^" + ALPHANUMERIC_NO_UNDERSCORE + "([" + SPECIAL_CHARACTERS + "]"
@@ -49,8 +56,13 @@ public class Email {
      */
     public Email(String email) {
         requireNonNull(email);
-        checkArgument(isValidEmail(email), MESSAGE_CONSTRAINTS);
-        value = email;
+        String trimmed = email.trim();
+        checkArgument(isValidEmail(trimmed), MESSAGE_CONSTRAINTS);
+        value = trimmed;
+    }
+
+    private static String normalizedKey(String email) {
+        return email.toUpperCase(Locale.ROOT);
     }
 
     /**
@@ -77,12 +89,12 @@ public class Email {
         }
 
         Email otherEmail = (Email) other;
-        return value.equals(otherEmail.value);
+        return normalizedKey(value).equals(normalizedKey(otherEmail.value));
     }
 
     @Override
     public int hashCode() {
-        return value.hashCode();
+        return normalizedKey(value).hashCode();
     }
 
 }

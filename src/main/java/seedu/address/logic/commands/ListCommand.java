@@ -16,7 +16,7 @@ public class ListCommand extends Command {
     public static final String MESSAGE_EMPTY = "No contacts found. Add your first contact to get started!";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Lists all contacts in the address book.\n"
-            + "The list command does not take any parameters.\n"
+            + "Extra text after the command word is ignored.\n"
             + "Format: " + COMMAND_WORD;
 
 

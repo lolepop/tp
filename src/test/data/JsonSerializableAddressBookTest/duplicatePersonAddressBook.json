@@ -10,8 +10,8 @@
   }, {
     "name": "Alice Pauline",
     "phone": "94351253",
-    "email": "pauline@example.com",
-    "username": "alicepauline2",
+    "email": "alice@example.com",
+    "username": "alicepauline",
     "type": "student",
     "position": null,
     "tags": []

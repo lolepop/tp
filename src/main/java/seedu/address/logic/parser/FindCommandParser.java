@@ -66,6 +66,10 @@ public class FindCommandParser implements Parser<FindCommand> {
         if (!tagList.isEmpty()) {
             fd.setTags(tagList);
         }
+
+        if (!fd.isValid()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        }
         return new FindCommand(fd);
     }
 

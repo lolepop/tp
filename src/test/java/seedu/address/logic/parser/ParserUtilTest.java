@@ -158,6 +158,14 @@ public class ParserUtilTest {
     }
 
     @Test
+    public void parsePosition_mixedCase_returnsCanonicalPosition() throws Exception {
+        Position expectedTa = new Position("Teaching Assistant");
+        assertEquals(expectedTa, ParserUtil.parsePosition("teaching assistant"));
+        Position expectedProf = new Position("Professors");
+        assertEquals(expectedProf, ParserUtil.parsePosition("professors"));
+    }
+
+    @Test
     public void parseEmail_null_throwsNullPointerException() {
         assertThrows(NullPointerException.class, () -> ParserUtil.parseEmail((String) null));
     }

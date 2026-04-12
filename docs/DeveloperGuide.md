@@ -208,9 +208,14 @@ The address book holds a single list of `Person` objects. Two types of persons a
 * **Students** — base `Person` instances, added with `add n/NAME p/... e/... u/...`.
 * **Teaching staff** — `TeachingStaff` instances (extend `Person`) with an additional `Position` field. Added with
   `add staff n/NAME p/... e/... u/... [pos/POSITION]` where name, phone, email, username are mandatory and
-  `pos/POSITION` is optional. `Position` is restricted to "Teaching Assistant" or "Professors".
+  `pos/POSITION` is optional. `Position` is restricted to "Teaching Assistant" or "Professors" (input is matched
+  case-insensitively; the model stores the canonical spelling).
 
 Phone numbers are validated as Singapore numbers (`[3689]\\d{7}`): exactly 8 digits, starting with 3, 6, 8, or 9.
+
+`Email` implements case-insensitive equality: `Email#equals` and `Email#hashCode` use a normalized (trimmed,
+upper-cased) form so duplicate-email checks in `AddCommand` reject addresses that differ only by letter case, while
+the stored string keeps the user's casing.
 
 The UI and commands treat both types uniformly as `Person` where possible (e.g. `find`, `delete` by index). The filtered
 list in the model can show all persons (`list`), only teaching staff (`staffslist`), or only students (`studentslist`)
@@ -236,7 +241,9 @@ Either variant of tag can be constructed using `TagFactory.create(tag)`. Which o
 
 Teaching staff members can specify when they are available to teach using the `tutorslot` command. This feature adds a
 `Set<TimeSlot>` field to the `TeachingStaff` model, where each `TimeSlot` represents a day-of-week and time range (e.g.,
-Monday 10:00–12:00).
+Monday 10:00–12:00). Availability is **append-only** from the CLI: you can add slots with `tutorslot`, but there is no
+command to edit or remove an individual slot (workarounds: delete the staff contact, advanced editing of the data file,
+or future enhancements). In other words, slot management supports **Create** only, not full CRUD on each slot.
 
 #### Implementation
 
@@ -448,7 +455,9 @@ The following sequence diagram shows how the user's answer (`Y` to confirm, `N` 
 **Target user profile**:
 
 * NUS teaching staff (lecturers, instructors, and teaching assistants) who manage hundreds to thousands of students each
-  semester
+  semester. Staff **roles** in real life (e.g. lecturer, instructor) are not all listed as separate `pos/` values in
+  Doritus: the product only supports positions `Teaching Assistant` and `Professors` (see User Guide); users may map
+  broader roles to these values or omit `pos/` where appropriate.
 * prefer desktop apps that run locally on their own laptops
 * can type fast and are comfortable with command-style (CLI-like) interfaces
 * frequently need to retrieve student context quickly during emails, grading, and office hours
@@ -469,13 +478,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | Priority | As a …​                            | I want to …​                                           | So that I can…​                                                        |
 |----------|------------------------------------|--------------------------------------------------------|------------------------------------------------------------------------|
 | `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the Doritus             |
-| `* * *`  | user                               | add a new contact                                      | store their student ID and contact details for future reference        |
+| `* * *`  | user                               | add a new contact                                      | store **contact details** (name, phone, email, username, and optional tags) for future reference |
 | `* * *`  | user                               | delete a contact                                       | remove withdrawn students or duplicate entries                         |
-| `* * *`  | user                               | find a person by name or ID                            | locate details of persons without having to go through the entire list |
+| `* * *`  | user                               | find a person by **name, phone, email, username, or tags** | locate details of persons without having to go through the entire list |
 | `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
-| `* *`    | professor that teach many students | sort persons by name or ID                             | locate a person easily                                                 |
+| `* *`    | professor that teach many students | search and filter contacts (e.g. using `find`, `list`, `staffslist`, or `studentslist`) | locate a person easily                                                 |
 | `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
-| `* *`    | forgetful user                     | perform fuzzy and partially maching searchs                  | locate a person without remembering the full name of that person        |
+| `* *`    | forgetful user                     | perform fuzzy and partially matching searches                  | locate a person without remembering the full name of that person        |
 | `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
 | `* *`    | user                               | see contextual error messages when a command fails     | know what is the problem and fix it                                    |
 | `*`      | user                               | access my input history                                | run similar commands easily                                            |
@@ -486,6 +495,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 | `*`      | professor                          | record short notes about students                      | recall important context when meeting them again in future semesters   |
 | `* *`    | tutor/professor                    | state when I am available to teach                     | specify my availability so students know when I can teach              |
 | `* *`    | tutor/professor                    | view the availability of all tutors in one place       | see who is able to teach at a glance                                   |
+
+**Note (student ID and “ID” in user stories):** Doritus does **not** store or validate a separate NUS **Student ID** field; identity in the app is based on **name, phone, email, username** (and teaching-staff **position**), as described under *Duplicate contacts* in the User Guide and under **Student ID** in the [Glossary](#glossary) below. The **username** is the main user-chosen identifier analogous to an “ID” in some workflows. There is **no** dedicated “sort by name or ID” command: users narrow the list using **`find`** and the list commands (`list`, `staffslist`, `studentslist`).
 
 ### Use cases
 
@@ -613,7 +624,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 4a. The person at the given index is not a teaching staff member.
 
-    * 4a1. Doritus shows an error message indicating the person is not teaching staff.
+    * 4a1. Doritus shows an error message indicating the person is not teaching staff, and suggests using `staffslist` if
+      the user intended to target a tutor.
 
       Use case resumes at step 4.
 
@@ -737,22 +749,25 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 **MSS**
 
-1. User requests to see instructions for a specific command
-2. System shows instructions for the command
+1. User requests help (e.g. enters `help`).
+2. Doritus opens the **help window** (command reference content) and shows a short message in the command result area
+   (e.g. confirming that help was opened). Full command text is **not** listed in the result panel; users read commands
+   in the help window (or the User Guide).
 
    Use case ends.
 
-**Extensions*
+**Extensions**
 
-* 1a. User does not specify a command.
+* 1a. User types extra text after `help` (e.g. `help 123`).
 
-    * 1a1. System shows instructions for all commands.
+    * 1a1. Doritus treats the input as `help` (extraneous parameters are ignored, per the User Guide) and proceeds as in
+      the MSS.
 
       Use case ends.
 
-* 1b. User specifies an invalid command.
+* 1b. User specifies an invalid command (not recognised by the application).
 
-    * 1b1. System shows an error message.
+    * 1b1. Doritus shows an error message.
 
       Use case resumes at step 1.
 
@@ -778,11 +793,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Contact**: A record representing a person in the address book; either a student (base `Person`) or teaching staff (
   `TeachingStaff`), including fields such as name, phone, email, username, and tags. Teaching staff additionally have a
   `Position` (Teaching Assistant or Professors).
-* **Student ID**: A unique identifier assigned to NUS students (e.g., `A1234567Z`), used by the application to detect
-  duplicate student contacts where applicable.
+* **Student ID**: In real life, NUS may assign identifiers such as `A1234567Z` to students. Doritus does **not** store or
+  validate a separate Student ID field; duplicate detection uses the same identity rules as in the User Guide (*Duplicate
+  contacts*), not an NUS ID.
 * **Teaching staff**: Persons represented by the `TeachingStaff` class (extends `Person`), with a `Position` field
   restricted to "Teaching Assistant" or "Professors". Added via `add staff`; listed via `staffslist` or `list`.
-* **Position**: The role of a teaching staff member; only "Teaching Assistant" and "Professors" are allowed.
+* **Position**: The role of a teaching staff member; only "Teaching Assistant" and "Professors" are allowed (user input
+  may use any letter case; stored values use the canonical spellings above).
 * **Tag**: A short label attached to a contact (e.g., module code, tutorial group, lab group) used for grouping and
   filtering contacts.
 * **Tutorial group / Lab group**: A subgroup of students within a module, usually associated with a specific weekly
@@ -809,7 +826,8 @@ testers are expected to do more *exploratory* testing.
 
     1. Download the jar file and copy into an empty folder
 
-    1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be
+    1. Double-click the jar file Expected: Shows the GUI. If no data file was present yet, sample contacts are loaded; if
+       a data file already exists (including an empty list), that file is used instead. The window size may not be
        optimum.
 
 1. Saving window preferences

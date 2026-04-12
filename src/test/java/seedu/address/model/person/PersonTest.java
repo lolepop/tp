@@ -8,9 +8,11 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_POSITION_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_USERNAME_BOB;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.AMY;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
 import org.junit.jupiter.api.Test;
@@ -35,10 +37,13 @@ public class PersonTest {
         // null -> returns false
         assertFalse(ALICE.isSamePerson(null));
 
-        // same name, all other attributes different -> returns true
-        Person editedAlice = new PersonBuilder(ALICE).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
-                .withUsername(VALID_USERNAME_BOB).withTags(VALID_TAG_HUSBAND).build();
+        // same name, phone, email, username; only tags differ -> returns true
+        Person editedAlice = new PersonBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertTrue(ALICE.isSamePerson(editedAlice));
+
+        // same name but different phone -> returns false (different people)
+        editedAlice = new PersonBuilder(ALICE).withPhone(VALID_PHONE_BOB).build();
+        assertFalse(ALICE.isSamePerson(editedAlice));
 
         // different name, all other attributes same -> returns false
         editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
@@ -52,6 +57,23 @@ public class PersonTest {
         String nameWithExtraWord = VALID_NAME_BOB + " Jr";
         editedBob = new PersonBuilder(BOB).withName(nameWithExtraWord).build();
         assertFalse(BOB.isSamePerson(editedBob));
+    }
+
+    @Test
+    public void isSamePerson_teachingStaff() {
+        // two teaching staff with same identity and same position -> true
+        Person bobCopy = new PersonBuilder(BOB).build();
+        assertTrue(BOB.isSamePerson(bobCopy));
+
+        // same name, phone, email, username but different position -> false
+        Person bobOtherPosition = new PersonBuilder(BOB).withPosition(VALID_POSITION_AMY).build();
+        assertFalse(BOB.isSamePerson(bobOtherPosition));
+
+        // student vs teaching staff with same name, phone, email, username -> false
+        Person student = new PersonBuilder(AMY).build();
+        Person staffWithAmysFields = new PersonBuilder(AMY).withPosition(VALID_POSITION_AMY).build();
+        assertFalse(student.isSamePerson(staffWithAmysFields));
+        assertFalse(staffWithAmysFields.isSamePerson(student));
     }
 
     @Test

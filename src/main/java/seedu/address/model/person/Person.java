@@ -71,16 +71,34 @@ public sealed class Person permits TeachingStaff {
     }
 
     /**
-     * Returns true if both persons have the same name.
-     * This defines a weaker notion of equality between two persons.
+     * Returns true if both persons are considered the same entry for duplicate detection (same identity fields).
+     * Students match when name, phone, email, and username are equal. Teaching staff additionally require the same
+     * position. A student and a teaching staff member are never the same person.
      */
     public boolean isSamePerson(Person otherPerson) {
         if (otherPerson == this) {
             return true;
         }
-
-        return otherPerson != null
-                && otherPerson.getName().equals(getName());
+        if (otherPerson == null) {
+            return false;
+        }
+        if (!(otherPerson instanceof Person)) {
+            return false;
+        }
+        Person other = (Person) otherPerson;
+        if (!name.equals(other.name) || !phone.equals(other.phone) || !email.equals(other.email)
+                || !username.equals(other.username)) {
+            return false;
+        }
+        boolean thisIsStaff = this instanceof TeachingStaff;
+        boolean otherIsStaff = other instanceof TeachingStaff;
+        if (thisIsStaff != otherIsStaff) {
+            return false;
+        }
+        if (thisIsStaff) {
+            return ((TeachingStaff) this).getPosition().equals(((TeachingStaff) other).getPosition());
+        }
+        return true;
     }
 
     /**
