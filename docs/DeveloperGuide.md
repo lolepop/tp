@@ -545,22 +545,30 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. User requests to show all contacts.
 2. System shows contacts.
-3. User requests to delete a contact by index.
-4. System remove the contact.
+3. User requests to delete the identified contact by its index.
+4. System double checks with the user if they would like to proceed with the deletion.
+5. User confirms that they would like to delete the contact.
+6. System remove the contact.
 
    Use case ends.
 
 **Extensions**
 
-* 3a. User locate the contact to be deleted by other fields. (e.g. name, email)
+* 5a. User declines the action.
 
-    * 3a1. System remove the contact.
+    * 5a1. System notifies user that deletion was cancelled, as requested.
 
       Use case ends.
 
+* 5b. User tries performing some other command.
+
+  * 5b1. System automatically cancels the pending deletion.
+
+    Use case ends.
+
 ---
 
-**Use case: UC03 - find a person by name**
+**Use case: UC03 - Find a person by fields**
 
 **MSS**
 
@@ -585,21 +593,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ---
 
-**Use case: UC04 – Add tags to a student**
+**Use case: UC04 – Add tags to a person**
 
 **MSS**
 
 1. User requests to show all contacts.
 2. Doritus shows contacts.
-3. User identifies the correct student and notes their `index` in the displayed list.
-4. User enters a list of tags to be added to the student at `index`.
-5. Doritus adds the tag to the student and shows a success message including the updated tags.
+3. User identifies the correct person and notes their `index` in the displayed list.
+4. User enters a list of tags to be added to the person at `index`.
+5. Doritus adds the tag to the person and shows a success message including the updated tags.
 
    Use case ends.
 
 **Extensions**
 
-* 4a. The given index is invalid (not corresponding to a student).
+* 4a. The given index is invalid (not corresponding to a person).
 
     * 4a1. Doritus shows an error message explaining that the index must refer to a contact in the displayed list.
     * 4a2. User checks the displayed list and corrects their mistake.
@@ -613,7 +621,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 4.
 
-* 4c. A given tag already exists for that student.
+* 4c. A given tag already exists for that person.
     * 4c1. Doritus shows a warning (non-fatal) that the tag already exists.
 
       Use case resumes at step 5.
