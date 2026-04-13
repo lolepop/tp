@@ -1,6 +1,4 @@
-﻿* If a staff member already has `mon-10-12`, then `tutorslot 1 mon-12-14` succeeds but `tutorslot 1 mon-11-13` fails
-  because it overlaps.
-
+﻿
 ---
 layout: page
 title: User Guide
@@ -101,7 +99,7 @@ fast, Doritus can get your contact management tasks done faster than traditional
 * **Multiple contacts may share the same display name** (e.g. two different students both named `John Doe`) as long as
   their **phone**, **email**, and **username** are all distinct.
 * A contact is rejected as a **duplicate person** only if it has the **same identity** as someone already in the book:
-  same name, phone, email, and username, andâ€”for teaching staffâ€”the same `pos/` value (compared **case-insensitively**;
+  same name, phone, email, and username, and—for teaching staff—the same `pos/` value (compared **case-insensitively**;
   stored as `Teaching Assistant` or `Professors`). The error message is:
   `This person already exists in the address book.`
 * **Phone**, **email**, and **username** must each remain unique across contacts: two people cannot share the same
@@ -220,9 +218,9 @@ Adds a teaching staff member to the address book.
 
 **Examples:**
 
-* `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` â€” Adds teaching staff with default position
+* `add staff n/Jane Smith p/91234567 e/jane@example.com u/janesmith` — Adds teaching staff with default position
   "Teaching Assistant".
-* `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors t/colleagues` â€” Adds teaching staff with full
+* `add staff n/Dr Lee p/91234567 e/lee@example.com u/drlee pos/Professors t/colleagues` — Adds teaching staff with full
   details.
 
 ---
@@ -292,7 +290,8 @@ available to teach.
   that index is a student.
 * The slot must be a same-day `DAY-START-END` whole-hour range with `START < END`; crossing midnight is invalid.
 * Overlapping time slots on the same day are not allowed for the same person, including exact duplicates. For example,
-  if a staff member already has `mon-10-12`, then `mon-11-13`, `mon-10-12`, and `mon-10-11` will all be rejected.
+  if a staff member already has `mon-10-12`, then `tutorslot 1 mon-12-14` succeeds but `tutorslot 1 mon-11-13` fails
+  because it overlaps.
 * Boundary-touching slots are allowed. For example, if a staff member already has `mon-10-12`, then `mon-12-14` is
   allowed because the two slots only touch at the boundary and do not overlap.
 * Time slots are displayed in the UI beneath the staff member's contact details (each slot as its own label, with
@@ -320,7 +319,7 @@ Displays a dashboard of all teaching staff and their available time slots, regar
 
 **Behavior:**
 
-* Shows **all** teaching staff in the address book â€” not just those visible in the current filtered list.
+* Shows **all** teaching staff in the address book — not just those visible in the current filtered list.
 * For each staff member, lists their time slots sorted by day and start time.
 * Displays `(no slots set)` for staff members who have no slots added yet.
 
@@ -337,7 +336,7 @@ Tutor Availability Dashboard (3 tutor(s)):
 
 **Examples:**
 
-* `tutordashboard` â€” Shows the full availability dashboard for all teaching staff.
+* `tutordashboard` — Shows the full availability dashboard for all teaching staff.
 * After `tutorslot 1 mon-10-12`, run `tutordashboard` to confirm the slot was added.
 
 ---
@@ -362,9 +361,9 @@ Edits an existing person in the address book. For teaching staff, you can also c
 * When editing tags, existing tags are replaced (not cumulative). Use `t/` with no value to clear all tags.
   **Examples:**
 
-* `edit 1 p/91234567 e/johndoe@example.com` â€” Edits the 1st person's phone and email.
-* `edit 2 n/Betsy Crower t/` â€” Edits the 2nd person's name and clears all tags.
-* `staffslist` then `edit 1 pos/Professors` â€” Edits the 1st teaching staff's position to Professors.
+* `edit 1 p/91234567 e/johndoe@example.com` — Edits the 1st person's phone and email.
+* `edit 2 n/Betsy Crower t/` — Edits the 2nd person's name and clears all tags.
+* `staffslist` then `edit 1 pos/Professors` — Edits the 1st teaching staff's position to Professors.
 
 ---
 
@@ -434,11 +433,11 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 
 **Examples:**
 
-* `find John` â€” Returns all persons with "John" in their name
-* `find alex david` â€” Returns `Alex Yeoh`, `David Li`, and anyone else with "alex" or "david" in their name
-* `find t/friends` â€” Returns all persons tagged with "friends"
-* `find t/colleagues t/important` â€” Returns all persons tagged with either "colleagues" or "important"
-* `find John t/friends` â€” Returns persons with "John" in their name who are also tagged with "friends"<br>
+* `find John` — Returns all persons with "John" in their name
+* `find alex david` — Returns `Alex Yeoh`, `David Li`, and anyone else with "alex" or "david" in their name
+* `find t/friends` — Returns all persons tagged with "friends"
+* `find t/colleagues t/important` — Returns all persons tagged with either "colleagues" or "important"
+* `find John t/friends` — Returns persons with "John" in their name who are also tagged with "friends"<br>
   ![result for 'find alex david'](images/findAlexDavidResult.png)
 
 ---
@@ -462,9 +461,9 @@ Deletes the specified person from the address book. Works for both students and 
 
 **Examples:**
 
-* `list` then `delete 2` â€” Deletes the 2nd person in the full list (student or staff).
-* `staffslist` then `delete 1` â€” Deletes the 1st teaching staff in the staff list.
-* `find Betsy` then `delete 1` â€” Deletes the 1st person in the find results.
+* `list` then `delete 2` — Deletes the 2nd person in the full list (student or staff).
+* `staffslist` then `delete 1` — Deletes the 1st teaching staff in the staff list.
+* `find Betsy` then `delete 1` — Deletes the 1st person in the find results.
 
 ---
 
@@ -482,7 +481,7 @@ This permanently deletes all contacts and cannot be undone. You will be asked to
 
 ### Double confirmation
 
-Some commands that are **irreversible** â€” currently `delete` and `clear` â€” require you to explicitly confirm before they are executed.
+Some commands that are **irreversible** — currently `delete` and `clear` — require you to explicitly confirm before they are executed.
 
 **How it works:**
 
@@ -531,9 +530,9 @@ Exports all contacts currently listed in the address book to a CSV file. This al
 
 **Examples:**
 
-* `export` â€” Exports contacts to `./export.csv` (default location).
-* `export f/contacts.csv` â€” Exports contacts to `contacts.csv` in the current directory.
-* `export f/backup/students.csv` â€” Exports contacts to `backup/students.csv`.
+* `export` — Exports contacts to `./export.csv` (default location).
+* `export f/contacts.csv` — Exports contacts to `contacts.csv` in the current directory.
+* `export f/backup/students.csv` — Exports contacts to `backup/students.csv`.
 
 ---
 
@@ -560,7 +559,7 @@ Import contacts from the given file path of a **csv file generated by the `expor
 
 **Examples:**
 
-* `import f/./contacts.csv` â€” Imports all contacts from `contacts.csv`.
+* `import f/./contacts.csv` — Imports all contacts from `contacts.csv`.
 
 ---
 

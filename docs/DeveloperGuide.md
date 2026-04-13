@@ -205,8 +205,8 @@ This section describes some noteworthy details on how certain features are imple
 
 The address book holds a single list of `Person` objects. Two types of persons are supported:
 
-* **Students** â€” base `Person` instances, added with `add n/NAME p/... e/... u/...`.
-* **Teaching staff** â€” `TeachingStaff` instances (extend `Person`) with an additional `Position` field. Added with
+* **Students** — base `Person` instances, added with `add n/NAME p/... e/... u/...`.
+* **Teaching staff** — `TeachingStaff` instances (extend `Person`) with an additional `Position` field. Added with
   `add staff n/NAME p/... e/... u/... [pos/POSITION]` where name, phone, email, username are mandatory and
   `pos/POSITION` is optional. `Position` is restricted to "Teaching Assistant" or "Professors" (input is matched
   case-insensitively; the model stores the canonical spelling).
@@ -257,27 +257,27 @@ The feature is implemented across the following components:
 
 **Model:**
 
-* `TimeSlot` â€” An immutable value object containing a `DayOfWeek`, a `LocalTime` start, and a `LocalTime` end. Supports
+* `TimeSlot` — An immutable value object containing a `DayOfWeek`, a `LocalTime` start, and a `LocalTime` end. Supports
   parsing from string format `DAY-START-END` (e.g., `mon-10-12`). Implements `Comparable<TimeSlot>` for sorted display.
   Crossing-midnight slots are intentionally not supported in this format.
-* `TeachingStaff` â€” Extended with a `Set<TimeSlot> availability` field. A new constructor accepts availability alongside
+* `TeachingStaff` — Extended with a `Set<TimeSlot> availability` field. A new constructor accepts availability alongside
   existing fields. The `getAvailability()` method returns an unmodifiable set.
 
 **Logic:**
 
-* `TutorSlotCommand` â€” Takes an `Index` and a `TimeSlot`. On execution, it:
+* `TutorSlotCommand` — Takes an `Index` and a `TimeSlot`. On execution, it:
     1. Retrieves the person at the given index from the filtered list.
     2. Validates that the person is a `TeachingStaff` instance.
     3. Checks for overlapping time slots on the same day (exact duplicates are a subset of overlap).
     4. Constructs a new `TeachingStaff` with the slot added (preserving immutability).
     5. Replaces the old person in the model via `Model#setPerson()`.
-* `TutorSlotCommandParser` â€” Parses `INDEX SLOT` from user input, delegating to `ParserUtil#parseTimeSlot()` for
+* `TutorSlotCommandParser` — Parses `INDEX SLOT` from user input, delegating to `ParserUtil#parseTimeSlot()` for
   validation.
 
 **Storage:**
 
-* `JsonAdaptedTimeSlot` â€” Serialises a `TimeSlot` as its string representation (e.g., `"mon-10-12"`) using `@JsonValue`.
-* `JsonAdaptedPerson` â€” Extended with a `List<JsonAdaptedTimeSlot> availability` field, serialised only for staff-type
+* `JsonAdaptedTimeSlot` — Serialises a `TimeSlot` as its string representation (e.g., `"mon-10-12"`) using `@JsonValue`.
+* `JsonAdaptedPerson` — Extended with a `List<JsonAdaptedTimeSlot> availability` field, serialised only for staff-type
   persons.
 
 The following activity diagram summarises the decision flow when `tutorslot` is executed:
@@ -305,10 +305,10 @@ Key design decisions:
 
 * **Reads from the full address book** (`model.getAddressBook().getPersonList()`), not the filtered list. This ensures
   the dashboard is always complete even when the user has filtered to show only students.
-* **Sorted display** â€” slots for each staff member are inserted into a `TreeSet`, which uses `TimeSlot`'s natural
+* **Sorted display** — slots for each staff member are inserted into a `TreeSet`, which uses `TimeSlot`'s natural
   ordering (day-of-week first, then start time) via its `Comparable` implementation.
-* **No model mutation** â€” the command produces only a `CommandResult`; it does not modify any data.
-* **No parser needed** â€” the command takes no arguments and is returned directly by `AddressBookParser`.
+* **No model mutation** — the command produces only a `CommandResult`; it does not modify any data.
+* **No parser needed** — the command takes no arguments and is returned directly by `AddressBookParser`.
   Extra trailing arguments are currently ignored for no-argument commands (e.g., `tutordashboard foo`).
 
 The following sequence diagram shows how the `tutordashboard` command is executed:
@@ -339,24 +339,24 @@ The feature is implemented across the following components:
 
 **Logic:**
 
-* `ExportCommand` â€” Takes a file path as a parameter. On execution, it:
+* `ExportCommand` — Takes a file path as a parameter. On execution, it:
     1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts currently listed to the specified file.
     2. If the specified directory to export the contacts to does not exist, CsvExporter will recursively create all the directories required.
     3. Returns a `CommandResult` with a success message containing the file path.
     4. Throws `CommandException` if an `IOException` or `InvalidPathException` occurs during the export process.
-* `ExportCommandParser` â€” Parses user input with optional file path prefix `f/`. If no file path is provided, uses the default location (`./export.csv`).
+* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the default location (`./export.csv`).
 
 **Storage:**
 
-* `CsvExporter` â€” Utility class responsible for:
+* `CsvExporter` — Utility class responsible for:
     1. Converting each `Person` to CSV format using `convertToCSV(Person)`.
     2. Writing all contacts to the specified CSV file.
     3. Handling both students and teaching staff, including tags and time slots for staff.
 
 **Command Format:**
 
-* `export` â€” Exports to `./export.csv` (default location).
-* `export f/FILE_PATH` â€” Exports to the specified file path.
+* `export` — Exports to `./export.csv` (default location).
+* `export f/FILE_PATH` — Exports to the specified file path.
 
 #### Design Considerations
 
@@ -383,23 +383,23 @@ The feature is implemented across the following components:
 
 **Logic:**
 
-* `ImportCommand` â€” Takes a file path as a parameter. On execution, it:
+* `ImportCommand` — Takes a file path as a parameter. On execution, it:
     1. Calls `CsvImporter#importContacts(Model, filePath)` to import all contacts that currently do not exist.
     2. Returns a `CommandResult` with a success message containing the file path.
     3. Throws `CommandException` if an `IOException` occurs during the import process or when the csv file is corrupted,
        i.e, has invalid format, resulting in a `DeserialisePersonException`.
-* `ImportCommandParser` â€” Parses user input with compulsory file path prefix `f/`.
+* `ImportCommandParser` — Parses user input with compulsory file path prefix `f/`.
 
 **Storage:**
 
-* `CsvImporter â€” Utility class responsible for:
+* `CsvImporter — Utility class responsible for:
     1. Reading from the csv file containing all the contacts.
     2. Converting each CSV formatted string (representing a person) into a `Person` via
        `CsvImporter#deserialisePerson(personStrRep)`
 
 **Command Format:**
 
-* `import f/FILE_PATH` â€” Imports contacts from the specified file path.
+* `import f/FILE_PATH` — Imports contacts from the specified file path.
 
 #### Design Considerations
 
@@ -419,17 +419,17 @@ The feature is implemented across the following components:
 
 #### Overview
 
-Certain commands that are destructive or irreversible â€” currently `delete` and `clear` â€” require the user to explicitly confirm before they are executed. These commands implement the `CriticalCommand` marker interface, which causes `AddressBookParser` to intercept them and wrap them in a `RequireConfirmationCommand` instead of executing them directly.
+Certain commands that are destructive or irreversible — currently `delete` and `clear` — require the user to explicitly confirm before they are executed. These commands implement the `CriticalCommand` marker interface, which causes `AddressBookParser` to intercept them and wrap them in a `RequireConfirmationCommand` instead of executing them directly.
 
 #### Implementation
 
 The feature introduces the following classes:
 
-* `CriticalCommand` â€” Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution, and have a verification step before requiring confirmation.
-* `RequireConfirmationCommand` â€” Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
-* `AnswerConfirmationCommand` â€” Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
-* `CommandResult#isPending()` â€” Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
-* `Model#pendingCommand` â€” Field in `ModelManager` that holds the deferred command between the two interactions.
+* `CriticalCommand` — Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution, and have a verification step before requiring confirmation.
+* `RequireConfirmationCommand` — Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
+* `AnswerConfirmationCommand` — Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
+* `CommandResult#isPending()` — Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
+* `Model#pendingCommand` — Field in `ModelManager` that holds the deferred command between the two interactions.
 
 The following sequence diagram shows how a critical command (e.g. `delete 1`) is intercepted and a confirmation prompt is issued:
 
@@ -455,7 +455,7 @@ The following sequence diagram shows how the user's answer (`Y` to confirm, `N` 
 
 ### Product scope
 
-**Product:** Doritus â€” An address book software for NUS teaching staff to manage student contacts.
+**Product:** Doritus — An address book software for NUS teaching staff to manage student contacts.
 
 **Target user profile**:
 
