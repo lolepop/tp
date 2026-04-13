@@ -370,9 +370,9 @@ Appends tags to an existing person, without having to respecify all existing tag
 Finds persons whose names contain any of the given keywords and/or who have any of the specified tags.
 
 **Format:**
-`find [KEYWORD [MORE_KEYWORDS]...] [t/TAG [MORE_TAGS]...] [e/EMAIL [MORE_EMAILS]...] [u/USERNAME [USERNAMES]...] [p/PHONE_SEQUENCE [PHONE_SEQUENCEs]...]`
+`find [n/NAME [MORE_NAMES]...] [e/EMAIL [MORE_EMAIL]...] [u/USERNAME [MORE_USERNAMES]...] [p/PHONE [MORE_PHONES]...] [t/TAG [MORE_TAGS]...]`
 
-**Note:** At least one keyword or tag must be provided.
+**Note:** At least one of NAME, EMAIL, USERNAME, PHONE or TAG must be provided.
 
 **Behavior:**
 
