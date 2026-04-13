@@ -317,6 +317,7 @@ available to teach.
 * Time slots are displayed in the UI beneath the staff member's contact details (each slot as its own label, with
   spacing between multiple slots).
 * Time slots are persisted in the data file.
+* Time slots are discrete. i.e. (11:00-12:00, 12:00-13:00) is different from (11:00-13:00)
 * Successful additions are append-only: you can **add** multiple slots with repeated `tutorslot` commands, but there is
   **no command** to edit or remove one slot only. To change slots you may delete the staff contact and re-add them, or
   edit the data file directly (advanced; see [Editing the data file](#editing-the-data-file)).
