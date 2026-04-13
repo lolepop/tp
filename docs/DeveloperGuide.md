@@ -325,8 +325,7 @@ The following sequence diagram shows how the `tutordashboard` command is execute
 
 #### Overview
 
-The `export` command allows users to export all contacts in the address book to a CSV file. This feature enables users
-to back up their data or share contacts with others in a common CSV format.
+The `export` command allows users to export all contacts currently listed in the address book to a CSV file. This feature enables users to back up their data or share contacts with others in a common CSV format.
 
 #### Implementation
 
@@ -335,11 +334,11 @@ The feature is implemented across the following components:
 **Logic:**
 
 * `ExportCommand` — Takes a file path as a parameter. On execution, it:
-    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts to the specified file.
-    2. Returns a `CommandResult` with a success message containing the file path.
-    3. Throws `CommandException` if an `IOException` occurs during the export process.
-* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the
-  default location (`./export.csv`).
+    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts currently listed to the specified file.
+    2. If the specified directory to export the contacts to does not exist, CsvExporter will recursively create all the directories required.
+    3. Returns a `CommandResult` with a success message containing the file path.
+    4. Throws `CommandException` if an `IOException` or `InvalidPathException` occurs during the export process.
+* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the default location (`./export.csv`).
 
 **Storage:**
 
@@ -608,68 +607,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ---
 
-**Use case: UC08 – Add availability to a teaching staff member**
-
-**MSS**
-
-1. User lists teaching staff using `staffslist`.
-2. Doritus shows the list of teaching staff.
-3. User identifies the target staff member and notes their index.
-4. User enters `tutorslot INDEX DAY-START-END` (e.g., `tutorslot 1 mon-10-12`).
-5. Doritus adds the time slot to the staff member and shows a success message.
-
-   Use case ends.
-
-**Extensions**
-
-* 4a. The person at the given index is not a teaching staff member.
-
-    * 4a1. Doritus shows an error message indicating the person is not teaching staff, and suggests using `staffslist` if
-      the user intended to target a tutor.
-
-      Use case resumes at step 4.
-
-* 4b. The time slot format is invalid.
-
-    * 4b1. Doritus shows an error message explaining the valid format (`DAY-START-END`).
-    * 4b2. User re-enters the command with a valid time slot.
-
-      Use case resumes at step 4.
-
-* 4c. The time slot overlaps with an existing slot for this staff member.
-
-    * 4c1. Doritus shows an error message indicating the overlap.
-
-      Use case resumes at step 4.
-
----
-
-**Use case: UC09 – View tutor availability dashboard**
-
-**MSS**
-
-1. User enters `tutordashboard`.
-2. Doritus displays a numbered list of all teaching staff, each with their available time slots sorted by day and start
-   time.
-
-   Use case ends.
-
-**Extensions**
-
-* 2a. There are no teaching staff in the address book.
-
-    * 2a1. Doritus shows a message indicating no teaching staff were found.
-
-      Use case ends.
-
-* 2b. A teaching staff member has no time slots set.
-
-    * 2b1. Doritus shows `(no slots set)` for that staff member.
-
-      Use case continues from step 2 for remaining staff.
-
----
-
 **Use case: UC05 – Prepare a tutorial group contact list for attendance**
 
 **MSS**
@@ -770,6 +707,69 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
     * 1b1. Doritus shows an error message.
 
       Use case resumes at step 1.
+
+**Use case: UC08 – Add availability to a teaching staff member**
+
+**MSS**
+
+1. User lists teaching staff using `staffslist`.
+2. Doritus shows the list of teaching staff.
+3. User identifies the target staff member and notes their index.
+4. User enters `tutorslot INDEX DAY-START-END` (e.g., `tutorslot 1 mon-10-12`).
+5. Doritus adds the time slot to the staff member and shows a success message.
+
+   Use case ends.
+
+**Extensions**
+
+* 4a. The person at the given index is not a teaching staff member.
+
+    * 4a1. Doritus shows an error message indicating the person is not teaching staff, and suggests using `staffslist` if
+      the user intended to target a tutor.
+
+      Use case resumes at step 4.
+
+* 4b. The time slot format is invalid.
+
+    * 4b1. Doritus shows an error message explaining the valid format (`DAY-START-END`).
+    * 4b2. User re-enters the command with a valid time slot.
+
+      Use case resumes at step 4.
+
+* 4c. The time slot overlaps with an existing slot for this staff member.
+
+    * 4c1. Doritus shows an error message indicating the overlap.
+
+      Use case resumes at step 4.
+
+---
+
+**Use case: UC09 – View tutor availability dashboard**
+
+**MSS**
+
+1. User enters `tutordashboard`.
+2. Doritus displays a numbered list of all teaching staff, each with their available time slots sorted by day and start
+   time.
+
+   Use case ends.
+
+**Extensions**
+
+* 2a. There are no teaching staff in the address book.
+
+    * 2a1. Doritus shows a message indicating no teaching staff were found.
+
+      Use case ends.
+
+* 2b. A teaching staff member has no time slots set.
+
+    * 2b1. Doritus shows `(no slots set)` for that staff member.
+
+      Use case continues from step 2 for remaining staff.
+
+---
+
 
 ### Non-Functional Requirements
 
