@@ -331,6 +331,9 @@ Edits an existing person in the address book. For teaching staff, you can also c
 
 * Updates the specified fields; unspecified fields are unchanged.
 * Same validation constraints as `add` / `add staff` apply.
+* **Duplicate checks:** If you edit a person's phone, email, or username to match another person's, the edit is rejected
+  with the error: `This phone number already exists in the address book`, `This email already exists in the address book`,
+  or `This username already exists in the address book`. This ensures phone, email, and username remain unique across all contacts.
 * When editing tags, existing tags are replaced (not cumulative). Use `t/` with no value to clear all tags.
   **Examples:**
 
