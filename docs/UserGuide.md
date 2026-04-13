@@ -377,6 +377,9 @@ Finds persons whose names contain any of the given keywords and/or who have any 
 
 * **Tag search:** Tags match against person tags (case-insensitive)
     * Persons with at least one matching tag will be returned (i.e. `OR` search)
+    * Tags will still have to share the same tag type in order to be matched.
+    * Tags are NOT matched using substring: `fri` will NOT match `friends`
+    * Please refer to [Types of tags](#types-of-tags) to the format for each tag type
 
 * **Email search:** Keywords match against person emails (case-insensitive)
     * Persons matching at least one keyword will be returned (i.e. `OR` search)
