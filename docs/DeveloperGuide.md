@@ -875,9 +875,9 @@ Prerequisites: At least 1 person exists in the displayed list
     1. Test case: `tag-add 1 t/friend t/course:CS2103T`
         Expected: the tags `friend` and `course:CS2103T` will be added to the existing list of tags for the person located at index `1`. The course tag is colour-coded and will appear before `friend`.
 2. Reject invalid tag
-    1. Test case: `tag-add t/frie,nd`
+    1. Test case: `tag-add 1 t/frie,nd`
         Expected: Command fails, explaining that the provided tag's format only accepts alphanumeric characters
-    2. Test case: `tag-add t/course:CS2103TTT`
+    2. Test case: `tag-add 1 t/course:CS2103TTT`
         Expected: Command fails, explaining that the provided tag's format is invalid and provides the allowed syntax for course
 
 --------------------------------------------------------------------------------------------------------------------
