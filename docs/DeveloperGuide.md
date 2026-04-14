@@ -22,7 +22,7 @@ title: Developer Guide
 
 <div markdown="span" class="alert alert-primary">
 
-:bulb: **Tip:** The `.puml` files used to create diagrams are in this document `docs/diagrams` folder.
+:bulb: **Tip:** The `.puml` files used to create diagrams are in the repository's `docs/diagrams` folder.
 </div>
 
 ### Architecture
@@ -62,7 +62,7 @@ the command `delete 1`.
 Each of the four main components (also shown in the diagram above),
 
 * defines its *API* in an `interface` with the same name as the Component.
-* implements its functionality using a concrete `{Component Name}Manager` class (which follows the corresponding API
+* implements its functionality using a concrete `{Component Name}Manager` class (which follows the corresponding API)
   `interface` mentioned in the previous point.
 
 For example, the `Logic` component defines its API in the `Logic.java` interface and implements its functionality using
@@ -148,7 +148,7 @@ How the parsing works:
   placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse
   the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a
   `Command` object. For example, `AddCommandParser` handles both `add` (student) and `add staff` (teaching staff) by
-  inspecting the preamble; list filtering is handled by `ListCommand`, `StaffListCommand`, and `StudentListCommand`.
+  inspecting the preamble; list filtering is handled by `ListCommand (list)`, `StaffListCommand (staffslist)`, and `StudentListCommand (studentslist)`..
 * All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser`
   interface so that they can be treated similarly where possible e.g, during testing.
 
@@ -347,7 +347,7 @@ The feature is implemented across the following components:
 **Logic:**
 
 * `ExportCommand` — Takes a file path as a parameter. On execution, it:
-    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts currently listed to the specified file.
+    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts currently displayed in the filtered list to the specified file. The exported contacts are therefore affected by commands that filter the displayed list (e.g. staffslist, studentslist, find).
     2. If the specified directory to export the contacts to does not exist, CsvExporter will recursively create all the directories required.
     3. Returns a `CommandResult` with a success message containing the file path.
     4. Throws `CommandException` if an `IOException` or `InvalidPathException` occurs during the export process.
@@ -382,7 +382,7 @@ The feature is implemented across the following components:
 #### Overview
 
 The `import` command allows users to import contacts in the address book from a CSV file.
-This allows users to a way to restore accidentally deleted contacts and to add multiple contacts quickly.
+This gives users a way to restore accidentally deleted contacts and to add multiple contacts quickly.
 
 #### Implementation
 
@@ -399,7 +399,7 @@ The feature is implemented across the following components:
 
 **Storage:**
 
-* `CsvImporter — Utility class responsible for:
+* `CsvImporter` — Utility class responsible for:
     1. Reading from the csv file containing all the contacts.
     2. Converting each CSV formatted string (representing a person) into a `Person` via
        `CsvImporter#deserialisePerson(personStrRep)`
@@ -410,7 +410,7 @@ The feature is implemented across the following components:
 
 #### Design Considerations
 
-**Aspect: Where to place export logic**
+**Aspect: Where to place import logic**
 
 * **Alternative 1 (current choice):** Place import logic in `CsvImporter` utility class in the storage component.
     * Pros: Able to test the logic for deserialisation and import easily and separately from the command execution.
@@ -434,7 +434,7 @@ The feature introduces the following classes:
 
 * `CriticalCommand` — Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution, and have a verification step before requiring confirmation.
 * `RequireConfirmationCommand` — Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
-* `AnswerConfirmationCommand` — Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
+* `AnswerConfirmationCommand` — Handles the user's Y or N response. `Y` and `N` must be exact match to confirm, both `Y` and `N` are case-sensitive. On Y, it retrieves and executes the pending command from Model. On N, it returns a cancellation message. If any other command is submitted while a confirmation is pending, the pending command is automatically discarded before the new command is processed.
 * `CommandResult#isPending()` — Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
 * `Model#pendingCommand` — Field in `ModelManager` that holds the deferred command between the two interactions.
 
@@ -548,7 +548,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 3. User requests to delete the identified contact by its index.
 4. System double checks with the user if they would like to proceed with the deletion.
 5. User confirms that they would like to delete the contact.
-6. System remove the contact.
+6. System removes the contact.
 
    Use case ends.
 
@@ -634,8 +634,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. User requests to view all contacts.
 2. Doritus shows the contacts.
-3. User narrows down the list to a specific tutorial or lab group (e.g., by using tags or a future `filter TAG`
-   command).
+3. User narrows down the list to a specific tutorial or lab group using `find t/TAG` (e.g., `find t/tut:A10`).
 4. Doritus shows only the contacts belonging to that tutorial or lab group.
 5. User uses the displayed list to take attendance or copy email addresses.
 
@@ -741,7 +740,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 2a. There are no teaching staff in the address book.
 
-    * 2a1. Doritus shows a message indicating no teaching staff were found.
+    * 2a1. Doritus shows `No teaching staff found.`
 
       Use case ends.
 
@@ -872,8 +871,7 @@ testers are expected to do more *exploratory* testing.
 1. Reject crossing-midnight slot
 
     1. Test case: `tutorslot 1 mon-23-24`<br>
-       Expected: Command fails because `24` is outside the allowed hour range `0-23`; slots that cross midnight are not
-       supported in the current format.
+       Expected: Command fails because `24` is outside the allowed hour range `0-23`; slots that cross midnight are not supported in the current format.
 
 ### Adding tags
 
