@@ -487,26 +487,26 @@ The following sequence diagram shows how the user's answer (`Y` to confirm, `N` 
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …                            | I want to …                                           | So that I can …                                                        |
-|----------|------------------------------------|--------------------------------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the Doritus             |
-| `* * *`  | user                               | add a new contact                                      | store **contact details** (name, phone, email, username, and optional tags) for future reference |
-| `* * *`  | user                               | delete a contact                                       | remove withdrawn students or duplicate entries                         |
-| `* * *`  | user                               | find a person by **name, phone, email, username, or tags** | locate details of persons without having to go through the entire list |
-| `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
+| Priority | As a …                            | I want to …                                                                             | So that I can …                                                        |
+|----------|------------------------------------|-----------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| `* * *`  | new user                           | see usage instructions                                                                  | refer to instructions when I forget how to use the Doritus             |
+| `* * *`  | user                               | add a new contact                                                                       | store **contact details** (name, phone, email, username, and optional tags) for future reference |
+| `* * *`  | user                               | delete a contact                                                                        | remove withdrawn students or duplicate entries                         |
+| `* * *`  | user                               | find a person by **name, phone, email, username, or tags**                              | locate details of persons without having to go through the entire list |
+| `* * *`  | professor                          | add tags to contacts                                                                    | categorize students by course, tutorial, or lab                        |
 | `* *`    | professor that teach many students | search and filter contacts (e.g. using `find`, `list`, `staffslist`, or `studentslist`) | locate a person easily                                                 |
-| `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
-| `* *`    | forgetful user                     | perform fuzzy and partially matching searches                  | locate a person without remembering the full name of that person        |
-| `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
-| `* *`    | user                               | see contextual error messages when a command fails     | know what is the problem and fix it                                    |
-| `*`      | user                               | access my input history                                | run similar commands easily                                            |
-| `* *`    | sloppy user                        | double confirm some dangerous operations               | keep my contacts data safe from mistakes                               |
-| `*`      | sloppy user                        | undo some commands                                     | revert the effects of mistakes                                         |
-| `*`      | user                               | have some customized configuration options             | customize this software to improve my efficiency and comfort           |
-| `* *`    | professor                          | archive a completed semester's cohort                  | start each new semester with a clean state                             |
-| `*`      | professor                          | record short notes about students                      | recall important context when meeting them again in future semesters   |
-| `* *`    | tutor/professor                    | state when I am available to teach                     | specify my availability so students know when I can teach              |
-| `* *`    | tutor/professor                    | view the availability of all tutors in one place       | see who is able to teach at a glance                                   |
+| `* *`    | professor that teach many courses  | search persons by tags                                                                  | locate details of persons in a course, tutorial, or lab easily         |
+| `* *`    | forgetful user                     | perform fuzzy and partial match searches                                                | locate a person without remembering the full name of that person        |
+| `*`      | professor that works in a group    | selectively import and export contacts in some formats                                  | share contacts data with others                                        |
+| `* *`    | user                               | see contextual error messages when a command fails                                      | know what is the problem and fix it                                    |
+| `*`      | user                               | access my input history                                                                 | run similar commands easily                                            |
+| `* *`    | sloppy user                        | double confirm some dangerous operations                                                | keep my contacts data safe from mistakes                               |
+| `*`      | sloppy user                        | undo some commands                                                                      | revert the effects of mistakes                                         |
+| `*`      | user                               | have some customized configuration options                                              | customize this software to improve my efficiency and comfort           |
+| `* *`    | professor                          | archive a completed semester's cohort                                                   | start each new semester with a clean state                             |
+| `*`      | professor                          | record short notes about students                                                       | recall important context when meeting them again in future semesters   |
+| `* *`    | tutor/professor                    | state when I am available to teach                                                      | specify my availability so students know when I can teach              |
+| `* *`    | tutor/professor                    | view the availability of all tutors in one place                                        | see who is able to teach at a glance                                   |
 
 **Note (student ID and "ID" in user stories):** Doritus does **not** store or validate a separate NUS **Student ID** field; identity in the app is based on **name, phone, email, username** (and teaching-staff **position**), as described under *Duplicate contacts* in the User Guide and under **Student ID** in the [Glossary](#glossary) below. The **username** is the main user-chosen identifier analogous to an "ID" in some workflows. There is **no** dedicated "sort by name or ID" command: users narrow the list using **`find`** and the list commands (`list`, `staffslist`, `studentslist`).
 
