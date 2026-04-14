@@ -32,7 +32,8 @@ public class TutorSlotCommand extends Command {
 
     public static final String MESSAGE_SUCCESS = "Added time slot to %1$s: %2$s";
     public static final String MESSAGE_NOT_TEACHING_STAFF =
-            "The person at index %1$d is not a teaching staff member.";
+            "The person at index %1$d is not a teaching staff member. Use staffslist to show only teaching staff, "
+                    + "then run tutorslot with the index from that list.";
     public static final String MESSAGE_OVERLAPPING_SLOT =
             "This time slot overlaps with an existing slot for this teaching staff member.";
 

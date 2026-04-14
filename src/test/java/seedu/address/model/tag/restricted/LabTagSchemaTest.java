@@ -33,6 +33,19 @@ public class LabTagSchemaTest {
     }
 
     @Test
+    public void testValidTag_optionalCourseSuffix() {
+        assertTrue(schema.isTagValid(VALID_LAB_TAG + "-" + CourseTagSchemaTest.VALID_COURSE_TAG));
+    }
+
+    @Test
+    public void testInvalidTag_optionalCourseSuffix() {
+        assertFalse(schema.isTagValid(CourseTagSchemaTest.VALID_COURSE_TAG));
+        assertFalse(schema.isTagValid("-" + CourseTagSchemaTest.VALID_COURSE_TAG));
+        assertFalse(schema.isTagValid(VALID_LAB_TAG + "-"));
+        assertFalse(schema.isTagValid(VALID_LAB_TAG + "-" + CourseTagSchemaTest.INVALID_COURSE_TAG));
+    }
+
+    @Test
     public void testGetConstraintViolationMessage() {
         assertEquals(LabTagSchema.MESSAGE_CONSTRAINTS, schema.getConstraintViolationMessage());
     }

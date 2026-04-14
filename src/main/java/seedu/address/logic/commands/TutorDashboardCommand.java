@@ -17,7 +17,7 @@ import seedu.address.model.person.TimeSlot;
 /**
  * Displays a dashboard showing all teaching staff and their available time slots.
  */
-public class TutorDashboardCommand extends Command {
+public class TutorDashboardCommand extends Command implements NullaryCommand {
 
     public static final String COMMAND_WORD = "tutordashboard";
 

@@ -107,6 +107,43 @@ public class AddTagCommandTest {
     }
 
     @Test
+    public void duplicateTagUpdated() {
+        String initial = "abc123";
+        String updated = "ABC123";
+        HashSet<AbstractTag> initialTag = new HashSet<>(List.of(new Tag(initial)));
+        HashSet<AbstractTag> updatedTag = new HashSet<>(List.of(new Tag(updated)));
+
+        // set this person to have only one tag: "abc123"
+        Person personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+        model.setPerson(personToEdit, personToEdit.cloneInto(p -> {
+            p.setTags(initialTag);
+        }));
+
+        // ensure updated version
+        personToEdit = model.getFilteredPersonList().get(INDEX_FIRST_PERSON.getZeroBased());
+
+        AddTagCommand addTagCommand = new AddTagCommand(INDEX_FIRST_PERSON, updatedTag);
+
+        Person editedPerson = personToEdit.cloneInto(p -> {
+            p.setTags(updatedTag);
+        });
+
+        ModelManager expectedModel = new ModelManager(model.getAddressBook(), new UserPrefs());
+        expectedModel.setPerson(personToEdit, editedPerson);
+
+        assertCommandSuccessModelOnly(addTagCommand, model, expectedModel);
+
+        // now the person should have that tag updated "abc123" -> "ABC123" (note the casing)
+        Tag finalUpdatedTag = (Tag) expectedModel.getFilteredPersonList()
+                .get(INDEX_FIRST_PERSON.getZeroBased())
+                .getTags()
+                .stream()
+                .findFirst()
+                .get();
+        assertEquals(finalUpdatedTag.getTagName(), updated);
+    }
+
+    @Test
     public void addTag_invalidIndex_success() {
         Index outOfBoundIndex = Index.fromOneBased(model.getFilteredPersonList().size() + 1);
 

@@ -11,6 +11,7 @@ import static seedu.address.logic.parser.CliSyntax.PREFIX_USERNAME;
 import java.util.Set;
 import java.util.stream.Stream;
 
+import seedu.address.logic.Messages;
 import seedu.address.logic.commands.AddCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
 import seedu.address.model.person.Email;
@@ -70,6 +71,10 @@ public class AddCommandParser implements Parser<AddCommand> {
     private AddCommand parseStudent(ArgumentMultimap argMultimap) throws ParseException {
         if (!arePrefixesPresent(argMultimap, PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_USERNAME)) {
             throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, AddCommand.MESSAGE_USAGE));
+        }
+
+        if (argMultimap.getValue(PREFIX_POSITION).isPresent()) {
+            throw new ParseException(Messages.MESSAGE_ADD_STUDENT_DISALLOWS_POSITION);
         }
 
         argMultimap.verifyNoDuplicatePrefixesFor(PREFIX_NAME, PREFIX_PHONE, PREFIX_EMAIL, PREFIX_USERNAME);

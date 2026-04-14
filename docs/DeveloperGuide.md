@@ -1,4 +1,4 @@
----
+﻿---
 layout: page
 title: Developer Guide
 ---
@@ -22,7 +22,7 @@ title: Developer Guide
 
 <div markdown="span" class="alert alert-primary">
 
-:bulb: **Tip:** The `.puml` files used to create diagrams are in this document `docs/diagrams` folder.
+:bulb: **Tip:** The `.puml` files used to create diagrams are in the repository's `docs/diagrams` folder.
 </div>
 
 ### Architecture
@@ -62,7 +62,7 @@ the command `delete 1`.
 Each of the four main components (also shown in the diagram above),
 
 * defines its *API* in an `interface` with the same name as the Component.
-* implements its functionality using a concrete `{Component Name}Manager` class (which follows the corresponding API
+* implements its functionality using a concrete `{Component Name}Manager` class (which follows the corresponding API)
   `interface` mentioned in the previous point.
 
 For example, the `Logic` component defines its API in the `Logic.java` interface and implements its functionality using
@@ -148,7 +148,7 @@ How the parsing works:
   placeholder for the specific command name e.g., `AddCommandParser`) which uses the other classes shown above to parse
   the user command and create a `XYZCommand` object (e.g., `AddCommand`) which the `AddressBookParser` returns back as a
   `Command` object. For example, `AddCommandParser` handles both `add` (student) and `add staff` (teaching staff) by
-  inspecting the preamble; list filtering is handled by `ListCommand`, `StaffListCommand`, and `StudentListCommand`.
+  inspecting the preamble; list filtering is handled by `ListCommand (list)`, `StaffListCommand (staffslist)`, and `StudentListCommand (studentslist)`..
 * All `XYZCommandParser` classes (e.g., `AddCommandParser`, `DeleteCommandParser`, ...) inherit from the `Parser`
   interface so that they can be treated similarly where possible e.g, during testing.
 
@@ -170,7 +170,7 @@ The `Model` component,
   the UI can be bound to this list so that the UI automatically updates when the data in the list change. Commands such
   as `list`, `staffslist`, and `studentslist` update this filter to show all persons, only teaching staff, or only
   students respectively.
-* stores a `UserPref` object that represents the user’s preferences. This is exposed to the outside as a
+* stores a `UserPref` object that represents the user's preferences. This is exposed to the outside as a
   `ReadOnlyUserPref` objects.
 * does not depend on any of the other three components (as the `Model` represents data entities of the domain, they
   should make sense on their own without depending on other components)
@@ -208,9 +208,14 @@ The address book holds a single list of `Person` objects. Two types of persons a
 * **Students** — base `Person` instances, added with `add n/NAME p/... e/... u/...`.
 * **Teaching staff** — `TeachingStaff` instances (extend `Person`) with an additional `Position` field. Added with
   `add staff n/NAME p/... e/... u/... [pos/POSITION]` where name, phone, email, username are mandatory and
-  `pos/POSITION` is optional. `Position` is restricted to "Teaching Assistant" or "Professors".
+  `pos/POSITION` is optional. `Position` is restricted to "Teaching Assistant" or "Professors" (input is matched
+  case-insensitively; the model stores the canonical spelling).
 
 Phone numbers are validated as Singapore numbers (`[3689]\\d{7}`): exactly 8 digits, starting with 3, 6, 8, or 9.
+
+`Email` implements case-insensitive equality: `Email#equals` and `Email#hashCode` use a normalized (trimmed,
+upper-cased) form so duplicate-email checks in `AddCommand` reject addresses that differ only by letter case, while
+the stored string keeps the user's casing.
 
 The UI and commands treat both types uniformly as `Person` where possible (e.g. `find`, `delete` by index). The filtered
 list in the model can show all persons (`list`), only teaching staff (`staffslist`), or only students (`studentslist`)
@@ -230,13 +235,28 @@ Either variant of tag can be constructed using `TagFactory.create(tag)`. Which o
   3. `RestrictedTag`'s constructor will pass `value` into the schema to check against its own specified validation method
   4. Should validation fail, an error is thrown
 
+#### Tutorial/Lab Tag Design Rationale
+- Tutorial and Lab tags optionally allow a course to be associated with these tags. (so `tut:A13` is distinct from `tut:A13-CS2103`)
+    - Reasoning: We leave the choice of convention to the user. For example, if they mainly teach CS1231S, they could decide that the one without the course marker is from their main course (so that it is easier to spot).
+- A `course` tag does not have to already be attached to the person
+    - We prioritise user flexibility over strict enforcement.
+    - Reasoning: The course suffix is mainly for contextual metadata. For example, a user may wish to disambiguate two tutorial groups by attaching a course identifier, but does not want the additional course tag cluttering the tag list.
+
 ### Tutor Availability Scheduling
 
 #### Overview
 
 Teaching staff members can specify when they are available to teach using the `tutorslot` command. This feature adds a
 `Set<TimeSlot>` field to the `TeachingStaff` model, where each `TimeSlot` represents a day-of-week and time range (e.g.,
-Monday 10:00–12:00).
+Monday 10:00–12:00). Availability is **append-only** from the CLI: you can add slots with `tutorslot`, but there is no
+command to edit or remove an individual slot (workarounds: delete the staff contact or advanced editing of the data
+file; planned fixes are listed in [Appendix: Planned Enhancements](#appendix-planned-enhancements)). In other words,
+slot management supports **Create** only, not full CRUD on each slot.
+
+The exact behaviour is as follows: adding a `tutorslot` only works for a teaching staff member in the current displayed
+list; the slot must be a same-day `DAY-START-END` whole-hour range with `START < END`; crossing midnight is invalid;
+overlapping or duplicate slots are rejected; boundary-touching slots are allowed; and successful additions are
+append-only.
 
 #### Implementation
 
@@ -318,8 +338,7 @@ The following sequence diagram shows how the `tutordashboard` command is execute
 
 #### Overview
 
-The `export` command allows users to export all contacts in the address book to a CSV file. This feature enables users
-to back up their data or share contacts with others in a common CSV format.
+The `export` command allows users to export all contacts currently listed in the address book to a CSV file. This feature enables users to back up their data or share contacts with others in a common CSV format.
 
 #### Implementation
 
@@ -328,11 +347,11 @@ The feature is implemented across the following components:
 **Logic:**
 
 * `ExportCommand` — Takes a file path as a parameter. On execution, it:
-    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts to the specified file.
-    2. Returns a `CommandResult` with a success message containing the file path.
-    3. Throws `CommandException` if an `IOException` occurs during the export process.
-* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the
-  default location (`./export.csv`).
+    1. Calls `CsvExporter#exportContacts(Model, filePath)` to export all contacts currently displayed in the filtered list to the specified file. The exported contacts are therefore affected by commands that filter the displayed list (e.g. staffslist, studentslist, find).
+    2. If the specified directory to export the contacts to does not exist, CsvExporter will recursively create all the directories required.
+    3. Returns a `CommandResult` with a success message containing the file path.
+    4. Throws `CommandException` if an `IOException` or `InvalidPathException` occurs during the export process.
+* `ExportCommandParser` — Parses user input with optional file path prefix `f/`. If no file path is provided, uses the default location (`./export.csv`).
 
 **Storage:**
 
@@ -363,7 +382,7 @@ The feature is implemented across the following components:
 #### Overview
 
 The `import` command allows users to import contacts in the address book from a CSV file.
-This allows users to a way to restore accidentally deleted contacts and to add multiple contacts quickly.
+This gives users a way to restore accidentally deleted contacts and to add multiple contacts quickly.
 
 #### Implementation
 
@@ -393,7 +412,7 @@ The feature is implemented across the following components:
 
 #### Design Considerations
 
-**Aspect: Where to place export logic**
+**Aspect: Where to place import logic**
 
 * **Alternative 1 (current choice):** Place import logic in `CsvImporter` utility class in the storage component.
     * Pros: Able to test the logic for deserialisation and import easily and separately from the command execution.
@@ -417,7 +436,7 @@ The feature introduces the following classes:
 
 * `CriticalCommand` — Any command implementing it will be intercepted by `AddressBookParser` and require confirmation before execution, and have a verification step before requiring confirmation.
 * `RequireConfirmationCommand` — Wraps a `CriticalCommand`. On execution, it stores the wrapped command as a pending command in `Model` and returns a `CommandResult` with `pending=true`, prompting the user to confirm.
-* `AnswerConfirmationCommand` — Handles the user's `Y` or `N` response. On `Y`, it retrieves and executes the pending command from `Model`. On `N`, it returns a cancellation message.
+* `AnswerConfirmationCommand` — Handles the user's Y or N response. `Y` and `N` must be exact match to confirm, both `Y` and `N` are case-sensitive. On Y, it retrieves and executes the pending command from Model. On N, it returns a cancellation message. If any other command is submitted while a confirmation is pending, the pending command is automatically discarded before the new command is processed.
 * `CommandResult#isPending()` — Flag that tells `LogicManager` not to clear the pending command from `Model` when `true`.
 * `Model#pendingCommand` — Field in `ModelManager` that holds the deferred command between the two interactions.
 
@@ -450,7 +469,9 @@ The following sequence diagram shows how the user's answer (`Y` to confirm, `N` 
 **Target user profile**:
 
 * NUS teaching staff (lecturers, instructors, and teaching assistants) who manage hundreds to thousands of students each
-  semester
+  semester. Staff **roles** in real life (e.g. lecturer, instructor) are not all listed as separate `pos/` values in
+  Doritus: the product only supports positions `Teaching Assistant` and `Professors` (see User Guide); users may map
+  broader roles to these values or omit `pos/` where appropriate.
 * prefer desktop apps that run locally on their own laptops
 * can type fast and are comfortable with command-style (CLI-like) interfaces
 * frequently need to retrieve student context quickly during emails, grading, and office hours
@@ -468,26 +489,28 @@ The following sequence diagram shows how the user's answer (`Y` to confirm, `N` 
 
 Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unlikely to have) - `*`
 
-| Priority | As a …​                            | I want to …​                                           | So that I can…​                                                        |
-|----------|------------------------------------|--------------------------------------------------------|------------------------------------------------------------------------|
-| `* * *`  | new user                           | see usage instructions                                 | refer to instructions when I forget how to use the Doritus             |
-| `* * *`  | user                               | add a new contact                                      | store their student ID and contact details for future reference        |
-| `* * *`  | user                               | delete a contact                                       | remove withdrawn students or duplicate entries                         |
-| `* * *`  | user                               | find a person by name or ID                            | locate details of persons without having to go through the entire list |
-| `* * *`  | professor                          | add tags to contacts                                   | categorize students by course, tutorial, or lab                        |
-| `* *`    | professor that teach many students | sort persons by name or ID                             | locate a person easily                                                 |
-| `* *`    | professor that teach many courses  | search persons by tags                                 | locate details of persons in a course, tutorial, or lab easily         |
-| `* *`    | forgetful user                     | perform fuzzy and partially maching searchs                  | locate a person without remembering the full name of that person        |
-| `*`      | professor that works in a group    | selectively import and export contacts in some formats | share contacts data with others                                        |
-| `* *`    | user                               | see contextual error messages when a command fails     | know what is the problem and fix it                                    |
-| `*`      | user                               | access my input history                                | run similar commands easily                                            |
-| `* *`    | sloppy user                        | double confirm some dangerous operations               | keep my contacts data safe from mistakes                               |
-| `*`      | sloppy user                        | undo some commands                                     | revert the effects of mistakes                                         |
-| `*`      | user                               | have some customized configuration options             | customize this software to improve my efficiency and comfort           |
-| `* *`    | professor                          | archive a completed semester’s cohort                  | start each new semester with a clean state                             |
-| `*`      | professor                          | record short notes about students                      | recall important context when meeting them again in future semesters   |
-| `* *`    | tutor/professor                    | state when I am available to teach                     | specify my availability so students know when I can teach              |
-| `* *`    | tutor/professor                    | view the availability of all tutors in one place       | see who is able to teach at a glance                                   |
+| Priority | As a …                            | I want to …                                                                             | So that I can …                                                        |
+|----------|------------------------------------|-----------------------------------------------------------------------------------------|------------------------------------------------------------------------|
+| `* * *`  | new user                           | see usage instructions                                                                  | refer to instructions when I forget how to use the Doritus             |
+| `* * *`  | user                               | add a new contact                                                                       | store **contact details** (name, phone, email, username, and optional tags) for future reference |
+| `* * *`  | user                               | delete a contact                                                                        | remove withdrawn students or duplicate entries                         |
+| `* * *`  | user                               | find a person by **name, phone, email, username, or tags**                              | locate details of persons without having to go through the entire list |
+| `* * *`  | professor                          | add tags to contacts                                                                    | categorize students by course, tutorial, or lab                        |
+| `* *`    | professor that teach many students | search and filter contacts (e.g. using `find`, `list`, `staffslist`, or `studentslist`) | locate a person easily                                                 |
+| `* *`    | professor that teach many courses  | search persons by tags                                                                  | locate details of persons in a course, tutorial, or lab easily         |
+| `* *`    | forgetful user                     | perform fuzzy and partial match searches                                                | locate a person without remembering the full name of that person        |
+| `*`      | professor that works in a group    | selectively import and export contacts in some formats                                  | share contacts data with others                                        |
+| `* *`    | user                               | see contextual error messages when a command fails                                      | know what is the problem and fix it                                    |
+| `*`      | user                               | access my input history                                                                 | run similar commands easily                                            |
+| `* *`    | sloppy user                        | double confirm some dangerous operations                                                | keep my contacts data safe from mistakes                               |
+| `*`      | sloppy user                        | undo some commands                                                                      | revert the effects of mistakes                                         |
+| `*`      | user                               | have some customized configuration options                                              | customize this software to improve my efficiency and comfort           |
+| `* *`    | professor                          | archive a completed semester's cohort                                                   | start each new semester with a clean state                             |
+| `*`      | professor                          | record short notes about students                                                       | recall important context when meeting them again in future semesters   |
+| `* *`    | tutor/professor                    | state when I am available to teach                                                      | specify my availability so students know when I can teach              |
+| `* *`    | tutor/professor                    | view the availability of all tutors in one place                                        | see who is able to teach at a glance                                   |
+
+**Note (student ID and "ID" in user stories):** Doritus does **not** store or validate a separate NUS **Student ID** field; identity in the app is based on **name, phone, email, username** (and teaching-staff **position**), as described under *Duplicate contacts* in the User Guide and under **Student ID** in the [Glossary](#glossary) below. The **username** is the main user-chosen identifier analogous to an "ID" in some workflows. There is **no** dedicated "sort by name or ID" command: users narrow the list using **`find`** and the list commands (`list`, `staffslist`, `studentslist`).
 
 ### Use cases
 
@@ -524,27 +547,35 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 1. User requests to show all contacts.
 2. System shows contacts.
-3. User requests to delete a contact by index.
-4. System remove the contact.
+3. User requests to delete the identified contact by its index.
+4. System double checks with the user if they would like to proceed with the deletion.
+5. User confirms that they would like to delete the contact.
+6. System removes the contact.
 
    Use case ends.
 
 **Extensions**
 
-* 3a. User locate the contact to be deleted by other fields. (e.g. name, email)
+* 5a. User declines the action.
 
-    * 3a1. System remove the contact.
+    * 5a1. System notifies user that deletion was cancelled, as requested.
 
       Use case ends.
 
+* 5b. User tries performing some other command.
+
+  * 5b1. System automatically cancels the pending deletion.
+
+    Use case ends.
+
 ---
 
-**Use case: UC03 - find a person by name**
+**Use case: UC03 - Find a person by fields**
 
 **MSS**
 
-1. User requests to find a person by name, phone, email or username
-2. System shows a list of persons whose names match the search query
+1. User requests to find a person by name, phone, email, username or any combination of these fields (name, phone, email, username)
+2. System shows a list of persons whose name, phone, email and username match the search query
 
    Use case ends.
 
@@ -564,21 +595,21 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ---
 
-**Use case: UC04 – Add tags to a student**
+**Use case: UC04 – Add tags to a person**
 
 **MSS**
 
 1. User requests to show all contacts.
 2. Doritus shows contacts.
-3. User identifies the correct student and notes their `index` in the displayed list.
-4. User enters a list of tags to be added to the student at `index`.
-5. Doritus adds the tag to the student and shows a success message including the updated tags.
+3. User identifies the correct person and notes their `index` in the displayed list.
+4. User enters a list of tags to be added to the person at `index`.
+5. Doritus adds the tag to the person and shows a success message including the updated tags.
 
    Use case ends.
 
 **Extensions**
 
-* 4a. The given index is invalid (not corresponding to a student).
+* 4a. The given index is invalid (not corresponding to a person).
 
     * 4a1. Doritus shows an error message explaining that the index must refer to a contact in the displayed list.
     * 4a2. User checks the displayed list and corrects their mistake.
@@ -592,20 +623,82 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
       Use case resumes at step 4.
 
-* 4c. A given tag already exists for that student.
+* 4c. A given tag already exists for that person.
     * 4c1. Doritus shows a warning (non-fatal) that the tag already exists.
 
       Use case resumes at step 5.
 
 ---
 
-**Use case: UC08 – Add availability to a teaching staff member**
+**Use case: UC05 – Prepare a tutorial group contact list for attendance**
 
 **MSS**
 
-1. User lists teaching staff using `staffslist`.
-2. Doritus shows the list of teaching staff.
-3. User identifies the target staff member and notes their index.
+1. User requests to view all contacts.
+2. Doritus shows the contacts.
+3. User narrows down the list to a specific tutorial or lab group using `find t/TAG` (e.g., `find t/tut:A10`).
+4. Doritus shows only the contacts belonging to that tutorial or lab group.
+5. User uses the displayed list to take attendance or copy email addresses.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. The address book is empty.
+
+    * 1a1. Doritus shows an empty list with a message such as "No contacts found. Add your first contact to get
+      started!".
+
+      Use case ends.
+
+* 3a. The specified tag or filter value is invalid.
+
+    * 3a1. Doritus shows an error message explaining the valid format for tags/filters.
+    * 3a2. User re-enters the filter with a valid value.
+
+      Use case resumes at step 3.
+
+* 4a. No contacts match the specified tutorial or lab group.
+
+    * 4a1. Doritus shows an empty list and a message such as "No contacts found for this group".
+    * 4a2. User may try a different group or adjust the filter.
+
+      Use case resumes at step 3.
+
+---
+
+**Use case: UC06 - see command instructions**
+
+**MSS**
+
+1. User requests help (e.g. enters `help`).
+2. Doritus opens the **help window** and shows the message `Opened help window.` in the command result area. The help
+   window provides a link to the online User Guide; full command text is **not** listed in the result panel.
+
+   Use case ends.
+
+**Extensions**
+
+* 1a. User types extra text after `help` (e.g. `help 123`).
+
+    * 1a1. Doritus treats the input as `help` (extraneous parameters are ignored, per the User Guide) and proceeds as in
+      the MSS.
+
+      Use case ends.
+
+* 1b. User specifies an invalid command (not recognised by the application).
+
+    * 1b1. Doritus shows an error message.
+
+      Use case resumes at step 1.
+
+**Use case: UC07 – Add availability to a teaching staff member**
+
+**MSS**
+
+1. User lists teaching staff using `staffslist`, or lists all contacts using `list`.
+2. Doritus shows the selected list.
+3. User identifies the target person and notes their index.
 4. User enters `tutorslot INDEX DAY-START-END` (e.g., `tutorslot 1 mon-10-12`).
 5. Doritus adds the time slot to the staff member and shows a success message.
 
@@ -615,7 +708,8 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 4a. The person at the given index is not a teaching staff member.
 
-    * 4a1. Doritus shows an error message indicating the person is not teaching staff.
+    * 4a1. Doritus shows an error message indicating the person is not teaching staff, and suggests using `staffslist` if
+      the user intended to target a tutor.
 
       Use case resumes at step 4.
 
@@ -628,13 +722,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 4c. The time slot overlaps with an existing slot for this staff member.
 
-    * 4c1. Doritus shows an error message indicating the overlap.
+    * 4c1. Doritus shows `This time slot overlaps with an existing slot for this teaching staff member.`
 
       Use case resumes at step 4.
 
 ---
 
-**Use case: UC09 – View tutor availability dashboard**
+**Use case: UC08 – View tutor availability dashboard**
 
 **MSS**
 
@@ -648,7 +742,7 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 * 2a. There are no teaching staff in the address book.
 
-    * 2a1. Doritus shows a message indicating no teaching staff were found.
+    * 2a1. Doritus shows `No teaching staff found.`
 
       Use case ends.
 
@@ -660,103 +754,6 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 
 ---
 
-**Use case: UC05 – Prepare a tutorial group contact list for attendance**
-
-**MSS**
-
-1. User requests to view all contacts.
-2. Doritus shows the contacts.
-3. User narrows down the list to a specific tutorial or lab group (e.g., by using tags or a future `filter TAG`
-   command).
-4. Doritus shows only the contacts belonging to that tutorial or lab group.
-5. User uses the displayed list to take attendance or copy email addresses.
-
-   Use case ends.
-
-**Extensions**
-
-* 1a. The address book is empty.
-
-    * 1a1. Doritus shows an empty list with a message such as “No contacts found. Add your first contact to get
-      started!”.
-
-      Use case ends.
-
-* 3a. The specified tag or filter value is invalid.
-
-    * 3a1. Doritus shows an error message explaining the valid format for tags/filters.
-    * 3a2. User re-enters the filter with a valid value.
-
-      Use case resumes at step 3.
-
-* 4a. No contacts match the specified tutorial or lab group.
-
-    * 4a1. Doritus shows an empty list and a message such as “No contacts found for this group”.
-    * 4a2. User may try a different group or adjust the filter.
-
-      Use case resumes at step 3.
-
----
-
-**Use case: UC06 – Archive a completed semester’s contacts**
-
-**MSS**
-
-1. User ensures the current list shows the cohort to be archived (e.g., by filtering by module code and semester tag).
-2. User initiates an archive operation (e.g., `archive CURRENT_VIEW` or similar command).
-3. Doritus writes the selected contacts to an archive data file while keeping them readable by humans.
-4. Doritus removes the archived contacts from the active list or marks them as archived, depending on the chosen design.
-5. Doritus shows a summary indicating how many contacts were archived and where the archive is stored.
-
-   Use case ends.
-
-**Extensions**
-
-* 1a. No contacts are visible in the current view.
-
-    * 1a1. Doritus shows a message indicating there is nothing to archive.
-
-      Use case ends.
-
-* 2a. The archive command format is invalid.
-
-    * 2a1. Doritus shows an error message giving the correct archive command usage.
-    * 2a2. User re-enters the command.
-
-      Use case resumes at step 2.
-
-* 3a. There is an I/O error while writing to the archive file.
-
-    * 3a1. Doritus shows an error message explaining that the archive could not be saved and that no changes were made
-      to active data.
-    * 3a2. User resolves the underlying issue (e.g., disk space, permissions) and retries the command.
-
-      Use case resumes at step 2.
-
----
-
-**Use case: UC07 - see command instructions**
-
-**MSS**
-
-1. User requests to see instructions for a specific command
-2. System shows instructions for the command
-
-   Use case ends.
-
-**Extensions*
-
-* 1a. User does not specify a command.
-
-    * 1a1. System shows instructions for all commands.
-
-      Use case ends.
-
-* 1b. User specifies an invalid command.
-
-    * 1b1. System shows an error message.
-
-      Use case resumes at step 1.
 
 ### Non-Functional Requirements
 
@@ -780,11 +777,13 @@ Priorities: High (must have) - `* * *`, Medium (nice to have) - `* *`, Low (unli
 * **Contact**: A record representing a person in the address book; either a student (base `Person`) or teaching staff (
   `TeachingStaff`), including fields such as name, phone, email, username, and tags. Teaching staff additionally have a
   `Position` (Teaching Assistant or Professors).
-* **Student ID**: A unique identifier assigned to NUS students (e.g., `A1234567Z`), used by the application to detect
-  duplicate student contacts where applicable.
+* **Student ID**: In real life, NUS may assign identifiers such as `A1234567Z` to students. Doritus does **not** store or
+  validate a separate Student ID field; duplicate detection uses the same identity rules as in the User Guide (*Duplicate
+  contacts*), not an NUS ID.
 * **Teaching staff**: Persons represented by the `TeachingStaff` class (extends `Person`), with a `Position` field
   restricted to "Teaching Assistant" or "Professors". Added via `add staff`; listed via `staffslist` or `list`.
-* **Position**: The role of a teaching staff member; only "Teaching Assistant" and "Professors" are allowed.
+* **Position**: The role of a teaching staff member; only "Teaching Assistant" and "Professors" are allowed (user input
+  may use any letter case; stored values use the canonical spellings above).
 * **Tag**: A short label attached to a contact (e.g., module code, tutorial group, lab group) used for grouping and
   filtering contacts.
 * **Tutorial group / Lab group**: A subgroup of students within a module, usually associated with a specific weekly
@@ -811,7 +810,8 @@ testers are expected to do more *exploratory* testing.
 
     1. Download the jar file and copy into an empty folder
 
-    1. Double-click the jar file Expected: Shows the GUI with a set of sample contacts. The window size may not be
+    1. Double-click the jar file Expected: Shows the GUI. If no data file was present yet, sample contacts are loaded; if
+       a data file already exists (including an empty list), that file is used instead. The window size may not be
        optimum.
 
 1. Saving window preferences
@@ -827,9 +827,9 @@ testers are expected to do more *exploratory* testing.
 
     1. Prerequisites: List all persons using the `list` command. Multiple persons in the list.
 
-    1. Test case: `delete 1`<br>
-       Expected: First contact is deleted from the list. Details of the deleted contact shown in the status message.
-       Timestamp in the status bar is updated.
+    1. Test case: `delete 1`, then `Y`<br>
+       Expected: First contact is deleted from the list after confirmation. Details of the deleted contact shown in the
+       status message. Timestamp in the status bar is updated.
 
     1. Test case: `delete 0`<br>
        Expected: No person is deleted. Error details shown in the status message. Status bar remains the same.
@@ -861,22 +861,37 @@ testers are expected to do more *exploratory* testing.
     1. Prerequisites: Execute `tutorslot 1 mon-10-12` first.
 
     1. Test case: `tutorslot 1 mon-10-11`<br>
-       Expected: Command fails with overlap-related error.
+       Expected: Command fails with `This time slot overlaps with an existing slot for this teaching staff member.`
+
+1. Accept boundary-touching slot
+
+    1. Prerequisites: Execute `tutorslot 1 mon-10-12` first.
+
+    1. Test case: `tutorslot 1 mon-12-14`<br>
+       Expected: Slot is added successfully because boundary-touching slots do not count as overlap.
 
 1. Reject crossing-midnight slot
 
     1. Test case: `tutorslot 1 mon-23-24`<br>
-       Expected: Command fails because the current slot format does not support crossing midnight.
+       Expected: Command fails because `24` is outside the allowed hour range `0-23`; slots that cross midnight are not supported in the current format.
 
 ### Adding tags
 
 Prerequisites: At least 1 person exists in the displayed list
 
 1. Add valid tag
-    1. Test case: `tag-add 1 friend course:CS2103T`
+    1. Test case: `tag-add 1 t/friend t/course:CS2103T`
         Expected: the tags `friend` and `course:CS2103T` will be added to the existing list of tags for the person located at index `1`. The course tag is colour-coded and will appear before `friend`.
 2. Reject invalid tag
-    1. Test case: `tag-add frie,nd`
+    1. Test case: `tag-add 1 t/frie,nd`
         Expected: Command fails, explaining that the provided tag's format only accepts alphanumeric characters
-    2. Test case: `tag-add course:CS2103TTT`
+    2. Test case: `tag-add 1 t/course:CS2103TTT`
         Expected: Command fails, explaining that the provided tag's format is invalid and provides the allowed syntax for course
+
+--------------------------------------------------------------------------------------------------------------------
+
+## **Appendix: Planned Enhancements**
+
+1. Accept more teaching-staff roles in `add staff`: the current `pos/` field accepts only `Teaching Assistant` and `Professors`. We plan to expand this to additional common NUS teaching roles such as `Lecturer` and `Instructor`, while still storing a canonical display value and listing the accepted roles in the validation message.
+2. Add editing of individual tutor availability slots: Doritus will support correcting one existing slot for a teaching staff member, for example changing `Mon 10:00-12:00` to `Mon 11:00-13:00`, without requiring deletion of the whole contact or manual editing of the JSON data file.
+3. Add deletion of individual tutor availability slots: Doritus will support removing one existing slot for a teaching staff member, for example deleting `Mon 10:00-12:00` from a staff member who has multiple slots, without requiring deletion of the whole contact or manual editing of the JSON data file.

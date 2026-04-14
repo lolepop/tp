@@ -107,6 +107,63 @@ public class FindPersonDescriptorTest {
     }
 
     @Test
+    public void isValid_test() {
+        // empty fd -> false
+        FindPersonDescriptor fd = new FindPersonDescriptor();
+        assertFalse(fd.isValid());
+
+        // fd with empty name -> false
+        fd = new FindPersonDescriptor();
+        fd.setName(Set.of(""));
+        assertFalse(fd.isValid());
+
+        // fd with only name -> true
+        fd = new FindPersonDescriptor();
+        fd.setName(Set.of("aa"));
+        assertTrue(fd.isValid());
+
+        // fd with empty username -> false
+        fd = new FindPersonDescriptor();
+        fd.setUsername(Set.of(""));
+        assertFalse(fd.isValid());
+
+        // fd with only username -> true
+        fd = new FindPersonDescriptor();
+        fd.setUsername(Set.of("aa"));
+        assertTrue(fd.isValid());
+
+        // fd with empty email -> false
+        fd = new FindPersonDescriptor();
+        fd.setEmail(Set.of(""));
+        assertFalse(fd.isValid());
+
+        // fd with only email -> true
+        fd = new FindPersonDescriptor();
+        fd.setEmail(Set.of("aa"));
+        assertTrue(fd.isValid());
+
+        // fd with empty phone -> false
+        fd = new FindPersonDescriptor();
+        fd.setPhone(Set.of(""));
+        assertFalse(fd.isValid());
+
+        // fd with only phone -> true
+        fd = new FindPersonDescriptor();
+        fd.setPhone(Set.of("111"));
+        assertTrue(fd.isValid());
+
+        // fd with empty tags -> false
+        fd = new FindPersonDescriptor();
+        fd.setTags(Set.of());
+        assertFalse(fd.isValid());
+
+        // fd with only tags -> true
+        fd = new FindPersonDescriptor();
+        fd.setTags(Set.of(new Tag("test")));
+        assertTrue(fd.isValid());
+    }
+
+    @Test
     public void toStringMethod() {
         FindPersonDescriptor fd = new FindPersonDescriptor();
         String expected = FindPersonDescriptor.class.getCanonicalName() + "{name="

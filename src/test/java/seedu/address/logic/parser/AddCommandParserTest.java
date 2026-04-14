@@ -168,6 +168,12 @@ public class AddCommandParserTest {
     }
 
     @Test
+    public void parse_studentWithPositionPrefix_failure() {
+        assertParseFailure(parser, NAME_DESC_BOB + PHONE_DESC_BOB + EMAIL_DESC_BOB + USERNAME_DESC_BOB
+                + POSITION_DESC_BOB, Messages.MESSAGE_ADD_STUDENT_DISALLOWS_POSITION);
+    }
+
+    @Test
     public void parse_staffInvalidName_failure() {
         assertParseFailure(parser, "staff n/James&" + PHONE_DESC_BOB + EMAIL_DESC_BOB + USERNAME_DESC_BOB,
                 Name.MESSAGE_CONSTRAINTS);

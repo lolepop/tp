@@ -16,11 +16,13 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javafx.collections.ObservableList;
 import seedu.address.commons.core.index.Index;
 import seedu.address.commons.util.CollectionUtil;
 import seedu.address.commons.util.ToStringBuilder;
 import seedu.address.logic.Messages;
 import seedu.address.logic.commands.exceptions.CommandException;
+import seedu.address.logic.commands.exceptions.EditCommandException;
 import seedu.address.model.Model;
 import seedu.address.model.person.Email;
 import seedu.address.model.person.Name;
@@ -57,6 +59,9 @@ public class EditCommand extends Command {
     public static final String MESSAGE_DUPLICATE_PERSON = "This person already exists in the address book.";
     public static final String MESSAGE_POSITION_ON_STUDENT =
             "Cannot set position on a student. Use 'add staff' to add teaching staff.";
+    public static final String MESSAGE_DUPLICATE_PHONE = "This phone number already exists in the address book";
+    public static final String MESSAGE_DUPLICATE_EMAIL = "This email already exists in the address book";
+    public static final String MESSAGE_DUPLICATE_USERNAME = "This username already exists in the address book";
 
     private final Index index;
     private final EditPersonDescriptor editPersonDescriptor;
@@ -88,11 +93,7 @@ public class EditCommand extends Command {
             throw new CommandException(MESSAGE_POSITION_ON_STUDENT);
         }
 
-        Person editedPerson = createEditedPerson(personToEdit, editPersonDescriptor);
-
-        if (!personToEdit.isSamePerson(editedPerson) && model.hasPerson(editedPerson)) {
-            throw new CommandException(MESSAGE_DUPLICATE_PERSON);
-        }
+        Person editedPerson = createEditedPerson(model, personToEdit, editPersonDescriptor);
 
         model.setPerson(personToEdit, editedPerson);
         model.updateFilteredPersonList(PREDICATE_SHOW_ALL_PERSONS);
@@ -104,8 +105,26 @@ public class EditCommand extends Command {
      * edited with {@code editPersonDescriptor}.
      * Preserves the type (Person vs TeachingStaff) of the original person.
      */
-    private static Person createEditedPerson(Person personToEdit, EditPersonDescriptor editPersonDescriptor) {
+    private static Person createEditedPerson(Model model, Person personToEdit,
+            EditPersonDescriptor editPersonDescriptor) throws CommandException {
         assert personToEdit != null;
+        try {
+            ObservableList<Person> personList = model.getAddressBook().getPersonList();
+            editPersonDescriptor.getPhone().filter(phone -> personList.stream()
+                    .anyMatch(p -> !p.equals(personToEdit) && p.getPhone().equals(phone))).ifPresent(phone -> {
+                        throw new EditCommandException(MESSAGE_DUPLICATE_PHONE);
+                    });
+            editPersonDescriptor.getEmail().filter(email -> personList.stream()
+                    .anyMatch(p -> !p.equals(personToEdit) && p.getEmail().equals(email))).ifPresent(email -> {
+                        throw new EditCommandException(MESSAGE_DUPLICATE_EMAIL);
+                    });
+            editPersonDescriptor.getUsername().filter(username -> personList.stream()
+                    .anyMatch(p -> !p.equals(personToEdit) && p.getUsername().equals(username))).ifPresent(username -> {
+                        throw new EditCommandException(MESSAGE_DUPLICATE_USERNAME);
+                    });
+        } catch (EditCommandException e) {
+            throw new CommandException(e.getMessage());
+        }
 
         Name updatedName = editPersonDescriptor.getName().orElse(personToEdit.getName());
         Phone updatedPhone = editPersonDescriptor.getPhone().orElse(personToEdit.getPhone());

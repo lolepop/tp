@@ -1,5 +1,7 @@
 package seedu.address.logic.commands;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandFailure;
 import static seedu.address.logic.commands.CommandTestUtil.assertCommandSuccess;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
@@ -10,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import seedu.address.logic.Messages;
+import seedu.address.model.AddressBook;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
@@ -75,6 +78,35 @@ public class AddCommandIntegrationTest {
                 .withUsername("uniqueuser")
                 .build();
         assertCommandFailure(new AddCommand(personWithDuplicateEmail), model,
+                AddCommand.MESSAGE_DUPLICATE_EMAIL);
+    }
+
+    @Test
+    public void execute_sameNameDifferentContactDetails_addSuccessful() throws Exception {
+        Person firstJohn = new PersonBuilder().withName("John Doe").withPhone("91234567")
+                .withEmail("john1@example.com").withUsername("johndoe1").build();
+        Person secondJohn = new PersonBuilder().withName("John Doe").withPhone("81234567")
+                .withEmail("john2@example.com").withUsername("johndoe2").build();
+        Model model = new ModelManager(new AddressBook(getTypicalAddressBook()), new UserPrefs());
+
+        new AddCommand(firstJohn).execute(model);
+        CommandResult result = new AddCommand(secondJohn).execute(model);
+
+        assertTrue(result.getFeedbackToUser().contains("New student added"));
+        assertEquals(9, model.getAddressBook().getPersonList().size());
+    }
+
+    @Test
+    public void execute_duplicateEmailCaseInsensitive_throwsCommandException() {
+        Person personInList = model.getAddressBook().getPersonList().get(0);
+        String upperCaseVariant = personInList.getEmail().value.toUpperCase();
+        Person personWithDuplicateEmailDifferentCase = new PersonBuilder()
+                .withName("Unique Name")
+                .withPhone("81119999")
+                .withEmail(upperCaseVariant)
+                .withUsername("uniqueuser")
+                .build();
+        assertCommandFailure(new AddCommand(personWithDuplicateEmailDifferentCase), model,
                 AddCommand.MESSAGE_DUPLICATE_EMAIL);
     }
 

@@ -8,7 +8,7 @@ import seedu.address.model.Model;
 /**
  * Lists all persons in the address book to the user.
  */
-public class ListCommand extends Command {
+public class ListCommand extends Command implements NullaryCommand {
 
     public static final String COMMAND_WORD = "list";
 
@@ -16,7 +16,7 @@ public class ListCommand extends Command {
     public static final String MESSAGE_EMPTY = "No contacts found. Add your first contact to get started!";
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Lists all contacts in the address book.\n"
-            + "The list command does not take any parameters.\n"
+            + "Extra text after the command word is ignored.\n"
             + "Format: " + COMMAND_WORD;
 
 

@@ -2,12 +2,12 @@ package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_USERNAME;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import seedu.address.logic.commands.FindCommand;
@@ -29,11 +29,9 @@ public class FindCommandParser implements Parser<FindCommand> {
      */
     public FindCommand parse(String args) throws ParseException {
         ArgumentMultimap argMultimap = ArgumentTokenizer.tokenize(args, PREFIX_EMAIL, PREFIX_PHONE, PREFIX_USERNAME,
-                PREFIX_TAG);
+                PREFIX_TAG, PREFIX_NAME);
 
-        String preamble = argMultimap.getPreamble().trim();
-
-        if (preamble.isEmpty()
+        if (argMultimap.getAllValues(PREFIX_NAME).isEmpty()
                 && argMultimap.getAllValues(PREFIX_EMAIL).isEmpty()
                 && argMultimap.getAllValues(PREFIX_USERNAME).isEmpty()
                 && argMultimap.getAllValues(PREFIX_PHONE).isEmpty()
@@ -44,11 +42,9 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         Set<AbstractTag> tagList = ParserUtil.parseTags(argMultimap.getAllValues(PREFIX_TAG));
 
-        String[] nameKeywords = preamble.isEmpty() ? new String[0] : preamble.split("\\s+");
-
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        if (!preamble.isEmpty()) {
-            fd.setName(new HashSet<>(List.of(nameKeywords)));
+        if (!argMultimap.getAllValues(PREFIX_NAME).isEmpty()) {
+            fd.setName(new HashSet<>(argMultimap.getAllValues(PREFIX_NAME)));
         }
 
         if (!argMultimap.getAllValues(PREFIX_EMAIL).isEmpty()) {
@@ -65,6 +61,10 @@ public class FindCommandParser implements Parser<FindCommand> {
 
         if (!tagList.isEmpty()) {
             fd.setTags(tagList);
+        }
+
+        if (!fd.isValid()) {
+            throw new ParseException(String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
         }
         return new FindCommand(fd);
     }

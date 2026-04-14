@@ -8,7 +8,7 @@ import seedu.address.model.person.TeachingStaff;
 /**
  * Lists all teaching staff in the address book to the user.
  */
-public class StaffListCommand extends Command {
+public class StaffListCommand extends Command implements NullaryCommand {
 
     public static final String COMMAND_WORD = "staffslist";
 

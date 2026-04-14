@@ -29,27 +29,38 @@ public class Name {
     }
 
     private static String initValidationRegex() {
-        String mid = "[a-zA-Z0-9/,']";
+        String namePart = "[a-zA-Z0-9](?:[a-zA-Z0-9']*[a-zA-Z0-9])?";
 
-        String segment = "[a-zA-Z0-9](?:" + "(?:" + mid + "|(?:[ -](?![ -])))*" + "[a-zA-Z0-9])?";
+        String separator = "(?:[ /-]|[.,] )";
 
-        return "^" + segment + "(?: \\(" + segment + "\\))?$";
+        String nameSequence = namePart + "(?:" + separator + namePart + ")*\\.?";
+
+        return "^" + nameSequence + "(?: \\(" + nameSequence + "\\))?$";
     }
 
     private static String getNameConstraintsMessage() {
         return "Constraints for names:\n"
-                + "- Use only letters, numbers, and symbols: / , - ' ( )\n"
+                + "- Use only letters, numbers, and symbols: '/', ',', '-', ''', '(', ')' and '.'\n"
                 + "- Cannot be empty or only whitespace.\n"
-                + "- Use only a single space or hyphen between words.\n"
-                + "- Must only start and end with alphanumeric character.\n"
-                + "- Parentheses must be at the end, properly ordered (), and non-empty.\n"
-                + "- Examples:\n"
-                + "  - John Doe\n"
-                + "  - David, Tan Ah Khow\n"
-                + "  - Lily-Rose\n"
-                + "  - Ronald O'Donald\n"
-                + "  - Soh La Min (Su La Min)\n"
-                + "  - Child S/O Father";
+                + "- Between words, use either:\n"
+                + "    - a single space ' ',\n"
+                + "    - hyphen '-',\n"
+                + "    - forward slash '/',\n"
+                + "    - comma and space ', ',\n"
+                + "    - period and space '. ',\n"
+                + "- Must start with an alphanumeric character.\n"
+                + "- Must end with either alphanumeric character, closing bracket ')' or period '.'.\n"
+                + "- Parentheses must be at the end, properly ordered, i.e, open bracket '(' "
+                + "must always be followed with close bracket ')', and non-empty.\n"
+                + "Valid Examples:\n"
+                + "- John Doe\n"
+                + "- David, Tan Ah Khow\n"
+                + "- Lily-Rose\n"
+                + "- Ronald O'Donald\n"
+                + "- Soh La Min (Su La Min)\n"
+                + "- Child S/O Father\n"
+                + "- Donald Trump Sr.\n"
+                + "- J. R. R. Tolkien";
     }
 
     /**

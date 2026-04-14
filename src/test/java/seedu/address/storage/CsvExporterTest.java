@@ -59,7 +59,12 @@ public class CsvExporterTest {
                 .build();
 
         String csv = CsvExporter.convertToCsv(student);
-        assertEquals("Student,\"Alice Smith\",81234567,alicesmith,alice@example.com,cs2103;tutee", csv);
+
+        // due to the nature of the hashset ordering of tags, either outcome is possible
+        // test for both cases to resolve flaky tests
+        String possibleCsv1 = "Student,\"Alice Smith\",81234567,alicesmith,alice@example.com,cs2103;tutee";
+        String possibleCsv2 = "Student,\"Alice Smith\",81234567,alicesmith,alice@example.com,tutee;cs2103";
+        assertTrue(csv.equals(possibleCsv1) || csv.equals(possibleCsv2));
     }
 
     @Test

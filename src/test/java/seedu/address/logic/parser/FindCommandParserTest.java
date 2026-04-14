@@ -31,25 +31,23 @@ public class FindCommandParserTest {
     public void parse_validArgs_returnsFindCommand() {
         // no leading and trailing whitespaces
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        fd.setName(Set.of("Alice", "Bob"));
+        fd.setName(Set.of("Alice Bob"));
         FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, "Alice Bob", expectedFindCommand);
-
-        // multiple whitespaces between keywords
-        assertParseSuccess(parser, " \n Alice \n \t Bob  \t", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob \n\t", expectedFindCommand);
     }
 
     @Test
     public void parse_validArgsWithTag_returnsFindCommand() {
         // name keywords with tag
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        fd.setName(Set.of("Alice", "Bob"));
+        fd.setName(Set.of("Alice Bob"));
         fd.setTags(Set.of(new Tag("friends")));
         FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, "Alice Bob t/friends", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends", expectedFindCommand);
 
         // multiple whitespaces with tags
-        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends", expectedFindCommand);
     }
 
     @Test
@@ -65,14 +63,14 @@ public class FindCommandParserTest {
     public void parse_validArgsWithEmail_returnsFindCommand() {
         // name keywords with tag
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        fd.setName(Set.of("Alice", "Bob"));
+        fd.setName(Set.of("Alice Bob"));
         fd.setTags(Set.of(new Tag("friends")));
         fd.setEmail(Set.of("alice"));
         FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, "Alice Bob t/friends e/alice", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends e/alice", expectedFindCommand);
 
         // multiple whitespaces with tags
-        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends \n\t e/alice", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob \t t/friends \n\t e/alice", expectedFindCommand);
     }
 
     @Test
@@ -89,15 +87,15 @@ public class FindCommandParserTest {
     public void parse_validArgsWithUsername_returnsFindCommand() {
         // name keywords with tag
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        fd.setName(Set.of("Alice", "Bob"));
+        fd.setName(Set.of("Alice Bob"));
         fd.setTags(Set.of(new Tag("friends")));
         fd.setEmail(Set.of("alice"));
         fd.setUsername(Set.of("aliceee"));
         FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, "Alice Bob t/friends u/aliceee e/alice ", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends u/aliceee e/alice ", expectedFindCommand);
 
         // multiple whitespaces with tags
-        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends \n\t e/alice u/aliceee", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends \n\t e/alice u/aliceee", expectedFindCommand);
     }
 
     @Test
@@ -113,16 +111,16 @@ public class FindCommandParserTest {
     public void parse_validArgsWithPhone_returnsFindCommand() {
         // name keywords with tag
         FindPersonDescriptor fd = new FindPersonDescriptor();
-        fd.setName(Set.of("Alice", "Bob"));
+        fd.setName(Set.of("Alice Bob"));
         fd.setTags(Set.of(new Tag("friends")));
         fd.setEmail(Set.of("alice"));
         fd.setUsername(Set.of("aliceee"));
         fd.setPhone(Set.of("817624"));
         FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, "Alice Bob t/friends u/aliceee e/alice p/817624", expectedFindCommand);
+        assertParseSuccess(parser, " n/Alice Bob t/friends u/aliceee e/alice p/817624", expectedFindCommand);
 
         // multiple whitespaces with tags
-        assertParseSuccess(parser, " \n Alice \n \t Bob \t t/friends \n\t e/alice u/aliceee  p/817624",
+        assertParseSuccess(parser, " n/Alice Bob \t t/friends \n\t e/alice u/aliceee  p/817624",
                 expectedFindCommand);
     }
 
@@ -137,17 +135,27 @@ public class FindCommandParserTest {
 
     @Test
     public void parse_argsWithEmptyValues_returnsFindCommand() {
-        // Only empty values
-        FindPersonDescriptor fd = new FindPersonDescriptor();
-        FindCommand expectedFindCommand = new FindCommand(fd);
-        assertParseSuccess(parser, " p/", expectedFindCommand);
-        assertParseSuccess(parser, " e/", expectedFindCommand);
-        assertParseSuccess(parser, " u/", expectedFindCommand);
-        assertParseSuccess(parser, " p/ e/ u/", expectedFindCommand);
+        // Only empty values (one arg)
+        assertParseFailure(parser, " p/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " u/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
 
-        fd = new FindPersonDescriptor();
+        // Only empty values (two args)
+        assertParseFailure(parser, " p/ e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+        assertParseFailure(parser, " p/ u/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+
+        // Only empty values (three args)
+        assertParseFailure(parser, " p/ u/ e/",
+                String.format(MESSAGE_INVALID_COMMAND_FORMAT, FindCommand.MESSAGE_USAGE));
+
+        FindPersonDescriptor fd = new FindPersonDescriptor();
         fd.setPhone(Set.of("5253"));
-        expectedFindCommand = new FindCommand(fd);
+        FindCommand expectedFindCommand = new FindCommand(fd);
         assertParseSuccess(parser, " e/ u/ p/5253", expectedFindCommand);
 
         fd = new FindPersonDescriptor();
@@ -156,8 +164,18 @@ public class FindCommandParserTest {
         assertParseSuccess(parser, " e/alice u/ p/", expectedFindCommand);
 
         fd = new FindPersonDescriptor();
+        fd.setName(Set.of("alice"));
+        expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " n/alice e/ u/ p/", expectedFindCommand);
+
+        fd = new FindPersonDescriptor();
         fd.setUsername(Set.of("aliceee"));
         expectedFindCommand = new FindCommand(fd);
         assertParseSuccess(parser, " e/ u/aliceee p/", expectedFindCommand);
+
+        fd = new FindPersonDescriptor();
+        fd.setTags(Set.of(new Tag("alice")));
+        expectedFindCommand = new FindCommand(fd);
+        assertParseSuccess(parser, " e/ u/ p/ t/alice", expectedFindCommand);
     }
 }

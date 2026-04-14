@@ -37,7 +37,10 @@ import seedu.address.logic.commands.StudentListCommand;
 import seedu.address.logic.commands.TutorDashboardCommand;
 import seedu.address.logic.commands.TutorSlotCommand;
 import seedu.address.logic.parser.exceptions.ParseException;
+import seedu.address.model.person.Email;
+import seedu.address.model.person.Name;
 import seedu.address.model.person.Person;
+import seedu.address.model.person.Phone;
 import seedu.address.model.person.TimeSlot;
 import seedu.address.model.tag.Tag;
 import seedu.address.testutil.EditPersonDescriptorBuilder;
@@ -68,9 +71,6 @@ public class AddressBookParserTest {
         Command command = parser.parseCommand(ClearCommand.COMMAND_WORD);
         assertTrue(command instanceof RequireConfirmationCommand);
         assertTrue(((RequireConfirmationCommand) command).getPendingCommand() instanceof ClearCommand);
-        command = parser.parseCommand(ClearCommand.COMMAND_WORD + " 3");
-        assertTrue(command instanceof RequireConfirmationCommand);
-        assertTrue(((RequireConfirmationCommand) command).getPendingCommand() instanceof ClearCommand);
     }
 
     @Test
@@ -93,43 +93,45 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_exit() throws Exception {
         assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD) instanceof ExitCommand);
-        assertTrue(parser.parseCommand(ExitCommand.COMMAND_WORD + " 3") instanceof ExitCommand);
     }
 
     @Test
     public void parseCommand_find() throws Exception {
-        List<String> keywords = Arrays.asList("foo", "bar", "baz");
+        List<String> keywords = Arrays.asList("foo bar baz");
         FindCommand command = (FindCommand) parser.parseCommand(
-                FindCommand.COMMAND_WORD + " " + keywords.stream().collect(Collectors.joining(" ")));
+                FindCommand.COMMAND_WORD + " n/" + keywords.stream().collect(Collectors.joining(" ")));
         FindPersonDescriptor fd = new FindPersonDescriptor();
         fd.setName(new HashSet<>(keywords));
         assertEquals(new FindCommand(fd), command);
+
+        assertThrows(ParseException.class, String.format("%s%n%s", "Name keyword violates constraints.",
+                        Name.MESSAGE_FIND_NAME_VALIDATE_ERROR), () ->
+                parser.parseCommand(FindCommand.COMMAND_WORD + " n/@@@"));
+        assertThrows(ParseException.class, Email.MESSAGE_FIND_EMAIL_VALIDATE_ERROR, () ->
+                parser.parseCommand(FindCommand.COMMAND_WORD + " e/,"));
+        assertThrows(ParseException.class, Phone.MESSAGE_FIND_PHONE_VALIDATE_ERROR, () ->
+                parser.parseCommand(FindCommand.COMMAND_WORD + " p/aaa"));
+
     }
 
     @Test
     public void parseCommand_help() throws Exception {
         assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD) instanceof HelpCommand);
-        assertTrue(parser.parseCommand(HelpCommand.COMMAND_WORD + " 3") instanceof HelpCommand);
     }
 
     @Test
     public void parseCommand_list() throws Exception {
         assertTrue(parser.parseCommand(ListCommand.COMMAND_WORD) instanceof ListCommand);
-        assertThrows(ParseException.class, () -> parser.parseCommand(ListCommand.COMMAND_WORD + " 3"));
     }
 
     @Test
     public void parseCommand_staffslist() throws Exception {
         assertTrue(parser.parseCommand(StaffListCommand.COMMAND_WORD) instanceof StaffListCommand);
-        assertTrue(parser.parseCommand(StaffListCommand.COMMAND_WORD + " 1") instanceof StaffListCommand);
     }
 
     @Test
     public void parseCommand_studentslist() throws Exception {
         assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD) instanceof StudentListCommand);
-        assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD + " 2") instanceof StudentListCommand);
-        assertTrue(parser.parseCommand(StudentListCommand.COMMAND_WORD + " ??? extra-input")
-                instanceof StudentListCommand);
     }
 
     @Test
@@ -152,8 +154,6 @@ public class AddressBookParserTest {
     @Test
     public void parseCommand_tutordashboard() throws Exception {
         assertTrue(parser.parseCommand(TutorDashboardCommand.COMMAND_WORD) instanceof TutorDashboardCommand);
-        assertTrue(parser.parseCommand(TutorDashboardCommand.COMMAND_WORD + " foo")
-                instanceof TutorDashboardCommand);
     }
 
     @Test

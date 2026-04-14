@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static seedu.address.testutil.TypicalPersons.getTypicalAddressBook;
 
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.junit.jupiter.api.Test;
@@ -17,7 +19,6 @@ import seedu.address.logic.commands.exceptions.CommandException;
 import seedu.address.model.Model;
 import seedu.address.model.ModelManager;
 import seedu.address.model.UserPrefs;
-import seedu.address.storage.CsvExporter;
 
 /**
  * Contains integration tests (interaction with the Model) and unit tests for
@@ -41,7 +42,7 @@ public class ExportCommandTest {
     }
 
     @Test
-    @EnabledOnOs({OS.WINDOWS})
+    @EnabledOnOs({ OS.WINDOWS })
     public void execute_invalidFilePath_throwsCommandException() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         String invalidFilePath = "<bad>.csv";
@@ -49,11 +50,11 @@ public class ExportCommandTest {
         ExportCommand exportCommand = new ExportCommand(invalidFilePath);
 
         CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
-        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
+        assertEquals(ExportCommand.MESSAGE_INVALID_PATH_EXCEPTION, thrown.getMessage());
     }
 
     @Test
-    @EnabledOnOs({OS.LINUX, OS.MAC})
+    @EnabledOnOs({ OS.LINUX, OS.MAC })
     public void execute_invalidFilePathLinux_throwsCommandException() {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
         // Test with null character which is invalid in Linux file paths
@@ -62,31 +63,101 @@ public class ExportCommandTest {
         ExportCommand exportCommand = new ExportCommand(invalidFilePath);
 
         CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
-        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
+        assertEquals(ExportCommand.MESSAGE_INVALID_PATH_EXCEPTION, thrown.getMessage());
     }
 
     @Test
-    public void execute_missingDirectory_throwsCommandException() {
+    public void execute_nestedDirectorySingleLevel_success() throws CommandException {
         Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        // Test with a path to a non-existent directory
-        String missingDirPath = "/nonexistent/directory/contacts.csv";
-
-        ExportCommand exportCommand = new ExportCommand(missingDirPath);
-
-        CommandException thrown = assertThrows(CommandException.class, () -> exportCommand.execute(model));
-        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
-    }
-
-    @Test
-    public void execute_defaultFilePath_success() throws CommandException {
-        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
-        String filePath = CsvExporter.DEFAULT_FILE_PATH;
+        String filePath = tempDir.resolve("output/contacts.csv").toString();
 
         ExportCommand exportCommand = new ExportCommand(filePath);
         CommandResult result = exportCommand.execute(model);
 
         String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
         assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_nestedDirectoryMultipleLevels_success() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        String filePath = tempDir.resolve("output/data/contacts/export.csv").toString();
+
+        ExportCommand exportCommand = new ExportCommand(filePath);
+        CommandResult result = exportCommand.execute(model);
+
+        String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
+        assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_nestedDirectoryDeepNesting_success() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        String filePath = tempDir.resolve("a/b/c/d/e/f/g/contacts.csv").toString();
+
+        ExportCommand exportCommand = new ExportCommand(filePath);
+        CommandResult result = exportCommand.execute(model);
+
+        String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
+        assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_defaultFilePath_success() throws CommandException {
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+        String filePath = tempDir.resolve("contacts.csv").toString();
+
+        ExportCommand exportCommand = new ExportCommand(filePath);
+        CommandResult result = exportCommand.execute(model);
+
+        String expectedMessage = String.format(ExportCommand.MESSAGE_SUCCESS, filePath);
+        assertEquals(expectedMessage, result.getFeedbackToUser());
+    }
+
+    @Test
+    public void execute_ioExceptionThrown_throwsCommandException() throws IOException {
+        // Create a regular file, then try to treat it as a parent directory
+        Path blocker = tempDir.resolve("blocker");
+        Files.writeString(blocker, "not a directory");
+
+        // This path asks for "blocker" to be a directory — it isn't, so
+        // createDirectories fails
+        String badPath = blocker.resolve("contacts.csv").toString();
+
+        ExportCommand command = new ExportCommand(badPath);
+        Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+        CommandException thrown = assertThrows(CommandException.class, () -> command.execute(model));
+        assertEquals(ExportCommand.MESSAGE_IO_EXCEPTION, thrown.getMessage());
+    }
+
+    @Test
+    public void execute_filePathWithoutParent_success() throws Exception {
+        // A bare filename has no parent directory
+        String fileName = "contacts.csv";
+
+        // Run the command from inside tempDir so the file doesn't pollute the project
+        // root.
+        // Easiest: resolve against tempDir but pass only the filename... that won't
+        // work
+        // because Paths.get(fileName) is resolved against the JVM's working directory.
+        // So instead, change approach: use an absolute path whose parent is the
+        // filesystem root,
+        // OR just accept writing to the working dir and clean up.
+
+        Path target = Path.of(fileName);
+        try {
+            ExportCommand command = new ExportCommand(fileName);
+            Model model = new ModelManager(getTypicalAddressBook(), new UserPrefs());
+
+            CommandResult result = command.execute(model);
+
+            assertTrue(Files.exists(target));
+            assertEquals(String.format(ExportCommand.MESSAGE_SUCCESS, fileName),
+                    result.getFeedbackToUser());
+        } finally {
+            Files.deleteIfExists(target); // cleanup
+        }
     }
 
     @Test

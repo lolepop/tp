@@ -8,9 +8,11 @@ import static seedu.address.logic.commands.CommandTestUtil.VALID_EMAIL_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_NAME_BOB;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_PHONE_BOB;
+import static seedu.address.logic.commands.CommandTestUtil.VALID_POSITION_AMY;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_TAG_HUSBAND;
 import static seedu.address.logic.commands.CommandTestUtil.VALID_USERNAME_BOB;
 import static seedu.address.testutil.TypicalPersons.ALICE;
+import static seedu.address.testutil.TypicalPersons.AMY;
 import static seedu.address.testutil.TypicalPersons.BOB;
 
 import org.junit.jupiter.api.Test;
@@ -35,23 +37,51 @@ public class PersonTest {
         // null -> returns false
         assertFalse(ALICE.isSamePerson(null));
 
-        // same name, all other attributes different -> returns true
-        Person editedAlice = new PersonBuilder(ALICE).withPhone(VALID_PHONE_BOB).withEmail(VALID_EMAIL_BOB)
-                .withUsername(VALID_USERNAME_BOB).withTags(VALID_TAG_HUSBAND).build();
+        // same name, phone, email, username; only tags differ -> returns true
+        Person editedAlice = new PersonBuilder(ALICE).withTags(VALID_TAG_HUSBAND).build();
         assertTrue(ALICE.isSamePerson(editedAlice));
 
-        // different name, all other attributes same -> returns false
-        editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
+        // same email and username, different phone -> returns false (different people)
+        editedAlice = new PersonBuilder(ALICE).withPhone(VALID_PHONE_BOB).build();
         assertFalse(ALICE.isSamePerson(editedAlice));
 
-        // name differs in case, all other attributes same -> returns false
-        Person editedBob = new PersonBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        // same email and phone, different username -> returns false (different people)
+        editedAlice = new PersonBuilder(ALICE).withUsername(VALID_USERNAME_BOB).build();
+        assertFalse(ALICE.isSamePerson(editedAlice));
 
-        // name has extra word appended, all other attributes same -> returns false
+        // same username and phone, different email -> returns false (different people)
+        editedAlice = new PersonBuilder(ALICE).withEmail(VALID_EMAIL_BOB).build();
+        assertFalse(ALICE.isSamePerson(editedAlice));
+
+        // different name, all other attributes same -> returns true
+        editedAlice = new PersonBuilder(ALICE).withName(VALID_NAME_BOB).build();
+        assertTrue(ALICE.isSamePerson(editedAlice));
+
+        // name differs in case, all other attributes same -> returns true
+        Person editedBob = new PersonBuilder(BOB).withName(VALID_NAME_BOB.toLowerCase()).build();
+        assertTrue(BOB.isSamePerson(editedBob));
+
+        // name has extra word appended, all other attributes same -> returns true
         String nameWithExtraWord = VALID_NAME_BOB + " Jr";
         editedBob = new PersonBuilder(BOB).withName(nameWithExtraWord).build();
-        assertFalse(BOB.isSamePerson(editedBob));
+        assertTrue(BOB.isSamePerson(editedBob));
+    }
+
+    @Test
+    public void isSamePerson_teachingStaff() {
+        // two teaching staff with same identity and same position -> true
+        Person bobCopy = new PersonBuilder(BOB).build();
+        assertTrue(BOB.isSamePerson(bobCopy));
+
+        // same name, phone, email, username but different position -> false
+        Person bobOtherPosition = new PersonBuilder(BOB).withPosition(VALID_POSITION_AMY).build();
+        assertFalse(BOB.isSamePerson(bobOtherPosition));
+
+        // student vs teaching staff with same name, phone, email, username -> false
+        Person student = new PersonBuilder(AMY).build();
+        Person staffWithAmysFields = new PersonBuilder(AMY).withPosition(VALID_POSITION_AMY).build();
+        assertFalse(student.isSamePerson(staffWithAmysFields));
+        assertFalse(staffWithAmysFields.isSamePerson(student));
     }
 
     @Test

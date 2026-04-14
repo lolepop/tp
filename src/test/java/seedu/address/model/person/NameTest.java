@@ -54,9 +54,7 @@ public class NameTest {
         assertFalse(Name.isValidName("a  b  c")); // multiple double spaces throughout
         assertFalse(Name.isValidName("James2sad l    eeeee Ho")); // multiple spaces in middle
         assertFalse(Name.isValidName("James,"));
-        assertFalse(Name.isValidName(",James"));
         assertFalse(Name.isValidName(",James,"));
-        assertFalse(Name.isValidName("(James"));
         assertFalse(Name.isValidName("James)"));
         assertFalse(Name.isValidName("James /"));
         assertFalse(Name.isValidName("James ("));
@@ -64,6 +62,24 @@ public class NameTest {
         assertFalse(Name.isValidName("James, "));
         assertFalse(Name.isValidName("James' "));
         assertFalse(Name.isValidName("James-"));
+        assertFalse(Name.isValidName("/James"));
+        assertFalse(Name.isValidName(",James"));
+        assertFalse(Name.isValidName("-James"));
+        assertFalse(Name.isValidName("'James"));
+        assertFalse(Name.isValidName("(James"));
+        assertFalse(Name.isValidName(")James"));
+
+        assertFalse(Name.isValidName("James/"));
+        assertFalse(Name.isValidName("James,"));
+        assertFalse(Name.isValidName("James-"));
+        assertFalse(Name.isValidName("James'"));
+        assertFalse(Name.isValidName("James)"));
+
+        assertFalse(Name.isValidName(".James"));
+        assertFalse(Name.isValidName("J,James"));
+        assertFalse(Name.isValidName("J(James"));
+        assertFalse(Name.isValidName("J)James"));
+        assertFalse(Name.isValidName("J.James"));
 
         // valid name
         assertTrue(Name.isValidName("peter jack")); // alphabets only with single space
@@ -78,6 +94,9 @@ public class NameTest {
         assertTrue(Name.isValidName("Ronald O'Donald"));
         assertTrue(Name.isValidName("Soh La Min (Su La Min)"));
         assertTrue(Name.isValidName("Child S/O Father"));
+        assertTrue(Name.isValidName("Mr. Bean"));
+        assertTrue(Name.isValidName("J. R. R. Tolkien"));
+        assertTrue(Name.isValidName("Donald Trump Sr."));
     }
 
     @Test

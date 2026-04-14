@@ -9,7 +9,7 @@ import seedu.address.model.Model;
 /**
  * Clears the address book.
  */
-public class ClearCommand extends Command implements CriticalCommand {
+public class ClearCommand extends Command implements CriticalCommand, NullaryCommand {
 
     public static final String COMMAND_WORD = "clear";
     public static final String MESSAGE_SUCCESS = "Address book has been cleared!";

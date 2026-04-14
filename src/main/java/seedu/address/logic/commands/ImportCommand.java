@@ -21,7 +21,7 @@ public class ImportCommand extends Command {
 
     public static final String MESSAGE_USAGE = COMMAND_WORD
             + ": Imports contacts saved in CSV file into the address book.\n"
-            + "Parameters: [f/FILE_PATH]\n"
+            + "Parameters: f/FILE_PATH\n"
             + "Example: " + COMMAND_WORD + " f/contacts.csv";
 
     public static final String MESSAGE_SUCCESS = "Successfully imported contacts from %s ";

@@ -8,7 +8,7 @@ import seedu.address.model.Model;
 /**
  * Represents a command that answers a confirmation prompt for a pending command.
  */
-public class AnswerConfirmationCommand extends Command {
+public class AnswerConfirmationCommand extends Command implements NullaryCommand {
 
     public static final String COMMAND_WORD_YES = "Y";
     public static final String COMMAND_WORD_NO = "N";

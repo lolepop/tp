@@ -46,4 +46,14 @@ public class ExportCommandParserTest {
         assertParseFailure(parser, "extra arguments f/contacts.csv",
                 String.format(MESSAGE_INVALID_COMMAND_FORMAT, ExportCommand.MESSAGE_USAGE));
     }
+
+    @Test
+    public void parse_blankFilePath_returnsExportCommandWithDefault() {
+        assertParseSuccess(parser, " f/   ", new ExportCommand(CsvExporter.DEFAULT_FILE_PATH));
+    }
+
+    @Test
+    public void parse_emptyFilePath_returnsExportCommandWithDefault() {
+        assertParseSuccess(parser, " f/", new ExportCommand(CsvExporter.DEFAULT_FILE_PATH));
+    }
 }

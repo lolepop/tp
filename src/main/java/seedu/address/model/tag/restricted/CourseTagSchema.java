@@ -11,8 +11,8 @@ package seedu.address.model.tag.restricted;
 public class CourseTagSchema extends RegexTagSchema {
     public static final String VARIANT = "course";
     public static final String TAG_PATTERN = "[A-Z]{2,4}\\d{4}[A-Z]?";
-    public static final String MESSAGE_CONSTRAINTS = "CourseTagSchema tag expects format of 2-4 uppercase letters "
-            + "followed by 4 numbers, and an optional uppercase suffix. Valid: 'CS2103T', 'MA1521', 'GESS1000T'";
+    public static final String MESSAGE_CONSTRAINTS = "Course code expects format: 2-4 uppercase letters followed by "
+            + "4 numbers, and an optional uppercase suffix. Valid course (example): 'CS2103T', 'MA1521', 'GESS1000T'";
 
     /**
      * Constructs a {@code CourseTagSchema}.

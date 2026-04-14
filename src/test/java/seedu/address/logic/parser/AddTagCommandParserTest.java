@@ -1,6 +1,7 @@
 package seedu.address.logic.parser;
 
 import static seedu.address.logic.Messages.MESSAGE_INVALID_COMMAND_FORMAT;
+import static seedu.address.logic.Messages.MESSAGE_INVALID_PERSON_DISPLAYED_INDEX;
 import static seedu.address.logic.commands.CommandTestUtil.INVALID_TAG_DESC;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CommandParserTestUtil.assertParseFailure;
@@ -35,8 +36,8 @@ public class AddTagCommandParserTest {
 
     @Test
     public void parse_invalidIndex_failure() {
-        assertParseFailure(parser, "a " + PREFIX_TAG + "hello ", MESSAGE_INVALID_FORMAT);
-        assertParseFailure(parser, "-1 " + PREFIX_TAG + "hello ", MESSAGE_INVALID_FORMAT);
+        assertParseFailure(parser, "a " + PREFIX_TAG + "hello ", MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
+        assertParseFailure(parser, "-1 " + PREFIX_TAG + "hello ", MESSAGE_INVALID_PERSON_DISPLAYED_INDEX);
     }
 
     @Test

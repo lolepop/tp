@@ -32,7 +32,7 @@ public class ExportCommandParser implements Parser<ExportCommand> {
                     String.format(MESSAGE_INVALID_COMMAND_FORMAT, ExportCommand.MESSAGE_USAGE));
         }
 
-        String path = argMultimap.getValue(PREFIX_FILE)
+        String path = argMultimap.getValue(PREFIX_FILE).filter(file -> !file.isBlank())
                 .orElse(CsvExporter.DEFAULT_FILE_PATH);
         return new ExportCommand(path);
     }

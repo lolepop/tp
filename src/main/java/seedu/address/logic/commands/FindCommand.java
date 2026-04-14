@@ -3,6 +3,7 @@ package seedu.address.logic.commands;
 import static java.util.Objects.requireNonNull;
 import static seedu.address.commons.util.AppUtil.checkArgument;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_EMAIL;
+import static seedu.address.logic.parser.CliSyntax.PREFIX_NAME;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_PHONE;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_TAG;
 import static seedu.address.logic.parser.CliSyntax.PREFIX_USERNAME;
@@ -41,17 +42,19 @@ public class FindCommand extends Command {
     public static final String COMMAND_WORD = "find";
 
     public static final String MESSAGE_USAGE = COMMAND_WORD + ": Finds all persons who meets the following conditions:"
-            + "\n 1. name contains any of the specified keywords.\n"
+            + "\n 1. name contains any of the specified name keywords. Each defined with " + PREFIX_NAME + ".\n"
             + " 2. username contains any of the specified username keywords. Each defined with " + PREFIX_USERNAME
-            + " 3. phone contains any of the specified sequence. Each defined with " + PREFIX_PHONE + ".\n"
+            + ".\n 3. phone contains any of the specified sequence. Each defined with " + PREFIX_PHONE + ".\n"
             + " 4. person who have the exact tags. Each defined with " + PREFIX_TAG + ".\n"
             + "Parameters: "
-            + "[KEYWORD [MORE_KEYWORDS]...] "
+            + "[" + PREFIX_NAME + "NAME [MORE_NAMES]...] "
             + "[" + PREFIX_EMAIL + "EMAIL [MORE_EMAIL]...] "
             + "[" + PREFIX_USERNAME + "USERNAME [MORE_USERNAMES]...] "
             + "[" + PREFIX_PHONE + "PHONE [MORE_PHONES]...] "
             + "[" + PREFIX_TAG + "TAG [MORE_TAGS]...]\n"
             + "Note: At least one of KEYWORD, EMAIL, USERNAME, PHONE or TAG must be provided.\n"
+            + "      All keywords should be a valid substring of their respective constraints.\n"
+            + "      Name keywords must start start and end with alphanumeric character.\n"
             + "Example: " + COMMAND_WORD + " alice bob " + PREFIX_TAG + "friends " + PREFIX_EMAIL + "email "
             + PREFIX_USERNAME + "username1 " + PREFIX_USERNAME + "username2 " + PREFIX_PHONE + "9123";
 
@@ -153,7 +156,8 @@ public class FindCommand extends Command {
         }
 
         public void setName(Set<String> name) {
-            name = cleanArgs(name, Name.VALIDATION_REGEX, Name.MESSAGE_FIND_NAME_VALIDATE_ERROR);
+            name = cleanArgs(name, Name.VALIDATION_REGEX, String.format("%s%n%s", "Name keyword violates constraints.",
+                    Name.MESSAGE_FIND_NAME_VALIDATE_ERROR));
             if (!name.isEmpty()) {
                 this.name = name;
             }
@@ -233,6 +237,12 @@ public class FindCommand extends Command {
 
         public Predicate<Person> getTagsPredicate() {
             return (tags != null) ? new TagsContainsTagPredicate(tags) : PREDICATE_TRUE;
+        }
+
+        public boolean isValid() {
+            return (username != null && !username.isEmpty()) || (name != null && !name.isEmpty())
+                    || (tags != null && !tags.isEmpty()) || (phone != null && !phone.isEmpty())
+                    || (email != null && !email.isEmpty());
         }
 
         @Override

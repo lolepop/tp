@@ -32,6 +32,19 @@ public class TutorialTagSchemaTest {
     }
 
     @Test
+    public void testValidTag_optionalCourseSuffix() {
+        assertTrue(schema.isTagValid(VALID_TUTORIAL_TAG + "-" + CourseTagSchemaTest.VALID_COURSE_TAG));
+    }
+
+    @Test
+    public void testInvalidTag_optionalCourseSuffix() {
+        assertFalse(schema.isTagValid(CourseTagSchemaTest.VALID_COURSE_TAG));
+        assertFalse(schema.isTagValid("-" + CourseTagSchemaTest.VALID_COURSE_TAG));
+        assertFalse(schema.isTagValid(VALID_TUTORIAL_TAG + "-"));
+        assertFalse(schema.isTagValid(VALID_TUTORIAL_TAG + "-" + CourseTagSchemaTest.INVALID_COURSE_TAG));
+    }
+
+    @Test
     public void testGetConstraintViolationMessage() {
         assertEquals(TutorialTagSchema.MESSAGE_CONSTRAINTS, schema.getConstraintViolationMessage());
     }
