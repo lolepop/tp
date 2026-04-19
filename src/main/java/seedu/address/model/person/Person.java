@@ -85,20 +85,14 @@ public sealed class Person permits TeachingStaff {
         if (!(otherPerson instanceof Person)) {
             return false;
         }
+        // NOTE: upon replacing with this code, both csv import and json import behaves like the add and edit commands
+        // therefore, these two are caused by the exact same bug
         Person other = (Person) otherPerson;
-        if (!phone.equals(other.phone) || !email.equals(other.email)
-                || !username.equals(other.username)) {
-            return false;
+        if (phone.equals(other.phone) || email.equals(other.email)
+                || username.equals(other.username)) {
+            return true;
         }
-        boolean thisIsStaff = this instanceof TeachingStaff;
-        boolean otherIsStaff = other instanceof TeachingStaff;
-        if (thisIsStaff != otherIsStaff) {
-            return false;
-        }
-        if (thisIsStaff) {
-            return ((TeachingStaff) this).getPosition().equals(((TeachingStaff) other).getPosition());
-        }
-        return true;
+        return false;
     }
 
     /**
